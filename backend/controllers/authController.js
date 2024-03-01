@@ -5,6 +5,9 @@ const jwt = require("jsonwebtoken")
 const authController = {
     registerUser : async(req, res) => {
         try {
+            const lengthPassword = await req.body.password.length;
+            if(lengthPassword<4) 
+            return res.status(400).send("Password needs to be longer than 4 characters");
             //hash password
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(req.body.password, salt);
