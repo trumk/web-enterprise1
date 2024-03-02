@@ -1,5 +1,6 @@
-npm install -g yarn
-yarn init
-yarn add express@^4.18.2
-npm install mongoose
-npm install cors dotenv bcrypt cookie-parser jsonwebtoken
+npm install -g yarn<br>
+yarn init<br>
+yarn add express@^4.18.2<br>
+npm install mongoose<br>
+npm install cors dotenv bcrypt cookie-parser jsonwebtoken<br>
+npm install nodemailer<br>
