@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         require: true,
         minLength: 4
     },
+    isVerified:{
+        type : Boolean,
+        default: false
+    },
     role:{
         type: String,
         default: 'user'
@@ -28,4 +32,21 @@ const userSchema = new mongoose.Schema({
     {timestamps:true}
 );
 
-module.exports = mongoose.model("User", userSchema, 'user');
+const otpSchema = new mongoose.Schema({
+    email:{ 
+        type: String,
+        required: true
+    },
+    otp:{
+        type: String,
+        required: true
+    },
+    createdAt:{ 
+        type: Date, 
+        default: Date.now
+    }
+});
+const User = mongoose.model("User", userSchema);
+const Otp = mongoose.model("Otp", otpSchema);
+
+module.exports = { User, Otp };
