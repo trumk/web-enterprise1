@@ -3,21 +3,22 @@ const { default: mongoose } = require("mongoose");
 const userSchema = new mongoose.Schema({
     userName:{
         type : String,
-        require: true,
+        match: [/^\S+$/, "UserName should not contain spaces"],
+        required: true,
         minLength: 4,
-        maxLength: 12,
+        maxLength: 20,
         unique: true
     },
     email:{
         type : String,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
-        require: true,
+        required: true,
         minLength: 4,
         unique: true        
     },
     password:{
         type : String,
-        require: true,
+        required: true,
         minLength: 4
     },
     isVerified:{

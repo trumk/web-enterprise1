@@ -56,7 +56,7 @@ const authController = {
                 });
             });
             await sendMailPromise;
-            res.status(200).json(user);
+            res.status(201).json(user);
         } catch (err) {
             res.status(500).json(err);
         }
@@ -101,7 +101,7 @@ const authController = {
             }
             const isVerified = await user.isVerified;
             if(!isVerified){
-                return res.status(404).json("Your account is not verified");
+                return res.status(403).json("Your account is not verified");
             }
             if(user && validPassword && isVerified){
              const accessToken =  jwt.sign({
