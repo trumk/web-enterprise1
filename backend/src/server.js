@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRoute = require("../routes/auth");
+const userRoute = require("../routes/user");
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json())
 
 //routes
 app.use("/", authRoute);
+app.use("/", userRoute);
 
 const hostname = 'localhost'
 const port = 5503
