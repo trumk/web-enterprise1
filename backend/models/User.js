@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type : String,
+        match: [/^\S+$/, "Password should not contain spaces"],
         required: true,
         minLength: 4
     },

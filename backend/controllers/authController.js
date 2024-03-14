@@ -118,11 +118,39 @@ const authController = {
             return res.status(500).json(err);
         }
     },
-    deleteUser : async(req, res, next)=>{
+    changePassword: async(req, res) =>{
         try {
-           const user = req.params._id; 
+            const user = await User.findById(req.params.id);
+            const currentPassword = req.body.currentPassword;
+            const newPassword = req.body.newPassword;
+            const confirmPassword = req.body.confirmPassword;
+
+            if(!user){
+                return res.status(404).json("User not found");
+            }            
+            const validPassword = await bcrypt.compare(currentPassword, user.password);
+            if(!validPassword){
+                return res.status(401).json("Current Password is not correct");
+            }
+            if(currentPassword == newPassword){
+                return res.status(400).json("The current password must be different from the new password");
+            }
+            const lengthPassword = newPassword.length;
+            if(lengthPassword<4){
+                return res.status(400).json("Password needs to be longer than 4 characters");
+            }
+            if(newPassword!=confirmPassword){
+                return res.status(401).json("New Password do not match");
+            }
+            if(validPassword && newPassword == confirmPassword){
+                const salt = await bcrypt.genSalt(10);
+                const hashed = await bcrypt.hash(newPassword, salt);
+                await user.updateOne({ password: hashed }, { new: true });
+                const {password, ...others} = user._doc;
+                res.status(200).json({"messenger":"Change password successfully", ...others});
+            }
         } catch (err) {
-            res.status(500).json(err);
+            return res.status(500).json(err);
         }
     }
 };
