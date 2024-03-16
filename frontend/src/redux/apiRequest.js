@@ -1,25 +1,36 @@
 import axios from "axios";
-import { loginFailed, loginStart, loginSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
+import { loginFailed, loginStart, loginSuccess, registerFailed, registerStart, registerSuccess, verifyFailed, verifyStart, verifySuccess } from "./authSlice";
 
+const BACKEND_URL = 'http://localhost:5503'
 
 export const loginUser = async (user, dispatch, navigate) => {
     dispatch(loginStart());
-    try{
-        const res = await axios.post(`${process.env.BACKEND_URL}/login`, user);
+    try {
+        const res = await axios.post(`${BACKEND_URL}/login`, user);
         dispatch(loginSuccess(res.data));
         navigate("/");
-    } catch(err){
+    } catch (err) {
         dispatch(loginFailed());
     }
 };
 
-export const registerUser = async (user, dispatch, navigate) => {
+export const registerUser = async (user, dispatch, handleSuccess) => {
     dispatch(registerStart());
     try {
-        await axios.post(`${process.env.BACKEND_URL}/register`, user); // Gọi API từ cổng 5503
+        await axios.post(`${BACKEND_URL}/register`, user);
         dispatch(registerSuccess());
-        navigate("/login");
+        handleSuccess();
     } catch (err) {
         dispatch(registerFailed());
     }
-}
+};
+export const verifyAccount = async (user, dispatch, navigate) => {
+    dispatch(verifyStart());
+    try {
+        await axios.post(`${BACKEND_URL}/verify`, user);
+        dispatch(verifySuccess());
+        navigate("/login");
+    } catch (err) {
+        dispatch(verifyFailed());
+    }
+};
