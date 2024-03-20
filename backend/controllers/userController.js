@@ -1,5 +1,6 @@
 const { User, Otp } = require("../models/User")
 
+
 const userController = {
     getAllUsers : async(req, res)=>{
         try {
@@ -22,6 +23,7 @@ const userController = {
             res.status(500).json(error);
         }
     }
+
 }
 
 module.exports = userController;
