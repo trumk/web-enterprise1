@@ -2,30 +2,30 @@ const mongoose = require("mongoose");
 const Event = require("../models/Event")
 
 function createEvent(req, res){
-    const event = new Event({
-        topic: req.body.topic,
-        content: req.body.content,
-        closureDate: req.body.closureDate,
-        finalDate: req.body.finalDate,
-    });
-    return event
-    .save()
-    .then((newEvent)=>{
-        return res.status(200).json({
-            success: true,
-            message:'New event created successfully',
-            Event: newEvent,
-        });
-    })
-    .catch((error)=>{
-        console.log(error);
-        res.status(500).json({
-            success:false,
-            message: 'Server error. Please try again',
-            error: error.message,
-        });
-    });   
-  };
+  const event = new Event({
+      topic: req.body.topic,
+      content: req.body.content,
+      closureDate: req.body.closureDate,
+      finalDate: req.body.finalDate,
+  });
+  return event
+  .save()
+  .then((newEvent)=>{
+      return res.status(200).json({
+          success: true,
+          message:'New event created successfully',
+          Event: newEvent,
+      });
+  })
+  .catch((error)=>{
+      console.log(error);
+      res.status(500).json({
+          success:false,
+          message: 'Server error. Please try again',
+          error: error.message,
+      });
+  });   
+};
 function getAllEvent(req, res){
     Event.find() //to retrieve all events from the database.
     .select('topic content closureDate finalDate') //properties
@@ -48,6 +48,13 @@ function getAllEvent(req, res){
 function updateEvent(req, res) {
     const id = req.params.eventId; 
     const updateObject = req.body; //update data from the request body as json, contain field edit 
+    if (!updateObject.topic || !updateObject.finalDate) {
+      return res.status(400).json({
+          success: false,
+          message: 'Missing required fields: topic or finalDate'
+      });
+  }
+
     // update query using mongo
     Event.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operationwith request body 
       .exec() //execute update query built

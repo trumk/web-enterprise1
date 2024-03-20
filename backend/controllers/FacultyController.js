@@ -48,7 +48,7 @@ function updateFaculty(req, res) {
     const id = req.params.facultyId; 
     const updateObject = req.body; //update data from the request body as json, contain field edit 
     // update query using mongo
-    Faculty.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operationwith request body 
+    Faculty.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operation with request body 
       .exec() //execute update query built
       //exec success 
       .then(() => {

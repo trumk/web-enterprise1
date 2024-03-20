@@ -10,14 +10,14 @@ const eventSchema = new Schema({
     },
     closureDate:{
         type:Date,
-        default:Date.now,
-        required: true
+        default:Date.now
     },
     finalDate:{
-        type:Date,
+        type:Date,  
         default:Date,
         reuqired: true
     }
+    
 
 });
 module.exports = mongoose.model("Event", eventSchema);
