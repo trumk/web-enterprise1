@@ -46,7 +46,13 @@ function getAllFaculty(req, res){
 
 function updateFaculty(req, res) {
     const id = req.params.facultyId; 
-    const updateObject = req.body; //update data from the request body as json, contain field edit 
+    const updateObject = req.body; //update data from the request body as json, contain field edit
+    if (!updateObject.facultyName || !updateObject.descActive) {
+      return res.status(400).json({
+          success: false,
+          message: 'Missing required fields: topic or finalDate'
+      });
+  } 
     // update query using mongo
     Faculty.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operation with request body 
       .exec() //execute update query built
@@ -67,17 +73,40 @@ function updateFaculty(req, res) {
       });
   };
  
+  // function deleteFaculty(req, res) {
+  //   const id = req.params.facultyId; // request parameters
+  //   Faculty.findOneAndDelete(id)
+  //     .exec()
+  //     .then(()=> res.status(204).json({
+  //       success: true,
+  //     }))
+  //     .catch((err) => res.status(500).json({
+  //       success: false,
+  //     }));
+  // };
   function deleteFaculty(req, res) {
-    const id = req.params.facultyId; // request parameters
+    const id = req.params.facultyId;
+  
     Faculty.findOneAndDelete(id)
       .exec()
-      .then(()=> res.status(204).json({
-        success: true,
-      }))
-      .catch((err) => res.status(500).json({
+      .then(deletedFaculty => {
+        if (!deletedFaculty) {
+          return res.status(404).json({
+            success: false,
+            message: "Faculty not found with ID: " + id
+          });
+        }
+  
+        // deleted successfully
+        return res.status(204).json({
+          success: true
+        });
+      })
+      .catch(err => res.status(500).json({
         success: false,
+        message: "Error deleting faculty : " + err.message
       }));
-  };
+  }
 
 module.exports = {
     createFaculty,

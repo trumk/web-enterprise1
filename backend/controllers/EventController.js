@@ -76,17 +76,28 @@ function updateEvent(req, res) {
   };
  
   function deleteEvent(req, res) {
-    const id = req.params.eventId; // request parameters
-    Event.findOneAndDelete(id)
+    const id = req.params.eventId;
+  
+    Faculty.findOneAndDelete(id)
       .exec()
-      .then(()=> res.status(204).json({
-        success: true,
-      }))
-      .catch((err) => res.status(500).json({
+      .then(deleteEvent => {
+        if (!deleteEvent) {
+          return res.status(404).json({
+            success: false,
+            message: "Event not found with ID: " + id
+          });
+        }
+  
+        //  deleted successfully
+        return res.status(204).json({
+          success: true
+        });
+      })
+      .catch(err => res.status(500).json({
         success: false,
+        message: "Error deleting : " + err.message
       }));
-  };
-
+  }
 module.exports = {
     createEvent,
     updateEvent,

@@ -15,7 +15,7 @@ const eventSchema = new Schema({
     finalDate:{
         type:Date,  
         default:Date,
-        reuqired: true
+        required: true
     }
     
 
