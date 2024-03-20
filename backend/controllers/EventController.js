@@ -78,7 +78,7 @@ function updateEvent(req, res) {
   function deleteEvent(req, res) {
     const id = req.params.eventId;
   
-    Faculty.findOneAndDelete(id)
+    Event.findOneAndDelete(id)
       .exec()
       .then(deleteEvent => {
         if (!deleteEvent) {
