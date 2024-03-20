@@ -18,6 +18,5 @@ const eventSchema = new Schema({
         default:Date,
         reuqired: true
     }
-
 });
 module.exports = mongoose.model("Event", eventSchema);
