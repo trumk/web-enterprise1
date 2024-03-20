@@ -10,6 +10,22 @@ const userController = {
             res.status(500).json(error);
         }
     },
+    setRoleUser : async(req, res)=>{
+        try {
+            const userUpdated = await User.findByIdAndUpdate(
+                req.params.id,
+                { role: req.body.role },
+                { new: true }
+              );
+              if (!userUpdated) {
+                return res.status(404).json("User not found");
+              }
+              const { password, ...others } = userUpdated._doc;
+              res.status(200).json({ "messenger": "Change role successfully", ...others });      
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
 
     deleteUser : async(req, res) => {
         try {

@@ -4,7 +4,7 @@ dotenv.config();
 
 const authentication ={
     verifyToken : (req, res, next) => {
-        const token = req.header.token;
+        const token = req.headers.token;
         if(token){
             const accessToken = token.split(" ")[1];
             jwt.verify(accessToken, process.env.ACCESS_KEY,(error, user)=>{

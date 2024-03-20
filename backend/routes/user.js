@@ -7,4 +7,6 @@ route.get("/getAllUsers", authentication.verifyAdmin, userController.getAllUsers
 
 route.delete("/delete/:id", authentication.verifyUserOrAdmin, userController.deleteUser)
 
+route.post("/updateRole/:id", authentication.verifyAdmin, userController.setRoleUser);
+
 module.exports = route;
