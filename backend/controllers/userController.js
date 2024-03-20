@@ -1,10 +1,27 @@
 const { User, Otp } = require("../models/User")
 
+
 const userController = {
     getAllUsers : async(req, res)=>{
         try {
             const user = await User.find()
             res.status(200).json(user)
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+    setRoleUser : async(req, res)=>{
+        try {
+            const userUpdated = await User.findByIdAndUpdate(
+                req.params.id,
+                { role: req.body.role },
+                { new: true }
+              );
+              if (!userUpdated) {
+                return res.status(404).json("User not found");
+              }
+              const { password, ...others } = userUpdated._doc;
+              res.status(200).json({ "messenger": "Change role successfully", ...others });      
         } catch (error) {
             res.status(500).json(error);
         }
@@ -22,6 +39,7 @@ const userController = {
             res.status(500).json(error);
         }
     }
+
 }
 
 module.exports = userController;

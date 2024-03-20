@@ -22,11 +22,18 @@ app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
 
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      return res.status(400).json({error: "Bad JSON"});
+  }
+  next(err);
+});
+
 //routes
 app.use("/", authRoute);
 app.use("/event",eventRouter);
-app.use("/", userRoute);
-app.use("/faculty",facultyRouter);
+app.use("/user", userRoute);
+app.use("/faculty", facultyRouter);
 
 const hostname = 'localhost'
 const port = 5503

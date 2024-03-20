@@ -35,12 +35,13 @@ const userSchema = new mongoose.Schema({
 );
 
 const otpSchema = new mongoose.Schema({
-    email:{ 
+    otp:{
         type: String,
         required: true
     },
-    otp:{
-        type: String,
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     createdAt:{ 
