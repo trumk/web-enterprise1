@@ -24,13 +24,14 @@ export const registerUser = async (user, dispatch, handleSuccess) => {
         dispatch(registerFailed());
     }
 };
-export const verifyAccount = async (user, dispatch, navigate) => {
+export const verifyAccount = async (otp, dispatch, navigate) => {
     dispatch(verifyStart());
     try {
-        await axios.post(`${BACKEND_URL}/verify`, user);
-        dispatch(verifySuccess());
+        const res = await axios.post(`${BACKEND_URL}/verify`, otp);
+        dispatch(verifySuccess(res.data));
         navigate("/login");
-    } catch (err) {
+      } catch (err) {
         dispatch(verifyFailed());
-    }
+        console.error("Verification error:", err);
+      }
 };

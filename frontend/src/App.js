@@ -7,6 +7,7 @@ import {
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import { Homepage } from './pages/Homepage';
+import "react-toastify/dist/ReactToastify.css";
 import { VerifyAccount } from './pages/VerifyAccount';
 
 function App() {
@@ -19,7 +20,6 @@ function App() {
             <Route path='/verify-account' element={<VerifyAccount/>}/>
           </Routes>
         </BrowserRouter>
-    
   );
 }
 
