@@ -12,7 +12,7 @@ export default function Header({
             <div className="flex justify-center">
                 <img 
                     alt=""
-                    className="h-14 w-14"
+                    className="h-28 w-28"
                     src={logo}/>
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
