@@ -1,12 +1,12 @@
 const userController = require("../controllers/userController");
-const authentication = require("../middlewares/authentication");
+const authorization = require("../middlewares/authorization");
 
-const route = require("express").Router();
+const router = require("express").Router();
 
-route.get("/getAllUsers", authentication.verifyAdmin, userController.getAllUsers);
+router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 
-route.delete("/delete/:id", authentication.verifyUserOrAdmin, userController.deleteUser)
+router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
-route.post("/updateRole/:id", authentication.verifyAdmin, userController.setRoleUser);
+router.post("/updateRole/:id", authorization.verifyAdmin, userController.setRoleUser);
 
-module.exports = route;
+module.exports = router;

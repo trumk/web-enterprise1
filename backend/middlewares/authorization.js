@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 dotenv.config();
 
-const authentication ={
+const authorization ={
     verifyToken : (req, res, next) => {
         const token = req.headers.token;
         if(token){
@@ -20,7 +20,7 @@ const authentication ={
         }
     },
     verifyAdmin : (req, res, next)=>{
-        authentication.verifyToken(req, res , ()=> {
+        authorization.verifyToken(req, res , ()=> {
             if(req.user.role == "admin"){
                 next();
             }
@@ -30,7 +30,7 @@ const authentication ={
         })
     },
     verifyUserOrAdmin : (req, res, next)=>{
-        authentication.verifyToken(req, res , ()=> {
+        authorization.verifyToken(req, res , ()=> {
             if(req.user.id == req.params.id || req.user.role == "admin"){
                 next();
             }
@@ -40,7 +40,7 @@ const authentication ={
         })
     },
     verifyMarketingCoodinator : (req, res, next)=>{
-        authentication.verifyToken(req, res , ()=> {
+        authorization.verifyToken(req, res , ()=> {
             if(req.user.role == "admin" || req.user.role == "marketing coodinator"){
                 next();
             }
@@ -50,7 +50,7 @@ const authentication ={
         })
     },
     verifyMarketingManager : (req, res, next)=>{
-        authentication.verifyToken(req, res , ()=> {
+        authorization.verifyToken(req, res , ()=> {
             if(req.user.role == "admin" || req.user.role == "marketing manager"){
                 next();
             }
@@ -60,7 +60,7 @@ const authentication ={
         })
     },
     verifyStudent : (req, res, next)=>{
-        authentication.verifyToken(req, res , ()=> {
+        authorization.verifyToken(req, res , ()=> {
             if(req.user.role == "admin" || req.user.role == "student"){
                 next();
             }
@@ -71,4 +71,4 @@ const authentication ={
     }
 }
 
-module.exports = authentication;
+module.exports = authorization;
