@@ -1,58 +1,76 @@
 const mongoose = require("mongoose");
-const Event = require("../models/Event")
+const Event = require("../models/Event");
+const Faculty = require("../models/Faculty");
 
-function createEvent(req, res){
-  const event = new Event({
-      topic: req.body.topic,
-      content: req.body.content,
-      closureDate: req.body.closureDate,
-      finalDate: req.body.finalDate,
+async function createEvent(req, res) {
+  const { topic, content, closureDate, finalDate, facultyId } = req.body;
+
+  // validate required fields
+  if (!topic || !finalDate || !facultyId) {
+    return res.status(400).json({
+      success: false,
+      message: 'Missing required fields: topic, finalDate, or facultyId'
+    });
+  }
+  const faculty = await Faculty.findById(facultyId);
+  if (!faculty) {
+    return res.status(404).json({
+      success: false,
+      message: 'Faculty not found with ID: ' + facultyId
+    });
+  }
+
+  const newEvent = new Event({
+    topic,
+    content,
+    closureDate,
+    finalDate,
+    facultyId
   });
-  return event
-  .save()
-  .then((newEvent)=>{
-      return res.status(200).json({
-          success: true,
-          message:'New event created successfully',
-          Event: newEvent,
-      });
-  })
-  .catch((error)=>{
-      console.log(error);
-      res.status(500).json({
-          success:false,
-          message: 'Server error. Please try again',
-          error: error.message,
-      });
-  });   
-};
-function getAllEvent(req, res){
-    Event.find() //to retrieve all events from the database.
-    .select('topic content closureDate finalDate') //properties
-    .then((allEvent)=>{
-        return res.status(200).json({
-            success: true,
-            message: 'A list of all event',
-            Event: allEvent,
-          });
-    })
-    .catch((err) => {
-        res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again.',
-          error: err.message,
-        });
-      });
-    };
+
+  await newEvent.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'New event created successfully',
+    event: {
+      ...newEvent.toObject(),
+      facultyName: faculty.facultyName
+    }
+  });
+}
+async function getAllEvent(req, res) {
+  try {
+    const events = await Event.find()
+      .populate('facultyId', 'facultyName') //show
+      .select('topic content closureDate finalDate facultyId');
+
+    return res.status(200).json({
+      success: true,
+      message: 'A list of all events',
+      events
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again.',
+      error: error.message || 'An unknown error occurred'
+    });
+  }
+}
 
 function updateEvent(req, res) {
     const id = req.params.eventId; 
     const updateObject = req.body; //update data from the request body as json, contain field edit 
-    if (!updateObject.topic || !updateObject.finalDate) {
+    if (!updateObject.topic || !updateObject.finalDate || !updateObject.Faculty) {
       return res.status(400).json({
           success: false,
-          message: 'Missing required fields: topic or finalDate'
+          message: 'Missing required fields'
       });
+  }
+  if (updateObject.faculty) {
+    updateObject.faculty = mongoose.Types.ObjectId(updateObject.faculty); 
   }
 
     // update query using mongo

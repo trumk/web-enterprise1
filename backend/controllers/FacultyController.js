@@ -96,7 +96,6 @@ function updateFaculty(req, res) {
             message: "Faculty not found with ID: " + id
           });
         }
-  
         // deleted successfully
         return res.status(204).json({
           success: true
