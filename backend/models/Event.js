@@ -19,7 +19,9 @@ const eventSchema = new Schema({
     },
     facultyId: {
         type: Schema.Types.ObjectId,
-        ref: 'Faculty' // Tham chiếu đến model Faculty
+        ref: 'Faculty' ,
+        required: true
+
       }
     
 

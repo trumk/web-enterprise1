@@ -12,7 +12,7 @@ function createFaculty(req, res) {
     .then((newFaculty) => {
       return res.status(200).json({
         success: true,
-        message: 'New Faculty created successfully',
+        message: 'new Faculty created successfully',
         Faculty: newFaculty,
       });
     })
@@ -31,7 +31,7 @@ function getAllFaculty(req, res) {
     .then((allFaculty) => {
       return res.status(200).json({
         success: true,
-        message: 'A list of all Faculty',
+        message: ' all Faculty',
         Faculty: allFaculty,
       });
     })
@@ -121,7 +121,7 @@ function deleteFaculty(req, res) {
     })
     .catch(err => res.status(500).json({
       success: false,
-      message: "Error deleting faculty : " + err.message
+      message: "Error : " + err.message
     }));
 }
 

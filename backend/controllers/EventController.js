@@ -32,7 +32,7 @@ async function createEvent(req, res) {
 
   res.status(200).json({
     success: true,
-    message: 'New event created successfully',
+    message: 'new event created successfully',
     event: {
       ...newEvent.toObject(),
       facultyName: faculty.facultyName
@@ -66,7 +66,7 @@ function updateEvent(req, res) {
     if (!updateObject.topic || !updateObject.finalDate || !updateObject.Faculty) {
       return res.status(400).json({
           success: false,
-          message: 'Missing required fields'
+          message: 'missing required fields'
       });
   }
   if (updateObject.faculty) {
@@ -80,7 +80,7 @@ function updateEvent(req, res) {
       .then(() => {
         res.status(200).json({
           success: true,
-          message: 'Event is updated',
+          message: 'event is updated',
           updateEvent: updateObject,
         });
       })
@@ -102,7 +102,7 @@ function updateEvent(req, res) {
         if (!deleteEvent) {
           return res.status(404).json({
             success: false,
-            message: "Event not found with ID: " + id
+            message: "event not found with ID: " + id
           });
         }
   
@@ -113,7 +113,7 @@ function updateEvent(req, res) {
       })
       .catch(err => res.status(500).json({
         success: false,
-        message: "Error deleting : " + err.message
+        message: "error deleting : " + err.message
       }));
   }
 module.exports = {

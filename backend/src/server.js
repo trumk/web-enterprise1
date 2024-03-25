@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRoute = require("../routes/auth");
 const userRoute = require("../routes/user");
+
 const bodyParser = require('body-parser');
 const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
@@ -34,6 +35,8 @@ app.use("/", authRoute);
 app.use("/event",eventRouter);
 app.use("/user", userRoute);
 app.use("/faculty", facultyRouter);
+
+
 
 const hostname = 'localhost'
 const port = 5503
