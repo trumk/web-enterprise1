@@ -3,17 +3,25 @@ const { User, Otp } = require("../models/User")
 const Schema = mongoose.Schema;
 
 const profileSchema = new Schema({
-    firstName:{
-        type : String,
-        default: null
-    },
-    lastName:{
-        type : String,
-        default: null
-    },
+    firstName: {
+        type: String,
+        required: true,
+        validate: {
+          validator: (value) => /^[a-zA-Z]+$/.test(value.trim()),
+          message: 'First name must only contain letters (a-z, A-Z).'
+        }
+      },
+      lastName: {
+        type: String,
+        required: true,
+        validate: {
+          validator: (value) => /^[a-zA-Z]+$/.test(value.trim()),
+          message: 'Last name must only contain letters (a-z, A-Z).'
+        }
+      },
     birthDay:{
         type : Date,
-        default: null
+        required: true
     },
     avatar:{
         type : String,
@@ -29,5 +37,4 @@ const profileSchema = new Schema({
         required: true
     }
 });
-const profile = mongoose.model("Profile", profileSchema);
-module.exports = profile;
+module.exports = mongoose.model("Profile", profileSchema);

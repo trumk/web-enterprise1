@@ -4,6 +4,7 @@ const facultySchema = new Schema({
     facultyName:{
         type: String,
         required: true,
+        unique: true
     },
     descActive:{
         type:String,

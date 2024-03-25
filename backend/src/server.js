@@ -3,9 +3,11 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+
 const authRouter = require("../routes/auth");
 const userRouter = require("../routes/user");
 const contributionRouter = require("../routes/contribution");
+
 const bodyParser = require('body-parser');
 const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
@@ -38,6 +40,8 @@ app.use("/event",eventRouter);
 app.use("/user", userRouter);
 app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
+
+
 
 const hostname = 'localhost'
 const port = 5503

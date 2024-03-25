@@ -9,5 +9,6 @@ router.post("/add", FacultyController.createFaculty);
 router.get("/get", FacultyController.getAllFaculty);
 router.put("/:facultyId", FacultyController.updateFaculty);
 router.delete("/:facultyId", FacultyController.deleteFaculty);
+router.get("/search", FacultyController.searchFaculty);
 
 module.exports = router;
