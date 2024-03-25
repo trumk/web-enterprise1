@@ -1,18 +1,21 @@
 const authController = require("../controllers/authController");
-const authentication = require("../middlewares/authentication");
+const authorization = require("../middlewares/authorization");
 
-const route = require("express").Router();
+const router = require("express").Router();
 
-route.post("/register", authController.registerUser);
+router.post("/register", authController.registerUser);
 
-route.post("/login", authController.loginUser);
+router.post("/login", authController.loginUser);
 
-route.post("/verify", authController.verifyUser);
+router.post("/verify", authController.verifyUser);
 
-route.get("/verifylink", authController.verifyByLink);
+router.get("/verifylink", authController.verifyByLink);
 
-route.post("/logout", authController.logOut);
+router.post("/logout", authController.logOut);
 
-route.post("/changePassword/:id", authentication.verifyUserOrAdmin, authController.changePassword);
+router.post("/refresh", authController.requestRefreshToken);
 
-module.exports = route;
+
+router.post("/changePassword/:id", authorization.verifyUserOrAdmin, authController.changePassword);
+
+module.exports = router;

@@ -122,6 +122,3 @@ module.exports = {
     deleteEvent,
     getAllEvent
 };
-
-
-

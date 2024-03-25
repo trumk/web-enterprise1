@@ -1,18 +1,17 @@
-
-const authentication = require("../middlewares/authentication");
 const { userController, profileController} = require("../controllers/userController");
+const authorization = require("../middlewares/authorization");
+const router = require("express").Router();
 
-const route = require("express").Router();
+router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 
-route.get("/getAllUsers", authentication.verifyAdmin, userController.getAllUsers);
+router.get("/profile", authorization.verifyToken, userController.getProfile);
 
-route.delete("/delete/:id", authentication.verifyUserOrAdmin, userController.deleteUser)
-
-route.post("/updateRole/:id", authentication.verifyAdmin, userController.setRoleUser);
-
-
+router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
 route.get("/:id", profileController.readProfile);
-route.put("/:id",profileController.updateProfile);
+
+route.put("/:id", authorization.verifyUserOrAdmin, profileController.updateProfile);
 
 module.exports = route;
+
+

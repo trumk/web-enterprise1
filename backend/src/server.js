@@ -3,8 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const authRoute = require("../routes/auth");
-const userRoute = require("../routes/user");
+
+const authRouter = require("../routes/auth");
+const userRouter = require("../routes/user");
+const contributionRouter = require("../routes/contribution");
 
 const bodyParser = require('body-parser');
 const eventRouter = require("../routes/event");
@@ -13,6 +15,13 @@ const facultyRouter = require("../routes/faculty");
 dotenv.config();
 
 const app = express();
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      return res.status(400).json({error: "Bad JSON"});
+  }
+  next(err);
+});
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
@@ -23,18 +32,14 @@ app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
 
-app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-      return res.status(400).json({error: "Bad JSON"});
-  }
-  next(err);
-});
+
 
 //routes
-app.use("/", authRoute);
+app.use("/", authRouter);
 app.use("/event",eventRouter);
-app.use("/user", userRoute);
+app.use("/user", userRouter);
 app.use("/faculty", facultyRouter);
+app.use("/contribution", contributionRouter);
 
 
 

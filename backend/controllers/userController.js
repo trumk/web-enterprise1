@@ -1,3 +1,4 @@
+
 const { User, Otp } = require("../models/User");
 const mongoose = require("mongoose");
 const Profile = require("../models/Profile");
@@ -81,6 +82,7 @@ const profileController = {
       return res.status(500).json({ message: "Server error" });
     }
   },
+
 }
 
 module.exports = { userController, profileController };

@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-function generateVerifyMail(user, otp){
+function generateVerifyMail(user, otp) {
     return jwt.sign({
         id: user._id,
         otp: otp.otp
@@ -31,6 +31,16 @@ function generateAccessToken(user) {
     },
         process.env.ACCESS_KEY,
         { expiresIn: "2h" }
+    )
+};
+
+function generateRefreshToken(user) {
+    return jwt.sign({
+        id: user.id,
+        role: user.role
+    },
+        process.env.REFRESH_KEY,
+        { expiresIn: "365d" }
     )
 };
 
@@ -102,12 +112,12 @@ const authController = {
             }
             if (user.isVerified) {
                 return res.status(400).json("You are already verified.");
-            }    
+            }
             const otp = req.body.otp;
             const emailOtp = await Otp.findOne({ user: user._id, otp: otp });
             if (!emailOtp) {
                 return res.status(400).json("Wrong otp, please try again or you are not signup before.");
-            }            
+            }
             const userUpdate = await User.findOneAndUpdate({ _id: user._id }, { isVerified: true }, { new: true });
             await Otp.deleteOne({ _id: emailOtp._id });
             res.status(200).json({ "message": "Verified successfully", userUpdate });
@@ -123,7 +133,7 @@ const authController = {
                 if (error) {
                     return res.status(403).json("Token is not valid");
                 }
-                
+
                 const user = await User.findOne({ _id: decoded.id })
                 if (!user) {
                     return res.status(404).json("User not found");
@@ -139,7 +149,7 @@ const authController = {
             res.status(500).json(err);
         }
     },
-    
+
 
     loginUser: async (req, res) => {
         try {
@@ -165,7 +175,17 @@ const authController = {
             }
             if (user && validPassword && isVerified) {
                 const accessToken = generateAccessToken(user);
-                const { password, ...others } = user._doc;
+                if (!user.Token) {
+                    const refreshToken = generateRefreshToken(user);
+                    await User.findByIdAndUpdate(user._id, { Token: refreshToken });
+                }
+                res.cookie("refreshToken", user.Token, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict",
+                });
+                const { password, Token, ...others } = user._doc;
                 res.status(200).json({ ...others, accessToken });
             }
         } catch (err) {
@@ -173,18 +193,43 @@ const authController = {
         }
     },
 
-    logOut: async (req, res) => {
+    requestRefreshToken: async (req, res) => {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) return res.status(401).json("You're not authenticated");
+    
         try {
-            if (req.cookies) {
-                for (let cookie in req.cookies) {
-                    res.clearCookie(cookie);
+            const user = await User.findOne({ Token: refreshToken });
+            if (!user) {
+                return res.status(403).json("Refresh token is not valid");
+            }
+    
+            jwt.verify(refreshToken, process.env.REFRESH_KEY, async (err, decoded) => {
+                if (err) {
+                    return res.status(403).json("Refresh token is not valid");
                 }
-            } 
-            res.status(200).json("Logged out successfully!");
-        } catch (error) {
+                const newAccessToken = generateAccessToken(decoded);
+                const newRefreshToken = generateRefreshToken(decoded);
+                await User.findByIdAndUpdate(user._id, { Token: newRefreshToken });    
+                res.cookie("refreshToken", newRefreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict",
+                });
+    
+                res.status(200).json({
+                    accessToken: newAccessToken,
+                });
+            });
+        } catch (err) {
             return res.status(500).json(err);
         }
     },
+    
+      logOut: async (req, res) => {
+        res.clearCookie("refreshToken");
+        res.status(200).json("Logged out successfully!");
+      },
 
     changePassword: async (req, res) => {
         try {
@@ -214,7 +259,7 @@ const authController = {
                 const salt = await bcrypt.genSalt(10);
                 const hashed = await bcrypt.hash(newPassword, salt);
                 await user.updateOne({ password: hashed }, { new: true });
-                const { password, ...others } = user._doc;
+                const { password, Token, ...others } = user._doc;
                 res.status(200).json({ "messenger": "Change password successfully", ...others });
             }
         } catch (err) {
