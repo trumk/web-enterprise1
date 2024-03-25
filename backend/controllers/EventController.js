@@ -59,6 +59,36 @@ async function getAllEvent(req, res) {
     });
   }
 }
+function getOneEvent(req, res) {
+  const id = req.params.eventId;
+  res.cookie("eventId", id, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    sameSite: "strict",
+  });
+  Event.findById(id)
+    .then(event => {
+      if (!event) {
+        return res.status(404).json({
+          success: false,
+          message: 'Event not found with ID: ' + id,
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: 'Event found',
+        Event: event,
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
 
 function updateEvent(req, res) {
     const id = req.params.eventId; 
@@ -120,5 +150,6 @@ module.exports = {
     createEvent,
     updateEvent,
     deleteEvent,
-    getAllEvent
+    getAllEvent,
+    getOneEvent
 };
