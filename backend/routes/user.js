@@ -5,6 +5,8 @@ const router = require("express").Router();
 
 router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 
+router.get("/profile", authorization.verifyToken, userController.getProfile);
+
 router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
 router.post("/updateRole/:id", authorization.verifyAdmin, userController.setRoleUser);

@@ -1,108 +1,139 @@
 const mongoose = require("mongoose");
 const Event = require("../models/Event")
 
-function createEvent(req, res){
+function createEvent(req, res) {
   const event = new Event({
-      topic: req.body.topic,
-      content: req.body.content,
-      closureDate: req.body.closureDate,
-      finalDate: req.body.finalDate,
+    topic: req.body.topic,
+    content: req.body.content,
+    closureDate: req.body.closureDate,
+    finalDate: req.body.finalDate,
   });
   return event
-  .save()
-  .then((newEvent)=>{
+    .save()
+    .then((newEvent) => {
       return res.status(200).json({
-          success: true,
-          message:'New event created successfully',
-          Event: newEvent,
+        success: true,
+        message: 'New event created successfully',
+        Event: newEvent,
       });
-  })
-  .catch((error)=>{
+    })
+    .catch((error) => {
       console.log(error);
       res.status(500).json({
-          success:false,
-          message: 'Server error. Please try again',
-          error: error.message,
+        success: false,
+        message: 'Server error. Please try again',
+        error: error.message,
       });
-  });   
+    });
 };
-function getAllEvent(req, res){
-    Event.find() //to retrieve all events from the database.
+function getAllEvent(req, res) {
+  Event.find() //to retrieve all events from the database.
     .select('topic content closureDate finalDate') //properties
-    .then((allEvent)=>{
-        return res.status(200).json({
-            success: true,
-            message: 'A list of all event',
-            Event: allEvent,
-          });
+    .then((allEvent) => {
+      return res.status(200).json({
+        success: true,
+        message: 'A list of all event',
+        Event: allEvent,
+      });
     })
     .catch((err) => {
-        res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again.',
-          error: err.message,
-        });
-      });
-    };
-
-function updateEvent(req, res) {
-    const id = req.params.eventId; 
-    const updateObject = req.body; //update data from the request body as json, contain field edit 
-    if (!updateObject.topic || !updateObject.finalDate) {
-      return res.status(400).json({
-          success: false,
-          message: 'Missing required fields: topic or finalDate'
-      });
-  }
-
-    // update query using mongo
-    Event.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operationwith request body 
-      .exec() //execute update query built
-      //exec success 
-      .then(() => {
-        res.status(200).json({
-          success: true,
-          message: 'Event is updated',
-          updateEvent: updateObject,
-        });
-      })
-      //exec error
-      .catch((err) => {
-        res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again.'
-        });
-      });
-  };
- 
-  function deleteEvent(req, res) {
-    const id = req.params.eventId;
-  
-    Faculty.findOneAndDelete(id)
-      .exec()
-      .then(deleteEvent => {
-        if (!deleteEvent) {
-          return res.status(404).json({
-            success: false,
-            message: "Event not found with ID: " + id
-          });
-        }
-  
-        //  deleted successfully
-        return res.status(204).json({
-          success: true
-        });
-      })
-      .catch(err => res.status(500).json({
+      res.status(500).json({
         success: false,
-        message: "Error deleting : " + err.message
-      }));
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
+
+function getOneEvent(req, res) {
+  const id = req.params.eventId;
+  res.cookie("eventId", id, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    sameSite: "strict",
+  });
+  Event.findById(id)
+    .then(event => {
+      if (!event) {
+        return res.status(404).json({
+          success: false,
+          message: 'Event not found with ID: ' + id,
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: 'Event found',
+        Event: event,
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
+function updateEvent(req, res) {
+  const id = req.params.eventId;
+  const updateObject = req.body; //update data from the request body as json, contain field edit 
+  if (!updateObject.topic || !updateObject.finalDate) {
+    return res.status(400).json({
+      success: false,
+      message: 'Missing required fields: topic or finalDate'
+    });
   }
+
+  // update query using mongo
+  Event.updateOne({ _id: id }, { $set: updateObject })  //to retrieve id, set object update operationwith request body 
+    .exec() //execute update query built
+    //exec success 
+    .then(() => {
+      res.status(200).json({
+        success: true,
+        message: 'Event is updated',
+        updateEvent: updateObject,
+      });
+    })
+    //exec error
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.'
+      });
+    });
+};
+
+function deleteEvent(req, res) {
+  const id = req.params.eventId;
+
+  Faculty.findOneAndDelete(id)
+    .exec()
+    .then(deleteEvent => {
+      if (!deleteEvent) {
+        return res.status(404).json({
+          success: false,
+          message: "Event not found with ID: " + id
+        });
+      }
+
+      //  deleted successfully
+      return res.status(204).json({
+        success: true
+      });
+    })
+    .catch(err => res.status(500).json({
+      success: false,
+      message: "Error deleting : " + err.message
+    }));
+}
 module.exports = {
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    getAllEvent
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getAllEvent,
+  getOneEvent
 };
 
 

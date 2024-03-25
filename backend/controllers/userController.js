@@ -1,7 +1,8 @@
 const { User, Otp } = require("../models/User")
-
+const Profile = require("../models/Profile")
 
 const userController = {
+    
     getAllUsers : async(req, res)=>{
         try {
             const user = await User.find()
@@ -38,8 +39,20 @@ const userController = {
         } catch (error) {
             res.status(500).json(error);
         }
+    },
+    getProfile: async(req, res) =>{
+        try {
+            const userID = req.user.id;
+            const profile = await Profile.findOne({userID:userID});
+            if(!profile)
+            {
+                return res.status(404).json("Profile not found");
+            }
+            res.status(200).json(profile) ;
+        } catch (error) {
+            res.status(500).json(error);
+        }
     }
-
 }
 
 module.exports = userController;
