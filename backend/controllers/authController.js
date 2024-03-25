@@ -30,7 +30,7 @@ function generateAccessToken(user) {
         role: user.role
     },
         process.env.ACCESS_KEY,
-        { expiresIn: "20s" }
+        { expiresIn: "2h" }
     )
 };
 

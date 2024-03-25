@@ -68,7 +68,17 @@ const authorization ={
                 return res.status(403).json("You don't have permission");
             }
         })
-    }
+    },
+    verifyManager : (req, res, next)=>{
+        authorization.verifyToken(req, res , ()=> {
+            if(req.user.role == "admin" || req.user.role == "marketing manager" || req.user.role == "marketing coordinator" ){
+                next();
+            }
+            else{
+                return res.status(403).json("You don't have permission");
+            }
+        })
+    },
 }
 
 module.exports = authorization;
