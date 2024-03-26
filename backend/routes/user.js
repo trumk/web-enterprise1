@@ -4,14 +4,14 @@ const router = require("express").Router();
 
 router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 
-router.get("/profile", authorization.verifyToken, userController.getProfile);
+router.get("/profile", authorization.verifyToken, profileController.readProfile);
 
 router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
-route.get("/:id", profileController.readProfile);
+router.get("/:id", profileController.readProfile);
 
-route.put("/:id", authorization.verifyUserOrAdmin, profileController.updateProfile);
+router.put("/:id", authorization.verifyUserOrAdmin, profileController.updateProfile);
 
-module.exports = route;
+module.exports = router;
 
 
