@@ -5,23 +5,15 @@ const Schema = mongoose.Schema;
 const profileSchema = new Schema({
     firstName: {
         type: String,
-        required: true,
-        validate: {
-          validator: (value) => /^[a-zA-Z]+$/.test(value.trim()),
-          message: 'First name must only contain letters (a-z, A-Z).'
-        }
+        default: null
       },
       lastName: {
         type: String,
-        required: true,
-        validate: {
-          validator: (value) => /^[a-zA-Z]+$/.test(value.trim()),
-          message: 'Last name must only contain letters (a-z, A-Z).'
-        }
+        default: null
       },
     birthDay:{
         type : Date,
-        required: true
+        default: null
     },
     avatar:{
         type : String,
