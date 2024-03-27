@@ -39,16 +39,42 @@ async function createEvent(req, res) {
     }
   });
 }
+
+function FilterExpression(filter) {
+  const filterExpression = {};
+  for (const key in filter) {
+    if (filter.hasOwnProperty(key)) {
+      if (key === 'closureDate' || key === 'finalDate' || key === 'facultyId') {
+        filterExpression[key] = filter[key];
+      }
+    }
+  }
+  return filterExpression;
+}
+
 async function getAllEvent(req, res) {
   try {
-    const events = await Event.find()
-      .populate('facultyId', 'facultyName') //show
+    let filterExpression = {};
+    if (req.query.filter) {
+      try {
+        const filter = JSON.parse(req.query.filter);
+        filterExpression = FilterExpression(filter);
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid filter format',
+          error: err.message
+        });
+      }
+    }
+    const events = await Event.find(filterExpression)
+      .populate('facultyId', 'facultyName')
       .select('topic content closureDate finalDate facultyId');
 
     return res.status(200).json({
       success: true,
       message: 'A list of all events',
-      events
+      events: events || []
     });
   } catch (error) {
     console.error(error);
@@ -59,6 +85,7 @@ async function getAllEvent(req, res) {
     });
   }
 }
+
 function getOneEvent(req, res) {
   const id = req.params.eventId;
   res.cookie("eventId", id, {
@@ -100,7 +127,7 @@ function updateEvent(req, res) {
       });
   }
   if (updateObject.faculty) {
-    updateObject.faculty = mongoose.Types.ObjectId(updateObject.faculty); 
+    updateObject.faculty = mongoose.Types.ObjectId(updateObject.faculty);
   }
 
     // update query using mongo
