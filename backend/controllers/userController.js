@@ -61,6 +61,7 @@ const profileController = {
   updateProfile: async (req, res) => {
     try {
       const { id } = req.params;
+      req.body.avatar = req.file.path;
       const updateObject = req.body;
       if (!updateObject.firstName || !updateObject.lastName || !updateObject.birthDay) {
         return res.status(400).json({
