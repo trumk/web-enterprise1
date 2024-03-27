@@ -164,6 +164,12 @@ const authController = {
                 path: "/",
                 sameSite: "strict"
             });
+            await res.cookie('userId', user._id, {
+                httpOnly: true,
+                secure: false,
+                path: "/",
+                sameSite: "strict"
+            });
             //decrypt hash and compare
             const validPassword = await bcrypt.compare(req.body.password, user.password);
             if (!validPassword) {
