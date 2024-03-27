@@ -18,6 +18,14 @@ const contributionController = {
     try {
       const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
       const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
+      console.log(imagesPaths)
+      console.log(filesPaths)
+      if(imagesPaths.length === 0){
+        return res.status(403).json("Image is required");
+      }
+      if(filesPaths.length === 0){
+        return res.status(403).json("File is required");
+      }
       const newContribution = new Contribution({
         title: req.body.title,
         content: req.body.content,
@@ -124,6 +132,18 @@ const contributionController = {
       }
       const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
       const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
+      if(imagesPaths.length === 0){
+        return res.status(403).json("Image is required");
+      }
+      if(filesPaths.length === 0){
+        return res.status(403).json("File is required");
+      }
+      if(req.body.title === ""){
+        return res.status(403).json("Title is not null");
+      }
+      if(req.body.content === ""){
+        return res.status(403).json("Content is not null");
+      }
       if (imagesPaths && !filesPaths) {
         const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
           {
