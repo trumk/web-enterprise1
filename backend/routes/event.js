@@ -5,6 +5,7 @@ const authorization = require("../middlewares/authorization");
 const bodyParser = require('body-parser');
 const EventController = require('../controllers/EventController');
 
+
 router.use(authorization.verifyToken);
 
 router.post("/create", authorization.verifyManager, EventController.createEvent);

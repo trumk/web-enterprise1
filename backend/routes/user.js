@@ -2,6 +2,8 @@ const { userController, profileController} = require("../controllers/userControl
 const authorization = require("../middlewares/authorization");
 const router = require("express").Router();
 
+const {uploadImage, uploadFile, upload, multerErrorHandler} = require("../middlewares/cloudinary");
+
 router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 
 router.get("/profile", authorization.verifyToken, profileController.readProfile);
@@ -10,7 +12,7 @@ router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.del
 
 router.get("/:id", profileController.readProfile);
 
-router.put("/:id", authorization.verifyUserOrAdmin, profileController.updateProfile);
+router.put("/:id", authorization.verifyUserOrAdmin, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
 
 module.exports = router;
 
