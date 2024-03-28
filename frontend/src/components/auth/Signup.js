@@ -59,7 +59,6 @@ import { OTPModal } from './otp-modal';
           </div>
         </form>
         <OTPModal open={openNotification} onClose={() => setOpenNotification(false)} email={signupState.email}/>
-        
       </>
     )
   }
