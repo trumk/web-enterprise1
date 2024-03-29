@@ -46,18 +46,30 @@ const userController = {
 
 const profileController = {
   readProfile: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const profile = await Profile.findById(id).populate('userID', 'username');
-      if (!profile) {
-        return res.status(404).json("Profile not found");
+      try {
+        const { userID } = req.params;
+        const profile = await Profile.findOne({ userID }).populate('userID', 'username');
+        if (!profile) {
+          return res.status(404).json("Profile not found");
+        }
+        res.status(200).json(profile);
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error" });
       }
-      res.status(200).json(profile);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Server error" });
-    }
-  },
+    },
+  //   try {
+  //     const { id } = req.params;
+  //     const profile = await Profile.findById(id).populate('userID', 'username');
+  //     if (!profile) {
+  //       return res.status(404).json("Profile not found");
+  //     }
+  //     res.status(200).json(profile);
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({ message: "Server error" });
+  //   }
+  // },
   updateProfile: async (req, res) => {
     try {
       const { id } = req.params;
