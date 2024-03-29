@@ -12,45 +12,78 @@ async function createEvent(req, res) {
       message: 'Missing required fields: topic, finalDate, or facultyId'
     });
   }
-  const faculty = await Faculty.findById(facultyId);
-  if (!faculty) {
-    return res.status(404).json({
+
+  try {
+  
+    if (!mongoose.Types.ObjectId.isValid(facultyId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid facultyId format'
+      });
+    }
+
+    const faculty = await Faculty.findById(facultyId);
+
+    if (!faculty) {
+      return res.status(404).json({
+        success: false,
+        message: 'Faculty not found with ID: ' + facultyId
+      });
+    }
+
+    const newEvent = new Event({
+      topic,
+      content,
+      closureDate,
+      finalDate,
+      facultyId
+    });
+
+    await newEvent.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'New event created successfully',
+      event: {
+        ...newEvent.toObject(),
+        facultyName: faculty.facultyName
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
       success: false,
-      message: 'Faculty not found with ID: ' + facultyId
+      message: 'Server error. Please try again',
+      error: error.message
     });
   }
-
-  const newEvent = new Event({
-    topic,
-    content,
-    closureDate,
-    finalDate,
-    facultyId
-  });
-
-  await newEvent.save();
-
-  res.status(200).json({
-    success: true,
-    message: 'new event created successfully',
-    event: {
-      ...newEvent.toObject(),
-      facultyName: faculty.facultyName
-    }
-  });
 }
-
+//closuredate by monthyear
 function FilterExpression(filter) {
   const filterExpression = {};
   for (const key in filter) {
     if (filter.hasOwnProperty(key)) {
-      if (key === 'closureDate' || key === 'finalDate' || key === 'facultyId') {
+      if (key === 'closureDate') {
+        if (filter[key].hasOwnProperty('year') && filter[key].hasOwnProperty('month')) {
+          const selectedYear = filter[key].year;
+          const selectedMonth = filter[key].month - 1; //  zero-based in js
+          const startDate = new Date(selectedYear, selectedMonth, 1); //set year and month first is 1
+          const endDate = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59, 999); //end of the selected month +1 next 0 end 4time
+          filterExpression[key] = { $gte: startDate, $lte: endDate }; //$gte >=, $lte <=
+        } else {
+          return { error: 'error' };
+        }
+      } else if (key === 'facultyId') {
+         //facultyId
+        filterExpression[key] = filter[key];
+      } else {
         filterExpression[key] = filter[key];
       }
     }
   }
   return filterExpression;
 }
+
 
 async function getAllEvent(req, res) {
   try {
@@ -62,14 +95,23 @@ async function getAllEvent(req, res) {
       } catch (err) {
         return res.status(400).json({
           success: false,
-          message: 'Invalid filter format',
+          message: 'invalid filter',
           error: err.message
         });
       }
     }
-    const events = await Event.find(filterExpression)
+
+    const eventsQuery = Event.find(filterExpression)
       .populate('facultyId', 'facultyName')
       .select('topic content closureDate finalDate facultyId');
+
+   //check
+    if (filterExpression.closureDate && filterExpression.closureDate.$gte && filterExpression.closureDate.$lte) {
+      eventsQuery.where('closureDate').gte(filterExpression.closureDate.$gte).lte(filterExpression.closureDate.$lte);
+    }
+
+    const events = await eventsQuery
+    .exec();
 
     return res.status(200).json({
       success: true,
@@ -118,65 +160,65 @@ function getOneEvent(req, res) {
 };
 
 function updateEvent(req, res) {
-    const id = req.params.eventId; 
-    const updateObject = req.body; //update data from the request body as json, contain field edit 
-    if (!updateObject.topic || !updateObject.finalDate || !updateObject.Faculty) {
-      return res.status(400).json({
-          success: false,
-          message: 'missing required fields'
-      });
+  const id = req.params.eventId;
+  const updateObject = req.body; //update data from the request body as json, contain field edit 
+  if (!updateObject.topic || !updateObject.finalDate || !updateObject.facultyId) {
+    return res.status(400).json({
+      success: false,
+      message: 'missing required fields'
+    });
   }
   if (updateObject.faculty) {
     updateObject.faculty = mongoose.Types.ObjectId(updateObject.faculty);
   }
 
-    // update query using mongo
-    Event.updateOne({ _id:id }, { $set:updateObject })  //to retrieve id, set object update operationwith request body 
-      .exec() //execute update query built
-      //exec success 
-      .then(() => {
-        res.status(200).json({
-          success: true,
-          message: 'event is updated',
-          updateEvent: updateObject,
-        });
-      })
-      //exec error
-      .catch((err) => {
-        res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again.'
-        });
+  // update query using mongo
+  Event.updateOne({ _id: id }, { $set: updateObject })  //to retrieve id, set object update operationwith request body 
+    .exec() //execute update query built
+    //exec success 
+    .then(() => {
+      res.status(200).json({
+        success: true,
+        message: 'event is updated',
+        updateEvent: updateObject,
       });
-  };
- 
-  function deleteEvent(req, res) {
-    const id = req.params.eventId;
-  
-    Event.findOneAndDelete(id)
-      .exec()
-      .then(deleteEvent => {
-        if (!deleteEvent) {
-          return res.status(404).json({
-            success: false,
-            message: "event not found with ID: " + id
-          });
-        }
-  
-        //  deleted successfully
-        return res.status(204).json({
-          success: true
-        });
-      })
-      .catch(err => res.status(500).json({
+    })
+    //exec error
+    .catch((err) => {
+      res.status(500).json({
         success: false,
-        message: "error deleting : " + err.message
-      }));
-  }
+        message: 'Server error. Please try again.'
+      });
+    });
+};
+
+function deleteEvent(req, res) {
+  const id = req.params.eventId;
+
+  Event.findOneAndDelete(id)
+    .exec()
+    .then(deleteEvent => {
+      if (!deleteEvent) {
+        return res.status(404).json({
+          success: false,
+          message: "event not found with ID: " + id
+        });
+      }
+
+      //  deleted successfully
+      return res.status(204).json({
+        success: true
+      });
+    })
+    .catch(err => res.status(500).json({
+      success: false,
+      message: "error deleting : " + err.message
+    }));
+}
 module.exports = {
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    getAllEvent,
-    getOneEvent
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getAllEvent,
+  getOneEvent
 };

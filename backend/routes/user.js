@@ -10,7 +10,7 @@ router.get("/profile", authorization.verifyToken, profileController.readProfile)
 
 router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
-router.get("/:id", profileController.readProfile);
+router.get("/:userID", profileController.readProfile);
 
 router.put("/:id", authorization.verifyUserOrAdmin, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
 
