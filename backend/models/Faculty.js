@@ -6,6 +6,10 @@ const facultySchema = new Schema({
         required: true,
         unique: true
     },
+    enrollKey:{
+        type: String,
+        required: true
+    },
     descActive:{
         type:String,
         required: true

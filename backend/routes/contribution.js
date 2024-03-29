@@ -18,6 +18,7 @@ router.post("/searchByTitle", contributionController.searchByTitleContribution);
 router.post("/searchByName", contributionController.searchByNameContribution);
 router.get("/sort/asc", contributionController.filterContributionAsc);
 router.get("/sort/desc", contributionController.filterContributionDesc);
-router.post("/public", authorization.verifyManager, contributionController.publishContribution);
+router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
+router.post("/comment/:id", contributionController.commentContribution);
 
 module.exports = router;

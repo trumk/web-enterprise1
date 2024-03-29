@@ -4,6 +4,7 @@ const { cloudinary, uploadImage } = require("../middlewares/cloudinary")
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
+const sanitizeHtml = require('sanitize-html');
 
 const transporter = nodemailer.createTransport({
   service: 'hotmail',
@@ -20,15 +21,30 @@ const contributionController = {
       const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
       console.log(imagesPaths)
       console.log(filesPaths)
-      if(imagesPaths.length === 0){
+      if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }
-      if(filesPaths.length === 0){
+      if (filesPaths.length === 0) {
         return res.status(403).json("File is required");
       }
+      const cleanContent = sanitizeHtml(req.body.content, {
+        allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+          'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+          'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img'],
+        allowedAttributes: {
+          a: ['href', 'name', 'target'],
+          img: ['src'],
+          iframe: ['src'],
+          div: ['class'],
+        },
+        allowedSchemes: ['http', 'https'],
+        allowedSchemesByTag: {
+          img: ['data', 'http'],
+        }
+      });
       const newContribution = new Contribution({
         title: req.body.title,
-        content: req.body.content,
+        content: cleanContent,
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
@@ -64,10 +80,14 @@ const contributionController = {
   },
   getContribution: async (req, res) => {
     try {
-      let query = { isPublic: true };
+      const profile = await Profile.find({ userID: req.user.id })
+      if (!role === 'admin' || !role === 'marketing coordinator' || !role === 'marketing manager' && profile.facultyID != req.cookies.facultyId) {
+        return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
+      }
+      let query = { isPublic: true, eventID: req.cookies.eventId };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = {};
+        query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -132,16 +152,16 @@ const contributionController = {
       }
       const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
       const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
-      if(imagesPaths.length === 0){
+      if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }
-      if(filesPaths.length === 0){
+      if (filesPaths.length === 0) {
         return res.status(403).json("File is required");
       }
-      if(req.body.title === ""){
+      if (req.body.title === "") {
         return res.status(403).json("Title is not null");
       }
-      if(req.body.content === ""){
+      if (req.body.content === "") {
         return res.status(403).json("Content is not null");
       }
       if (imagesPaths && !filesPaths) {
@@ -205,9 +225,9 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
-      let query = { title: new RegExp(keyword, "i"), isPublic: true };
+      let query = { title: new RegExp(keyword, "i"), isPublic: true, eventID: req.cookies.eventId };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i") };
+        query = { title: new RegExp(keyword, "i"), eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -229,9 +249,9 @@ const contributionController = {
       const role = req.user.role;
       const users = await User.find({ userName: new RegExp(keyword, "i") }).select('_id');
       const userIds = users.map(user => user._id);
-      let query = { userID: { $in: userIds }, isPublic: true };
+      let query = { userID: { $in: userIds }, isPublic: true, eventID: req.cookies.eventId };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { userID: { $in: userIds } };
+        query = { userID: { $in: userIds }, eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -251,9 +271,9 @@ const contributionController = {
   filterContributionDesc: async (req, res) => {
     try {
       const role = req.user.role;
-      let query = { isPublic: true };
+      let query = { isPublic: true, eventID: req.cookies.eventId };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = {};
+        query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .sort({ createdAt: -1 })
@@ -273,9 +293,9 @@ const contributionController = {
   filterContributionAsc: async (req, res) => {
     try {
       const role = req.user.role;
-      let query = { isPublic: true };
+      let query = { isPublic: true, eventID: req.cookies.eventId };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = {};
+        query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .sort({ createdAt: -1 })
@@ -313,6 +333,27 @@ const contributionController = {
       return res.status(404).json({ message: "Unable to publish contribution." });
     }
     res.status(200).json(updatedContribution);
+  },
+  commentContribution: async (req, res) => {
+    try {
+      const contributionId = req.params.id;
+      const userId = req.user.id;
+      const commentContent = req.body.comment;
+      const newComment = {
+        comment: commentContent,
+        userID: userId
+      };
+      const contribution = await Contribution.findByIdAndUpdate(contributionId, {
+        $push: { comments: newComment }
+      }, { new: true });
+      if (!contribution) {
+        return res.status(404).json({ message: "contribution not found" });
+      }
+      res.status(200).json(contribution);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error });
+    }
   }
 };
 

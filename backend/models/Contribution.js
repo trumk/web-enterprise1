@@ -23,7 +23,7 @@ const contributionSchema = new Schema({
         default: false
     },
     comments: [{
-        content: {
+        comment: {
             type: String,
             required: true
         },
