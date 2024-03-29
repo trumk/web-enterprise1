@@ -4,8 +4,8 @@ const Faculty = require("../models/Faculty")
 function createFaculty(req, res) {
   const faculty = new Faculty({
     facultyName: req.body.facultyName,
+    enrollKey : req.body.enrollKey,
     descActive: req.body.descActive,
-
   });
   return faculty
     .save()
@@ -36,6 +36,36 @@ function getAllFaculty(req, res) {
       });
     })
     .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
+function getOneFaculty(req, res) {
+  const id = req.params.eventId;
+  res.cookie("facultyId", id, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    sameSite: "strict",
+  });
+  Faculty.findById(id)
+    .then(faculty => {
+      if (!faculty) {
+        return res.status(404).json({
+          success: false,
+          message: 'Faculty not found with ID: ' + id,
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: 'Faculty found',
+        Faculty: faculty,
+      });
+    })
+    .catch(err => {
       res.status(500).json({
         success: false,
         message: 'Server error. Please try again.',
@@ -125,10 +155,13 @@ function deleteFaculty(req, res) {
     }));
 }
 
+
+
 module.exports = {
   createFaculty,
   updateFaculty,
   deleteFaculty,
   getAllFaculty,
+  getOneFaculty,
   searchFaculty
 };
