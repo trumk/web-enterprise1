@@ -14,6 +14,14 @@ async function createEvent(req, res) {
   }
 
   try {
+  
+    if (!mongoose.Types.ObjectId.isValid(facultyId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid facultyId format'
+      });
+    }
+
     const faculty = await Faculty.findById(facultyId);
 
     if (!faculty) {
