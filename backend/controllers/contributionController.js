@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const sanitizeHtml = require('sanitize-html');
 
+
 const transporter = nodemailer.createTransport({
   service: 'hotmail',
   auth: {
@@ -80,10 +81,6 @@ const contributionController = {
   },
   getContribution: async (req, res) => {
     try {
-      const profile = await Profile.find({ userID: req.user.id })
-      if (!role === 'admin' || !role === 'marketing coordinator' || !role === 'marketing manager' && profile.facultyID != req.cookies.facultyId) {
-        return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
-      }
       let query = { isPublic: true, eventID: req.cookies.eventId };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
