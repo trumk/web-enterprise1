@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { verifyAccount } from '../../redux/apiRequest';
 
 
+
 export const OTPModal = ({open, onClose, email}) => {
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [activeOTPIndex, setActiveOTPIndex] = useState(0);
@@ -78,8 +79,8 @@ export const OTPModal = ({open, onClose, email}) => {
               <FormAction handleSubmit={handleVerify} text="Submit"/>
             </form>
             <Typography color="black" variant="p">
-              Already verify? Go to <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
-                Login
+              Already verify? Go to <Link to="/term" className="font-medium text-purple-600 hover:text-purple-500">
+                next step
             </Link>
             </Typography>
           </DialogBody>
