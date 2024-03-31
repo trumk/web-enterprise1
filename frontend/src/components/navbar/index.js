@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Navbar,
   MobileNav,
@@ -19,7 +19,7 @@ import axios from "axios";
 import { createAxios } from "../../redux/createInstance";
 import {jwtDecode} from "jwt-decode";
 import { loginSuccess } from "../../redux/authSlice";
-import { logout } from "../../redux/apiRequest";
+import { getSelf, logout } from "../../redux/apiRequest";
 
 export default function NavbarDefault() {
   const [openNav, setOpenNav] = React.useState(false);
@@ -36,6 +36,7 @@ export default function NavbarDefault() {
   };
 
   const closeMenu = () => setIsMenuOpen(false);
+
   const profileMenuItems = [
     {
       label: "My Profile",
@@ -56,7 +57,13 @@ export default function NavbarDefault() {
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
+  useEffect(() => {
+    if(user && user._id) {
+      dispatch(getSelf(user._id));
+    }
+  }, [dispatch, user]);
 
+  const profile = useSelector((state) => state.user.user.user);
   return (
     <div className="max-h-[768px] w-full">
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
@@ -65,7 +72,7 @@ export default function NavbarDefault() {
             <Avatar src={logo} alt="logo" size="sm" className="mr-2" />
             <Typography
               as="a"
-              href="#"
+              href="/"
               variant="h6"
               className="mr-4 cursor-pointer py-1.5 lg:ml-2"
             >
@@ -118,7 +125,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
@@ -128,12 +135,15 @@ export default function NavbarDefault() {
                     </Button>
                   </MenuHandler>
                   <MenuList className="p-1">
-                    {profileMenuItems.map(({ label, icon, href }, key) => {
+                    {profileMenuItems.map(({ label, icon, href, action }, key) => {
                       const isLastItem = key === profileMenuItems.length - 1;
                       return (
                         <MenuItem
                           key={label}
-                          onClick={closeMenu}
+                          onClick={()=> {
+                            closeMenu();
+                            if(action) action()
+                          }}
                           className={`flex items-center gap-2 rounded ${isLastItem
                             ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                             : ""
@@ -175,7 +185,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile?.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
@@ -218,7 +228,6 @@ export default function NavbarDefault() {
                     })}
                   </MenuList>
                 </Menu>
-                <Button onClick={handleLogout}>Log Out</Button>
                 </>
             )}
 

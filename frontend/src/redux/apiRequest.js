@@ -1,6 +1,6 @@
 import axios from "axios";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess, verifyFailed, verifyStart, verifySuccess } from "./authSlice";
-import { getUsersFailed, getUsersStart, getUsersSuccess } from "./userSlice";
+import { getSelfFailed, getSelfStart, getSelfSuccess, getUsersFailed, getUsersStart, getUsersSuccess } from "./userSlice";
 
 const BACKEND_URL = 'http://localhost:5503'
 
@@ -65,5 +65,15 @@ export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
         dispatch(getUsersSuccess(res.data));
     } catch (err) {
         dispatch(getUsersFailed());
+    }
+};
+
+export const getSelf = (id) => async (dispatch) => {
+    dispatch(getSelfStart());
+    try {
+        const res = await axios.get(`${BACKEND_URL}/user/${id}`);
+        dispatch(getSelfSuccess(res.data));
+    } catch (err) {
+        dispatch(getSelfFailed());
     }
 };
