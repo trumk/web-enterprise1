@@ -1,50 +1,68 @@
 import {
     Card,
-    Typography,
     List,
-    ListItem,
-    ListItemPrefix,
-    IconButton,
-} from "@material-tailwind/react";
-import { FileSliders, PartyPopper, Users } from "lucide-react";
-import { useState } from "react";
-import { Toggle } from "./toggle";
+  } from "@material-tailwind/react";
+  import {
+    FileSliders, PartyPopper, Users, Home
+  } from "lucide-react";
 import { NavItem } from "./nav-item";
-
-export default function Sidebar() {
-    const [isExpand, setIsExpand] = useState(true);
-    const routes = [
-        {
-            label: "Faculty",
-            icon: Users,
-        },
-        {
-            label: "Event",
-            icon: PartyPopper,
-        },
-        {
-            label: "Contribution",
-            icon: FileSliders,
-        }
-    ]
+import { useLocation } from "react-router-dom";
+   
+  export default function DefaultSidebar() {
+    const location = useLocation();
+    const guestRoutes = [
+      {
+        href: '/',
+        icon: Home,
+        label: 'Home'
+      },
+      {
+        href: '/user',
+        icon: Users,
+        label: 'User'
+      },
+      {
+        href: '/event',
+        icon: PartyPopper,
+        label: 'Event'
+      },
+      {
+        href: '/contribution',
+        icon: FileSliders,
+        label: 'Contribution'
+      }
+    ];
+    const adminRoutes = [
+      {
+        href: '/admin/user',
+        icon: Users,
+        label: 'Manage User'
+      },
+      {
+        href: '/admin/event',
+        icon: PartyPopper,
+        label: 'Manage Event'
+      },
+      {
+        href: '/admin/contribution',
+        icon: FileSliders,
+        label: 'Manage Contribution'
+      }
+    ];
+    const isAdminPage = window.location.pathname.startsWith("/admin");
+    const routes = isAdminPage? adminRoutes : guestRoutes;
     return (
-        <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 mt-16">
-            <div className="mb-2 p-4 flex justify-between">
-                <Typography variant="h5" color="blue-gray">
-                    Dashboard
-                </Typography>
-                <Toggle />
-            </div>
-            <List className="space-y-2 px-2 pt-4 lg:pt-0">
-                {isExpand && (
-                        routes.map((route) => (
-                            <NavItem
-                                label={route.label}
-                                icon={route.icon}
-                            />
-                        ))
-                )}
-            </List>
-        </Card>
-    )
-}
+      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl">
+        <List>
+          {routes.map((route)=>(
+            <NavItem
+            key={route.path}
+            href={location === route.href}
+            icon={route.icon}
+            label={route.label}
+            />
+          ))}
+        </List>
+      </Card>
+    );
+  }
