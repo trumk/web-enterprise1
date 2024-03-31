@@ -13,14 +13,27 @@ export const EditProfile = () => {
   const [date, setDate] = useState();
   const user = useSelector((state) => state.auth.login.currentUser);
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
-    if(user && user._id) {
+    if (user && user._id) {
       dispatch(getSelf(user._id));
     }
   }, [dispatch, user]);
 
   const profile = useSelector((state) => state.user.user.user);
+  const [firstName, setFirstName] = useState(profile?.firstName || '');
+  const [lastName, setLastName] = useState(profile?.lastName || '');
+  const [description, setDescription] = useState(profile?.description || '');
+  const [avatar, setAvatar] = useState(profile?.avatar || '');
+
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.firstName || '');
+      setLastName(profile.lastName || '');
+      setDescription(profile.description || '');
+      setAvatar(profile.avatar || '');
+    }
+  }, [profile]);
   return (
     <>
       <NavbarDefault />
@@ -32,14 +45,14 @@ export const EditProfile = () => {
               <Typography variant='h4' className='mt-2 mb-2'>{profile?.firstName} {profile?.lastName}&apos;s profile</Typography>
             </CardHeader>
             <CardBody className='flex gap-5 items-center'>
-              <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+              <form className="mt-8 mb-2 w-full sm:w-96">
                 <div className="mb-1 flex flex-col gap-6">
                   <Typography variant="h6" color="blue-gray" className="-mb-3 w-full">
                     First Name
                   </Typography>
                   <Input
                     size="lg"
-                    placeholder={profile?.firstName}
+                    value={profile?.firstName}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
                       className: "before:content-none after:content-none",
@@ -50,7 +63,7 @@ export const EditProfile = () => {
                   </Typography>
                   <Input
                     size="lg"
-                    placeholder={profile?.lastName}
+                    value={profile?.lastName}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
                       className: "before:content-none after:content-none",
@@ -63,13 +76,12 @@ export const EditProfile = () => {
                     <PopoverHandler>
                       <Input
                         size="lg"
-                        placeholder={format(profile?.birthDay, 'MMMM dd,yyyy')}
                         className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                         labelProps={{
                           className: "before:content-none after:content-none",
                         }}
                         onChange={() => null}
-                        value={date ? format(date, "PPP") : ""}
+                        value={format(profile?.birthDay, 'MMMM dd,yyyy')}
                       />
                     </PopoverHandler>
                     <PopoverContent>
@@ -117,8 +129,14 @@ export const EditProfile = () => {
                     Avatar
                   </Typography>
                   <div className="p-4 flex flex-col items-center gap-2 bg-violet-50 text-violet-500 rounded-lg hover:bg-violet-100 cursor-pointer border">
-                    <ImageUpIcon className="w-6 h-6" />
-                    <span>Choose some files to upload</span>
+                    {profile.avatar ? (
+                      <>
+                        <ImageUpIcon className="w-6 h-6" />
+                        <span>Choose some files to upload</span>
+                      </>
+                    ) : (
+                      <img src={profile.avatar} alt="profile-picture" className="w-80 border rounded-md" />
+                    )}
                     <input type="file" className="hidden" />
                   </div>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -127,7 +145,7 @@ export const EditProfile = () => {
                   <Textarea label="Message" />
                 </div>
                 <Button className="mt-6" fullWidth>
-                  sign up
+                  Save
                 </Button>
               </form>
             </CardBody>

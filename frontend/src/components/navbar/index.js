@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Navbar,
   MobileNav,
@@ -57,7 +57,13 @@ export default function NavbarDefault() {
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
+  useEffect(() => {
+    if(user && user._id) {
+      dispatch(getSelf(user._id));
+    }
+  }, [dispatch, user]);
 
+  const profile = useSelector((state) => state.user.user.user);
   return (
     <div className="max-h-[768px] w-full">
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
@@ -119,7 +125,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
@@ -179,7 +185,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile?.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
