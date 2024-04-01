@@ -1,7 +1,9 @@
 import axios from "axios";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess, verifyFailed, verifyStart, verifySuccess } from "./authSlice";
 import { getSelfFailed, getSelfStart, getSelfSuccess, getUsersFailed, getUsersStart, getUsersSuccess } from "./userSlice";
-import { getFacultiesStart, getFacultiesSuccess, getFacultiesFailed, getFacultyStart, getFacultySuccess, getFacultyFailed } from "./facultySlice";
+import { getFacultiesStart, getFacultiesSuccess, getFacultiesFailed, getFacultyStart, getFacultySuccess, getFacultyFailed, addFacultyStart, addFacultyFailed, addFacultySuccess } from "./facultySlice";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = 'http://localhost:5503'
 
@@ -79,10 +81,10 @@ export const getSelf = (id) => async (dispatch) => {
     }
 };
 
-export const getAllFaculties = (accessToken, dispatch) => async (dispatch, axiosJWT) => {
+export const getAllFaculties = (accessToken) => async (dispatch) => {
     dispatch(getFacultiesStart());
     try {
-        const res = await axiosJWT.get(`${BACKEND_URL}/faculty/get`, {
+        const res = await axios.get(`${BACKEND_URL}/faculty/get`, {
             headers: {
                 token: `Bearer ${accessToken}`,
             },
@@ -92,3 +94,31 @@ export const getAllFaculties = (accessToken, dispatch) => async (dispatch, axios
         dispatch(getFacultiesFailed());
     }
 };
+
+export const addFaculty = createAsyncThunk(
+  "faculty/add",
+  async (facultyData, { getState, rejectWithValue }) => {
+    try {
+      const { accessToken } = getState().auth.login.currentUser;
+      const response = await axios.post(
+        `${BACKEND_URL}/faculty/add`,
+        facultyData,
+        {
+          headers: {
+            token: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const navigate = useNavigate();
+      navigate("/admin/faculty");
+
+      // Trả về dữ liệu response.data sau khi thêm faculty thành công
+      return response.data;
+    } catch (error) {
+      // Trả về error.response.data nếu có lỗi xảy ra
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+

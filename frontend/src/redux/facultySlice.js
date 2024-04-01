@@ -12,6 +12,10 @@ const facultySlice = createSlice({
             isFetching: false,
             error: false,
         },
+        addFaculty: {
+            isFetching: false,
+            error: false,
+        }
     },
     reducers: {
         getFacultiesStart: (state) => {
@@ -38,6 +42,18 @@ const facultySlice = createSlice({
             state.faculty.isFetching = false;
             state.faculty.error = true;
         },
+        addFacultyStart: (state) => {
+            state.addFaculty.isFetching = true;
+          },
+          addFacultySuccess: (state, action) => {
+            state.addFaculty.isFetching = false;
+            state.addFaculty.error = false;
+          },
+          addFacultyFailed: (state) => {
+            state.addFaculty.isFetching = false;
+            state.addFaculty.error = true;
+          },
+      
     },
     
 });
@@ -48,5 +64,8 @@ export const {
     getFacultyStart,
     getFacultySuccess,
     getFacultyFailed,
+    addFacultyStart,
+    addFacultySuccess,
+    addFacultyFailed,
 }=facultySlice.actions;
 export default facultySlice.reducer;
