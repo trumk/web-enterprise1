@@ -79,7 +79,7 @@ export const OTPModal = ({open, onClose, email}) => {
               <FormAction handleSubmit={handleVerify} text="Submit"/>
             </form>
             <Typography color="black" variant="p">
-              Already verify? Go to <Link to="/term" className="font-medium text-purple-600 hover:text-purple-500">
+              Already verify? Go to <Link to="/terms" className="font-medium text-purple-600 hover:text-purple-500">
                 next step
             </Link>
             </Typography>
