@@ -44,8 +44,9 @@ const facultySlice = createSlice({
         },
         addFacultyStart: (state) => {
             state.addFaculty.isFetching = true;
+            state.addFaculty.error = false; 
           },
-          addFacultySuccess: (state, action) => {
+          addFacultySuccess: (state) => {
             state.addFaculty.isFetching = false;
             state.addFaculty.error = false;
           },
@@ -53,7 +54,6 @@ const facultySlice = createSlice({
             state.addFaculty.isFetching = false;
             state.addFaculty.error = true;
           },
-      
     },
     
 });

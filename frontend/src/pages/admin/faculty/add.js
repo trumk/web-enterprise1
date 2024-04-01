@@ -8,7 +8,6 @@ import DefaultSidebar from "../../../components/sidebar";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  console.log(user.accessToken);
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
   const [enrollKey, setEnrollKey] = useState("");
@@ -16,26 +15,25 @@ const AddFaculty = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const faculty = {
       facultyName: facultyName,
-      descActive: descActive,
-      enrollKey: enrollKey
+      enrollKey: enrollKey,
+      descActive: descActive
     };
-    dispatch(addFaculty(faculty, user.accessToken, dispatch, navigate))
-    .unwrap()
-    .then((response) => {
-      // Xử lý thành công nếu cần
-    })
-    .catch((error) => {
-      // Xử lý lỗi nếu cần
-    });
+    try {
+      await dispatch(addFaculty(faculty));
+      navigate("/admin/faculty");
+    } catch (error) {
+      console.log("Error:", error);
+    }
+    
 
     setFacultyName("");
-    setDescActive("");
     setEnrollKey("");
+    setDescActive("");
   };
 
   return (
@@ -54,18 +52,7 @@ const AddFaculty = () => {
                 type="text"
                 value={facultyName}
                 onChange={(e) => setFacultyName(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
-                Description:
-              </label>
-              <input
-                type="text"
-                value={descActive}
-                onChange={(e) => setDescActive(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
             <div className="mb-4">
@@ -76,13 +63,26 @@ const AddFaculty = () => {
                 type="text"
                 value={enrollKey}
                 onChange={(e) => setEnrollKey(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-md font-medium text-gray-700">
+                Description:
+              </label>
+              <input
+                type="text"
+                value={descActive}
+                onChange={(e) => setDescActive(e.target.value)}
+                className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              onClick={handleSubmit}
             >
+
               Add Faculty
             </button>
           </form>
