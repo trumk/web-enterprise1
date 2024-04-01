@@ -58,6 +58,17 @@ async function createEvent(req, res) {
     });
   }
 }
+async function getEventsByFaculty(req,res){
+  try{
+    const facultyId= req.params.facultyId;
+    const events = await Event.find({ facultyId }).select('topic content createEvent closureDate finalDate');
+    return res.json({ success: true, events});
+  }catch(error){
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'SERVER ERROR'});
+  }
+}
+
 //closuredate by monthyear
 function FilterExpression(filter) {
   const filterExpression = {};
@@ -73,10 +84,6 @@ function FilterExpression(filter) {
         } else {
           return { error: 'error' };
         }
-      } else if (key === 'facultyId') {
-         //facultyId
-        filterExpression[key] = filter[key];
-      } else {
         filterExpression[key] = filter[key];
       }
     }
@@ -220,5 +227,7 @@ module.exports = {
   updateEvent,
   deleteEvent,
   getAllEvent,
-  getOneEvent
+  getOneEvent,
+  getEventsByFaculty
+
 };

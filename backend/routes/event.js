@@ -13,6 +13,7 @@ router.get("/:eventId", EventController.getOneEvent );
 router.put("/update/:eventId", authorization.verifyManager, EventController.updateEvent);
 router.get("/update/:eventId", authorization.verifyManager, EventController.getOneEvent);
 router.delete("/delete/:eventId",  authorization.verifyManager,EventController.deleteEvent);
+router.get("/:facultyId/events", EventController.getEventsByFaculty);
 
 module.exports = router;
 
