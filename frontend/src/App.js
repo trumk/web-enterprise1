@@ -13,6 +13,8 @@ import { UserProfile } from './pages/user/[id]/profile';
 import { Term } from './pages/Term';
 import { ChangePassword } from './pages/user/[id]/changePassword';
 import { EditProfile } from './pages/user/[id]/edit';
+import { Faculty } from './pages/admin/faculty';
+import { Event } from './pages/admin/event';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />
         <Route path="/user/:id/edit" element={<EditProfile/>} />
+        <Route path="/admin/faculty" element={<Faculty/>} />
+        <Route path="/admin/event" element={<Event/>} />
       </Routes>
     </BrowserRouter>
     </>

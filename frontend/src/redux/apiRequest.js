@@ -1,6 +1,7 @@
 import axios from "axios";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess, verifyFailed, verifyStart, verifySuccess } from "./authSlice";
 import { getSelfFailed, getSelfStart, getSelfSuccess, getUsersFailed, getUsersStart, getUsersSuccess } from "./userSlice";
+import { getFacultiesStart, getFacultiesSuccess, getFacultiesFailed, getFacultyStart, getFacultySuccess, getFacultyFailed } from "./facultySlice";
 
 const BACKEND_URL = 'http://localhost:5503'
 
@@ -75,5 +76,19 @@ export const getSelf = (id) => async (dispatch) => {
         dispatch(getSelfSuccess(res.data));
     } catch (err) {
         dispatch(getSelfFailed());
+    }
+};
+
+export const getAllFaculties = (accessToken, dispatch) => async (dispatch, axiosJWT) => {
+    dispatch(getFacultiesStart());
+    try {
+        const res = await axiosJWT.get(`${BACKEND_URL}/faculty/get`, {
+            headers: {
+                token: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getFacultiesSuccess(res.data));
+    } catch (err) {
+        dispatch(getFacultiesFailed());
     }
 };

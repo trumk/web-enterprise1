@@ -20,7 +20,7 @@ export const UserProfile = () => {
   }, [dispatch, user]);
 
   const profile = useSelector((state) => state.user.user.user);
-  console.log(user._id);
+  console.log(user?._id);
   return (
     <>
     <NavbarDefault/>
