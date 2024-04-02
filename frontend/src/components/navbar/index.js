@@ -63,13 +63,15 @@ export default function NavbarDefault() {
     }
   }, [dispatch, user]);
 
-  const profile = useSelector((state) => state.user.user.user);
+  const profile = useSelector((state) => state.user.user?.user);
   return (
     <div className="max-h-[768px] w-full">
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
           <div className="flex items-center">
+            <Typography as="a" href="/" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
             <Avatar src={logo} alt="logo" size="sm" className="mr-2" />
+            </Typography>
             <Typography
               as="a"
               href="/"
@@ -103,13 +105,13 @@ export default function NavbarDefault() {
               </div>
             ) : isAdmin ? (
               <>
-                <Link href="/admin/users">
+                <Link to="/admin/faculty">
                   <Button
                     variant="text"
                     size="sm"
                     className="hidden lg:inline-block"
                   >
-                    <span>Admin Mode</span>
+                    <span>Exit</span>
                   </Button>
                 </Link>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -125,7 +127,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={profile.avatar}
+                        src={logo}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
