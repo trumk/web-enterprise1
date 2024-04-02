@@ -1,4 +1,6 @@
 const Contribution = require("../models/Contribution")
+const Faculty = require("../models/Faculty")
+const Event = require("../models/Event")
 const { User, Otp } = require("../models/User")
 const { cloudinary, uploadImage } = require("../middlewares/cloudinary")
 const nodemailer = require('nodemailer');
@@ -350,6 +352,62 @@ const contributionController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error });
+    }
+  },
+  getStatistic: async (req, res) => {
+    try {
+      const allFacultiesWithContributions = await Faculty.aggregate([
+        {
+          $lookup: {
+            from: 'events', // Tên collection phải chính xác như trong MongoDB
+            let: { facultyId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$facultyId', '$$facultyId'] } } },
+              {
+                $lookup: {
+                  from: 'contributions', // Tên collection phải chính xác như trong MongoDB
+                  let: { eventId: '$_id' },
+                  pipeline: [
+                    { $match: { $expr: { $eq: ['$eventID', '$$eventId'] } } },
+                    { $count: 'totalContributions' },
+                  ],
+                  as: 'contributions',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$contributions',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $group: {
+                  _id: '$_id',
+                  totalContributions: { $sum: '$contributions.totalContributions' },
+                },
+              },
+            ],
+            as: 'eventsWithContributions',
+          },
+        },
+        {
+          $addFields: {
+            totalContributions: { $sum: '$eventsWithContributions.totalContributions' },
+          },
+        },
+        {
+          $project: {
+            facultyName: 1,
+            totalContributions: 1,
+          },
+        },
+      ]);
+  
+      console.log('All Faculties with Contributions:', allFacultiesWithContributions);
+      res.status(200).json(allFacultiesWithContributions);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
     }
   }
 };
