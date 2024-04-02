@@ -5,7 +5,6 @@ import { getAllFaculties } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Option, Select, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { AlignJustify } from "lucide-react";
 
 export const Faculty = () => {
   const faculties = useSelector((state)=>state.faculty.faculties.allFaculties)
@@ -18,7 +17,6 @@ export const Faculty = () => {
     }
   }, [user, dispatch]);
 
-  console.log(faculties.Faculty[0]._id);
 
   return (
     <>

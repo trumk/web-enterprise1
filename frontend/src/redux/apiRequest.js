@@ -33,7 +33,6 @@ import {
   addFacultySuccess,
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = "http://localhost:5503";
 
@@ -121,6 +120,16 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
     dispatch(getFacultiesSuccess(res.data));
   } catch (err) {
     dispatch(getFacultiesFailed());
+  }
+};
+
+export const getOneFaculty = (id) => async (dispatch) => {
+  dispatch(getFacultyStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/faculty/${id}`);
+    dispatch(getFacultySuccess(res.data));
+  } catch (err) {
+    dispatch(getFacultyFailed());
   }
 };
 
