@@ -49,7 +49,7 @@ export const Term = () => {
             
         <div className='w-[768px] flex justify-between mt-5'>
             <Checkbox label="I have read and agree all Terms and Conditions of system" disabled={!isScrolled} onChange={handleCheckboxChange}/>
-            <Link to="/login"><Button color='green' disabled={!isChecked}>Accept</Button></Link>
+            <Button color='green' disabled={!isChecked}><Link to="/login">Accept</Link></Button>
         </div>
         </div>
             </form>   
