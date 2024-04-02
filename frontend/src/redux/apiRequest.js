@@ -123,18 +123,23 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
   }
 };
 
-export const getOneFaculty = (id) => async (dispatch) => {
+export const getOneFaculty = (id) => async (accessToken, dispatch) => {
   dispatch(getFacultyStart());
-  try {
-    const res = await axios.get(`${BACKEND_URL}/faculty/${id}`);
+  try{
+    const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
     dispatch(getFacultySuccess(res.data));
-  } catch (err) {
-    dispatch(getFacultyFailed());
+  
   }
-};
+  catch(err){
+    dispatch(getFacultyFailed())
+  }
+}
 
 export const addFaculty = createAsyncThunk( "faculty/add", async (facultyData, { getState, dispatch}) => {
-    dispatch(addFacultyStart());
     dispatch(addFacultyStart());
     try {
       const { accessToken } = getState().auth.login.currentUser;
