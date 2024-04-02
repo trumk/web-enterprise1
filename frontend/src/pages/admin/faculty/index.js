@@ -91,7 +91,7 @@ export const Faculty = () => {
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
                             <Option> <Link to={`/admin/faculty/${faculty._id}`}> Detail </Link></Option>
-                            <Option>Edit</Option>
+                            <Option><Link to={`/admin/faculty/${faculty._id}/edit`}> Edit </Link></Option>
                             </Select>
                         </td>
                       </tr>

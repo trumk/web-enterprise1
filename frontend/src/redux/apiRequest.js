@@ -31,6 +31,9 @@ import {
   addFacultyStart,
   addFacultyFailed,
   addFacultySuccess,
+  editFacultyStart,
+  editFacultySuccess,
+  editFacultyFailed,
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -123,7 +126,7 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
   }
 };
 
-export const getOneFaculty = (id) => async (accessToken, dispatch) => {
+export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getFacultyStart());
   try{
     const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
@@ -157,7 +160,24 @@ export const addFaculty = createAsyncThunk( "faculty/add", async (facultyData, {
     } catch (error) {
       dispatch(addFacultyFailed());
       console.error(error);
-      throw error; // Rethrow error to handle it in the component
+      throw error; 
     }
   }
 );
+
+export const editFaculty = (id, faculty, accessToken, navigate) => async (dispatch) => {
+  dispatch(editFacultyStart());
+  try{
+    const res = await axios.put(`${BACKEND_URL}/faculty/${id}`, faculty, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editFacultySuccess(res.data));
+    navigate("/admin/faculty")
+  }
+  catch(error){
+    dispatch(editFacultyFailed())
+    console.log(error)
+  }
+}

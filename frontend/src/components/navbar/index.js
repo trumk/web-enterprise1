@@ -105,13 +105,13 @@ export default function NavbarDefault() {
               </div>
             ) : isAdmin ? (
               <>
-                <Link href="/admin/users">
+                <Link to="/admin/faculty">
                   <Button
                     variant="text"
                     size="sm"
                     className="hidden lg:inline-block"
                   >
-                    <span>Admin Mode</span>
+                    <span>Exit</span>
                   </Button>
                 </Link>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
