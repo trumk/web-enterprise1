@@ -1,6 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice"
 import userReducer from "./userSlice"
+import facultyReducer from "./facultySlice"
+import {thunk} from "redux-thunk";
 import {
     persistStore,
     persistReducer,
@@ -22,6 +24,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth: authReducer,
     user: userReducer,
+    faculty: facultyReducer,
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
@@ -32,7 +35,7 @@ export const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             },
-        }),
+        }).concat(thunk),
 })
 
 export let persistor = persistStore(store)

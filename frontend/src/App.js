@@ -12,6 +12,12 @@ import { ManageUser } from './pages/admin/users';
 import { UserProfile } from './pages/user/[id]/profile';
 import { Term } from './pages/Term';
 import { ChangePassword } from './pages/user/[id]/changePassword';
+import { EditProfile } from './pages/user/[id]/edit';
+import { Faculty } from './pages/admin/faculty';
+import { Event } from './pages/admin/event';
+import AddFaculty from './pages/admin/faculty/add';
+import { FacultyDetail } from './pages/admin/faculty/[id]/detail';
+import EditFaculty from './pages/admin/faculty/[id]/edit';
 
 function App() {
   return (
@@ -26,6 +32,12 @@ function App() {
         <Route path="/admin/users" element={<ManageUser />} />
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />
+        <Route path="/user/:id/edit" element={<EditProfile/>} />
+        <Route path="/admin/faculty" element={<Faculty/>} />
+        <Route path="/admin/faculty/:id" element={<FacultyDetail/>} />
+        <Route path="/admin/faculty/add" element={<AddFaculty/>} />
+        <Route path="/admin/faculty/:id/edit" element={<EditFaculty/>} />
+        <Route path="/admin/event" element={<Event/>} />
       </Routes>
     </BrowserRouter>
     </>

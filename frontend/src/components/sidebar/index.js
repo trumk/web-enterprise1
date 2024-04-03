@@ -3,7 +3,7 @@ import {
     List,
   } from "@material-tailwind/react";
   import {
-    FileSliders, PartyPopper, Users, Home
+    FileSliders, PartyPopper, Users, Home, CalendarDays
   } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
@@ -39,6 +39,11 @@ import { useLocation } from "react-router-dom";
         label: 'Manage User'
       },
       {
+        href: '/admin/faculty',
+        icon: CalendarDays,
+        label: 'Manage Faculty'
+      },
+      {
         href: '/admin/event',
         icon: PartyPopper,
         label: 'Manage Event'
@@ -57,7 +62,7 @@ import { useLocation } from "react-router-dom";
           {routes.map((route)=>(
             <NavItem
             key={route.path}
-            href={location === route.href}
+            href={route.href}
             icon={route.icon}
             label={route.label}
             />
