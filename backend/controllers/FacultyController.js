@@ -55,7 +55,7 @@ async function getOneFaculty(req, res) {
   const profile = await Profile.findOne({ userID: req.user.id });
   const facultyID = String(profile?.facultyID);
   const role = req.user.role;
-  if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== req.cookies.facultyId) {
+  if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== id) {
     return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
   }
   Faculty.findById(id)
