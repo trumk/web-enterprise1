@@ -2,6 +2,7 @@ const contributionController = require("../controllers/contributionController");
 const authorization = require("../middlewares/authorization");
 const multer = require('multer')
 const {uploadImage, uploadFile, upload, multerErrorHandler} = require("../middlewares/cloudinary");
+const upload1 = multer();
 
 const router = require("express").Router();
 
@@ -15,8 +16,8 @@ router.get("/statistic", contributionController.getStatistic);
 router.get("/:id", contributionController.getOneContribution);
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
-router.post("/searchByTitle", contributionController.searchByTitleContribution);
-router.post("/searchByName", contributionController.searchByNameContribution);
+router.post("/searchByTitle", upload1.none(),  contributionController.searchByTitleContribution);
+router.post("/searchByName", upload1.none(), contributionController.searchByNameContribution);
 router.get("/sort/asc", contributionController.filterContributionAsc);
 router.get("/sort/desc", contributionController.filterContributionDesc);
 router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
