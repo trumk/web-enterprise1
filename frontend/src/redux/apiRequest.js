@@ -34,6 +34,9 @@ import {
   editFacultyStart,
   editFacultySuccess,
   editFacultyFailed,
+  deleteFacultyStart,
+  deleteFacultySuccess,
+  deleteFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -135,7 +138,6 @@ export const getOneFaculty = (id, accessToken) => async (dispatch) => {
       },
     });
     dispatch(getFacultySuccess(res.data));
-  
   }
   catch(err){
     dispatch(getFacultyFailed())
@@ -181,3 +183,20 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
     console.log(error)
   }
 }
+
+export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => {
+  dispatch(deleteFacultyStart()); 
+  try {
+    await axios.delete(`${BACKEND_URL}/faculty/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(deleteFacultySuccess());
+    navigate("/admin/faculty")
+  } catch (error) {
+    dispatch(deleteFacultyFailed());
+    console.log(error);
+  }
+};
+

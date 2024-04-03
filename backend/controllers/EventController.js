@@ -4,13 +4,13 @@ const Faculty = require("../models/Faculty");
 
 
 async function createEvent(req, res) {
-  const { topic, content, closureDate, finalDate, facultyId } = req.body;
+  const { topic, content, createEvent, closureDate, finalDate, facultyId } = req.body;
 
   // validate required fields
-  if (!topic || !finalDate || !facultyId) {
+  if (!topic || !finalDate || !facultyId || !closureDate) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: topic, finalDate, or facultyId'
+      message: 'Missing required fields: topic, closureDate, finalDate, or facultyId'
     });
   }
 
@@ -35,6 +35,7 @@ async function createEvent(req, res) {
     const newEvent = new Event({
       topic,
       content,
+      createEvent,
       closureDate,
       finalDate,
       facultyId
@@ -59,32 +60,40 @@ async function createEvent(req, res) {
     });
   }
 }
-//closuredate by monthyear
+
+async function getEventsByFaculty(req,res){
+  try{
+    const facultyId= req.params.facultyId;
+    const events = await Event.find({ facultyId }).select('topic content createEvent closureDate finalDate');
+    return res.json({ success: true, events});
+  }catch(error){
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'SERVER ERROR'});
+  }
+}
+
 function FilterExpression(filter) {
   const filterExpression = {};
   for (const key in filter) {
     if (filter.hasOwnProperty(key)) {
-      if (key === 'closureDate') {
+      if (key === 'closureDate' || key === 'createEvent' || key === 'finalDate') {
         if (filter[key].hasOwnProperty('year') && filter[key].hasOwnProperty('month')) {
           const selectedYear = filter[key].year;
           const selectedMonth = filter[key].month - 1; //  zero-based in js
           const startDate = new Date(selectedYear, selectedMonth, 1); //set year and month first is 1
           const endDate = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59, 999); //end of the selected month +1 next 0 end 4time
           filterExpression[key] = { $gte: startDate, $lte: endDate }; //$gte >=, $lte <=
+          //         } else {
+        } else if (typeof filter[key] === 'string') {
+          filterExpression[key] = filter[key];
         } else {
           return { error: 'error' };
         }
-      } else if (key === 'facultyId') {
-         //facultyId
-        filterExpression[key] = filter[key];
-      } else {
-        filterExpression[key] = filter[key];
       }
     }
   }
   return filterExpression;
 }
-
 
 async function getAllEvent(req, res) {
   try {
@@ -104,15 +113,24 @@ async function getAllEvent(req, res) {
 
     const eventsQuery = Event.find(filterExpression)
       .populate('facultyId', 'facultyName')
-      .select('topic content closureDate finalDate facultyId');
+      .select('topic content createEvent closureDate finalDate facultyId');
 
-   //check
-    if (filterExpression.closureDate && filterExpression.closureDate.$gte && filterExpression.closureDate.$lte) {
+    // Check closureDate filter
+    if (filterExpression.hasOwnProperty('closureDate') && filterExpression.closureDate.$gte && filterExpression.closureDate.$lte) {
       eventsQuery.where('closureDate').gte(filterExpression.closureDate.$gte).lte(filterExpression.closureDate.$lte);
     }
 
-    const events = await eventsQuery
-    .exec();
+    // Check finalDate filter
+    if (filterExpression.hasOwnProperty('finalDate') && filterExpression.finalDate.$gte && filterExpression.finalDate.$lte) {
+      eventsQuery.where('finalDate').gte(filterExpression.finalDate.$gte).lte(filterExpression.finalDate.$lte);
+    }
+
+    // Check createEvent filter
+    if (filterExpression.hasOwnProperty('createEvent') && filterExpression.createEvent.$gte) {
+      eventsQuery.where('createEvent').gte(filterExpression.createEvent.$gte);
+    }
+
+    const events = await eventsQuery.exec();
 
     return res.status(200).json({
       success: true,
@@ -163,7 +181,7 @@ function getOneEvent(req, res) {
 function updateEvent(req, res) {
   const id = req.params.eventId;
   const updateObject = req.body; //update data from the request body as json, contain field edit 
-  if (!updateObject.topic || !updateObject.finalDate || !updateObject.facultyId) {
+  if (!updateObject.topic || !updateObject.finalDate || !updateObject.facultyId || !updateObject.closureDate) {
     return res.status(400).json({
       success: false,
       message: 'missing required fields'
@@ -196,7 +214,7 @@ function updateEvent(req, res) {
 function deleteEvent(req, res) {
   const id = req.params.eventId;
 
-  Event.findOneAndDelete(id)
+  Event.findOneAndDelete({_id: id})
     .exec()
     .then(deleteEvent => {
       if (!deleteEvent) {
@@ -221,5 +239,7 @@ module.exports = {
   updateEvent,
   deleteEvent,
   getAllEvent,
-  getOneEvent
+  getOneEvent,
+  getEventsByFaculty
+
 };

@@ -1,27 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
 import { editFaculty, getOneFaculty } from "../../../../redux/apiRequest";
 
 const EditFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const {id} = useParams();
-
-  const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
+  const { id } = useParams();
+  const facultyData = useSelector((state) => state.faculty.faculty.currentFaculty);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(id)
+
+  const [facultyName, setFacultyName] = useState("");
+  const [descActive, setDescActive] = useState("");
+  const [enrollKey, setEnrollKey] = useState("");
+
   useEffect(() => {
     if (user && user.accessToken) {
       dispatch(getOneFaculty(id, user.accessToken));
     }
   }, [dispatch, id, user]);
-  const initialData = faculty.Faculty;
-  const [facultyName, setFacultyName] = useState(initialData.facultyName);
-  const [descActive, setDescActive] = useState("");
-  const [enrollKey, setEnrollKey] = useState("");
+
+  useEffect(() => {
+    if (facultyData) {
+      setFacultyName(facultyData.Faculty.facultyName || "");
+      setEnrollKey(facultyData.Faculty.enrollKey || "");
+      setDescActive(facultyData.Faculty.descActive || "");
+    }
+  }, [facultyData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,8 +40,8 @@ const EditFaculty = () => {
       descActive: descActive
     };
     dispatch(editFaculty(id, faculty, user.accessToken, navigate))
-    
   };
+
   return (
     <>
       <NavbarDefault />
@@ -49,7 +57,7 @@ const EditFaculty = () => {
               <input
                 type="text"
                 onChange={(e) => setFacultyName(e.target.value)}
-                value={initialData.facultyName}
+                value={facultyName}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
@@ -60,7 +68,7 @@ const EditFaculty = () => {
               <input
                 type="text"
                 onChange={(e) => setEnrollKey(e.target.value)}
-                value={initialData.enrollKey}
+                value={enrollKey}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
@@ -71,16 +79,14 @@ const EditFaculty = () => {
               <input
                 type="text"
                 onChange={(e) => setDescActive(e.target.value)}
-                value={initialData.descActive}
+                value={descActive}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              onClick={handleSubmit}
             >
-
               Save
             </button>
           </form>

@@ -44,6 +44,33 @@ function getAllFaculty(req, res) {
       });
     });
 };
+async function searchFaculty(req, res) {
+  try {
+    const keyword = req.body.keyword;
+    const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
+      .select('facultyName descActive');
+
+    if (faculties.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Faculties found',
+      faculties: faculties
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again.',
+      error: err.message
+    });
+  }
+}
 async function getOneFaculty(req, res) {
   const id = req.params.id;
   res.cookie("facultyId", id, {
@@ -80,6 +107,7 @@ async function getOneFaculty(req, res) {
       });
     });
 };
+
 async function searchFaculty(req, res) {
   try {
     var keyword= req.body.keyword;
@@ -107,6 +135,7 @@ async function searchFaculty(req, res) {
     });
   }
 }
+
 
 
 function updateFaculty(req, res) {
@@ -137,31 +166,6 @@ function updateFaculty(req, res) {
       });
     });
 };
-
-
-function deleteFaculty(req, res) {
-  const id = req.params.facultyId;
-
-  Faculty.findOneAndDelete(id)
-    .exec()
-    .then(deletedFaculty => {
-      if (!deletedFaculty) {
-        return res.status(404).json({
-          success: false,
-          message: "Faculty not found with ID: " + id
-        });
-      }
-      // deleted successfully
-      return res.status(204).json({
-        success: true
-      });
-    })
-    .catch(err => res.status(500).json({
-      success: false,
-      message: "Error : " + err.message
-    }));
-};
-
 async function enrollStudent(req, res) {
   try {
     const id = req.cookies.facultyId;
@@ -200,6 +204,30 @@ async function enrollStudent(req, res) {
 }
 
 
+function deleteFaculty(req, res) {
+  const id = req.params.facultyId;
+
+  // ID
+  Faculty.findOneAndDelete({_id: id}) //find id
+    .exec()
+    .then(deletedFaculty => {
+      if (!deletedFaculty) {
+        return res.status(404).json({
+          success: false,
+          message: "Faculty not found with ID: " + id
+        });
+      }
+   // deleted successfully
+      return res.status(204).json({
+        success: true
+      });
+    })
+    .catch(err => res.status(500).json({
+      success: false,
+      message: "Error: " + err.message
+    }));
+};
+
 
 module.exports = {
   createFaculty,
@@ -209,4 +237,5 @@ module.exports = {
   getOneFaculty,
   searchFaculty,
   enrollStudent
+  
 };

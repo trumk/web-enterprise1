@@ -8,9 +8,14 @@ const eventSchema = new Schema({
     content:{
         type:String
     },
-    closureDate:{
+    createEvent:{
         type:Date,
         default:Date.now
+    },
+    closureDate:{
+        type:Date,
+        default:Date,
+        required: true
     },
     finalDate:{
         type:Date,  
@@ -21,7 +26,6 @@ const eventSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Faculty' ,
         required: true
-
       }
     
 
