@@ -34,6 +34,7 @@ async function createEvent(req, res) {
     const newEvent = new Event({
       topic,
       content,
+      createEvent,
       closureDate,
       finalDate,
       facultyId
@@ -210,7 +211,7 @@ function updateEvent(req, res) {
 function deleteEvent(req, res) {
   const id = req.params.eventId;
 
-  Event.findOneAndDelete(id)
+  Event.findOneAndDelete({_id: id})
     .exec()
     .then(deleteEvent => {
       if (!deleteEvent) {

@@ -26,7 +26,6 @@ const eventSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Faculty' ,
         required: true
-
       }
     
 
