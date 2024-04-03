@@ -108,6 +108,36 @@ async function getOneFaculty(req, res) {
     });
 };
 
+async function searchFaculty(req, res) {
+  try {
+    var keyword= req.body.keyword;
+    const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
+      .select('facultyName descActive');
+
+    if (faculties.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Faculties found',
+      faculties: faculties
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again.',
+      error: err.message
+    });
+  }
+}
+
+
+
 function updateFaculty(req, res) {
   const id = req.params.facultyId;
   const updateObject = req.body; //update data from the request body as json, contain field edit
