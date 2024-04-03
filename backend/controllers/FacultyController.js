@@ -71,7 +71,42 @@ async function searchFaculty(req, res) {
     });
   }
 }
-
+async function getOneFaculty(req, res) {
+  const id = req.params.id;
+  res.cookie("facultyId", id, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    sameSite: "strict",
+  });
+  const profile = await Profile.findOne({ userID: req.user.id });
+  const facultyID = String(profile?.facultyID);
+  const role = req.user.role;
+  if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== req.cookies.facultyId) {
+    return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
+  }
+  Faculty.findById(id)
+    .then(faculty => {
+      if (!faculty) {
+        return res.status(404).json({
+          success: false,
+          message: 'Faculty not found with ID: ' + id,
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: 'Faculty found',
+        Faculty: faculty,
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
 
 function updateFaculty(req, res) {
   const id = req.params.facultyId;
@@ -101,6 +136,42 @@ function updateFaculty(req, res) {
       });
     });
 };
+async function enrollStudent(req, res) {
+  try {
+    const id = req.cookies.facultyId;
+    const faculty = await Faculty.findById(id);
+    if (!faculty) {
+      return res.status(404).json({
+        success: false,
+        message: "Faculty not found"
+      });
+    }
+
+    if (faculty.enrollKey === req.body.enrollKey) {
+      const result = await Profile.updateOne({ userID: req.user.id }, { facultyID: id }).exec();
+      if (result.nModified === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Profile not found or not updated"
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: "Enrolled successfully"
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid enroll key"
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Error: " + err.message
+    });
+  }
+}
 
 
 function deleteFaculty(req, res) {
@@ -133,6 +204,8 @@ module.exports = {
   updateFaculty,
   deleteFaculty,
   getAllFaculty,
+  getOneFaculty,
   searchFaculty,
+  enrollStudent
   
 };
