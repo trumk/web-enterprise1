@@ -82,7 +82,7 @@ async function getOneFaculty(req, res) {
 };
 async function searchFaculty(req, res) {
   try {
-    const keyword = req.body.keyword;
+    var keyword= req.body.keyword;
     const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
       .select('facultyName descActive');
 
