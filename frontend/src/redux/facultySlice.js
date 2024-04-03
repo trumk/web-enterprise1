@@ -21,6 +21,10 @@ const facultySlice = createSlice({
       isFetching: false,
       error: false,
     },
+    deleteFaculty: { 
+      isFetching: false,
+      error: false,
+    },
   },
   reducers: {
     getFacultiesStart: (state) => {
@@ -71,6 +75,18 @@ const facultySlice = createSlice({
       state.editFaculty.isFetching = false;
       state.editFaculty.error = true;
     },
+    deleteFacultyStart: (state) => { 
+      state.deleteFaculty.isFetching = true;
+      state.deleteFaculty.error = false;
+    },
+    deleteFacultySuccess: (state) => { 
+      state.deleteFaculty.isFetching = false;
+      state.deleteFaculty.error = false;
+    },
+    deleteFacultyFailed: (state) => { 
+      state.deleteFaculty.isFetching = false;
+      state.deleteFaculty.error = true;
+    },
   },
 });
 export const {
@@ -85,6 +101,9 @@ export const {
   addFacultyFailed,
   editFacultyStart,
   editFacultySuccess,
-  editFacultyFailed
+  editFacultyFailed,
+  deleteFacultyStart,
+  deleteFacultySuccess,
+  deleteFacultyFailed
 } = facultySlice.actions;
 export default facultySlice.reducer;
