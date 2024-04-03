@@ -338,32 +338,27 @@ const contributionController = {
       const contributionId = req.params.id;
       const userId = req.user.id;
       const commentContent = req.body.comment;
+
+      var contribution1 = await Contribution.findById(contributionId);
+      if (!contribution1) {
+        return res.status(404).json({ message: "Contribution not found" });
+      }
+      var currentDate = new Date();
+      var contributionDate = new Date(contribution1.createdAt);
+      var targetDate = new Date(contributionDate);
+      targetDate.setDate(targetDate.getDate() + 14);
+      if (currentDate.getTime() > targetDate.getTime()) {
+        return res.status(404).json({ message: "You cannot comment because the contribution is expired" });
+      }
       const newComment = {
         comment: commentContent,
         userID: userId
       };
-      const contribution = await Contribution.findByIdAndUpdate(contributionId, {
-        $push: { comments: newComment },
-        submissionDate: new Date(), 
-        userID: userId
-    }, { new: true });
+      var contribution = await Contribution.findByIdAndUpdate(contributionId, {
+        $push: { comments: newComment }
+      }, { new: true });
 
-    if (!contribution) {
-        return res.status(404).json({ message: "Contribution not found" });
-    }
-   
-        if (!contribution.comments || contribution.comments.length === 0) {
-            return res.status(400).json({ message: "Contribution has no comments" });
-        }
-
-       //14days
-        const fourteenDaysAfterSubmission = moment(contribution.createdAt).add(14, 'days');
-
-    //
-        if (moment().isAfter(fourteenDaysAfterSubmission)) {
-            return res.status(400).json({ message: "Contribution has no comments after 14 days" });
-        }
-        res.status(200).json(contribution);
+      res.status(200).json(contribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error });
@@ -421,26 +416,24 @@ const contributionController = {
               $cond: {
                 if: { $eq: ['$totalContributions', 0] },
                 then: 0,
-                else: {
-                  else:  { $multiply: [{ $divide: ['$totalContributions', { $size: '$eventsWithContributions' }] }, 100] }, 
-                },
+                  else: { $multiply: [{ $divide: ['$totalContributions', { $size: '$eventsWithContributions' }] }, 100] },
               },
             },
           },
         },
       ]);
-    
+
       console.log('All Faculties with Contributions:', allFacultiesWithContributions);
       res.status(200).json(allFacultiesWithContributions);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message });
     }
-    
- }
+
+  }
 
 
-  
+
 };
 
 module.exports = contributionController;
