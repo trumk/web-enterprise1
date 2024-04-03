@@ -60,6 +60,7 @@ async function createEvent(req, res) {
     });
   }
 }
+
 async function getEventsByFaculty(req,res){
   try{
     const facultyId= req.params.facultyId;
@@ -70,6 +71,7 @@ async function getEventsByFaculty(req,res){
     return res.status(500).json({ success: false, message: 'SERVER ERROR'});
   }
 }
+
 function FilterExpression(filter) {
   const filterExpression = {};
   for (const key in filter) {

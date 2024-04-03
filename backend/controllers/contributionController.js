@@ -343,12 +343,27 @@ const contributionController = {
         userID: userId
       };
       const contribution = await Contribution.findByIdAndUpdate(contributionId, {
-        $push: { comments: newComment }
-      }, { new: true });
-      if (!contribution) {
-        return res.status(404).json({ message: "contribution not found" });
-      }
-      res.status(200).json(contribution);
+        $push: { comments: newComment },
+        submissionDate: new Date(), 
+        userID: userId
+    }, { new: true });
+
+    if (!contribution) {
+        return res.status(404).json({ message: "Contribution not found" });
+    }
+   
+        if (!contribution.comments || contribution.comments.length === 0) {
+            return res.status(400).json({ message: "Contribution has no comments" });
+        }
+
+       //14days
+        const fourteenDaysAfterSubmission = moment(contribution.createdAt).add(14, 'days');
+
+    //
+        if (moment().isAfter(fourteenDaysAfterSubmission)) {
+            return res.status(400).json({ message: "Contribution has no comments after 14 days" });
+        }
+        res.status(200).json(contribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error });
@@ -359,13 +374,13 @@ const contributionController = {
       const allFacultiesWithContributions = await Faculty.aggregate([
         {
           $lookup: {
-            from: 'events', // Tên collection phải chính xác như trong MongoDB
+            from: 'events',
             let: { facultyId: '$_id' },
             pipeline: [
               { $match: { $expr: { $eq: ['$facultyId', '$$facultyId'] } } },
               {
                 $lookup: {
-                  from: 'contributions', // Tên collection phải chính xác như trong MongoDB
+                  from: 'contributions',
                   let: { eventId: '$_id' },
                   pipeline: [
                     { $match: { $expr: { $eq: ['$eventID', '$$eventId'] } } },
@@ -384,6 +399,7 @@ const contributionController = {
                 $group: {
                   _id: '$_id',
                   totalContributions: { $sum: '$contributions.totalContributions' },
+                  contributors: { $addToSet: '$contributions.userId' }, // Track contributors
                 },
               },
             ],
@@ -393,23 +409,38 @@ const contributionController = {
         {
           $addFields: {
             totalContributions: { $sum: '$eventsWithContributions.totalContributions' },
+            totalContributors: { $size: '$eventsWithContributions.contributors' }, // Calculate total contributors
           },
         },
         {
           $project: {
             facultyName: 1,
             totalContributions: 1,
+            totalContributors: 1,
+            contributionPercentage: {
+              $cond: {
+                if: { $eq: ['$totalContributions', 0] },
+                then: 0,
+                else: {
+                  else:  { $multiply: [{ $divide: ['$totalContributions', { $size: '$eventsWithContributions' }] }, 100] }, 
+                },
+              },
+            },
           },
         },
       ]);
-  
+    
       console.log('All Faculties with Contributions:', allFacultiesWithContributions);
       res.status(200).json(allFacultiesWithContributions);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message });
     }
-  }
+    
+ }
+
+
+  
 };
 
 module.exports = contributionController;
