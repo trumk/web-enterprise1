@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const Faculty = require("../models/Faculty");
 
+
 async function createEvent(req, res) {
   const { topic, content, createEvent, closureDate, finalDate, facultyId } = req.body;
 
