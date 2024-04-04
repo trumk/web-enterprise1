@@ -25,14 +25,12 @@ export const FacultyDetail = () => {
     }
   }, [dispatch, id, user]);
   const detail = faculty.Faculty
-  console.log(id)
   const handleDelete = () => {
     const confirmation = window.confirm("Are you sure you want to delete this faculty?");
     if (confirmation) {
       dispatch(deleteFaculty(id, user.accessToken, navigate)); 
     }
   };
-  console.log(faculty.Faculty._id)
   return (
     <>
       <NavbarDefault />

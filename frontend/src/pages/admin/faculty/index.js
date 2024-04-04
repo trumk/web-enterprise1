@@ -1,23 +1,28 @@
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
-import { useEffect } from "react";
-import { getAllFaculties } from "../../../redux/apiRequest";
+import { useState, useEffect } from "react";
+import { getAllFaculties, searchFaculty } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Card, Option, Select, Typography } from "@material-tailwind/react";
+import { Button, Card, Input, Option, Select, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
 export const Faculty = () => {
   const faculties = useSelector((state)=>state.faculty.faculties.allFaculties)
   const user = useSelector((state)=>state.auth.login?.currentUser) 
+  const [searchTerm, setSearchTerm] = useState(""); 
   const dispatch = useDispatch();
-
+  const filterFaculty = useSelector((state) => state.faculty.searchFaculty.filterFaculty);
+  
   useEffect(() => {
     if (user) {
       dispatch(getAllFaculties(user.accessToken, dispatch));
     }
   }, [user, dispatch]);
 
-
+  const handleSearch = () => {
+    dispatch(searchFaculty(searchTerm, user.accessToken));
+      
+  };
   return (
     <>
       <NavbarDefault />
@@ -27,6 +32,16 @@ export const Faculty = () => {
           <Button className="mt-2.5 mb-2.5">
             <Link to="/admin/faculty/add">Create new</Link>
           </Button>
+          <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Search faculty..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-1/3 mb-4"
+          />
+          <Button onClick={handleSearch} className="mb-2.5 mt-2.5">Search</Button>
+          </div>
           <Card className="h-full w-full">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
