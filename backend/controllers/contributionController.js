@@ -364,76 +364,103 @@ const contributionController = {
       res.status(500).json({ message: error });
     }
   },
-  getStatistic: async (req, res) => {
-    try {
-      const allFacultiesWithContributions = await Faculty.aggregate([
-        {
-          $lookup: {
-            from: 'events',
-            let: { facultyId: '$_id' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$facultyId', '$$facultyId'] } } },
-              {
-                $lookup: {
-                  from: 'contributions',
-                  let: { eventId: '$_id' },
-                  pipeline: [
-                    { $match: { $expr: { $eq: ['$eventID', '$$eventId'] } } },
-                    { $count: 'totalContributions' },
-                  ],
-                  as: 'contributions',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$contributions',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $group: {
-                  _id: '$_id',
-                  totalContributions: { $sum: '$contributions.totalContributions' },
-                  contributors: { $addToSet: '$contributions.userId' }, // Track contributors
-                },
-              },
-            ],
-            as: 'eventsWithContributions',
-          },
-        },
-        {
-          $addFields: {
-            totalContributions: { $sum: '$eventsWithContributions.totalContributions' },
-            totalContributors: { $size: '$eventsWithContributions.contributors' }, // Calculate total contributors
-          },
-        },
-        {
-          $project: {
-            facultyName: 1,
-            totalContributions: 1,
-            totalContributors: 1,
-            contributionPercentage: {
-              $cond: {
-                if: { $eq: ['$totalContributions', 0] },
-                then: 0,
-                  else: { $multiply: [{ $divide: ['$totalContributions', { $size: '$eventsWithContributions' }] }, 100] },
-              },
-            },
-          },
-        },
-      ]);
+  // getStatistic: async (req, res) => {
+  //   try {
+  //     const allFacultiesWithContributions = await Faculty.aggregate([
+  //       {
+  //         $lookup: {
+  //           from: 'events',
+  //           let: { facultyId: '$_id' },
+  //           pipeline: [
+  //             { $match: { $expr: { $eq: ['$facultyId', '$$facultyId'] } } },
+  //             {
+  //               $lookup: {
+  //                 from: 'contributions',
+  //                 let: { eventId: '$_id' },
+  //                 pipeline: [
+  //                   { $match: { $expr: { $eq: ['$eventID', '$$eventId'] } } },
+  //                   { $count: 'totalContributions' },
+  //                 ],
+  //                 as: 'contributions',
+  //               },
+  //             },
+  //             {
+  //               $unwind: {
+  //                 path: '$contributions',
+  //                 preserveNullAndEmptyArrays: true,
+  //               },
+  //             },
+  //             {
+  //               $group: {
+  //                 _id: '$_id',
+  //                 totalContributions: { $sum: '$contributions.totalContributions' },
+  //                 contributors: { $addToSet: '$contributions.userId' }, // Track contributors
+  //               },
+  //             },
+  //           ],
+  //           as: 'eventsWithContributions',
+  //         },
+  //       },
+  //       {
+  //         $addFields: {
+  //           totalContributions: { $sum: '$eventsWithContributions.totalContributions' },
+  //           totalContributors: { $size: '$eventsWithContributions.contributors' }, // Calculate total contributors
+  //         },
+  //       },
+  //       {
+  //         $project: {
+  //           facultyName: 1,
+  //           totalContributions: 1,
+  //           totalContributors: 1,
+  //           contributionPercentage: {
+  //             $cond: {
+  //               if: { $eq: ['$totalContributions', 0] },
+  //               then: 0,
+  //                 else: { $multiply: [{ $divide: ['$totalContributions', { $size: '$eventsWithContributions' }] }, 100] },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     ]);
 
-      console.log('All Faculties with Contributions:', allFacultiesWithContributions);
-      res.status(200).json(allFacultiesWithContributions);
+  //     console.log('All Faculties with Contributions:', allFacultiesWithContributions);
+  //     res.status(200).json(allFacultiesWithContributions);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: error.message });
+  //   }
+  // },
+
+  getExceptionReports: async (req, res) => {
+    try {
+      const noComments = await Contribution.aggregate([
+        {
+          $match: {
+            comments: { $size: 0 }
+          }
+        }
+      ]);
+      const noCommentsAfter14Days = await Contribution.aggregate([
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: [{ $size: "$comments" }, 0] },
+                { $lt: ["$createdAt", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)] }
+              ]
+            }
+          }
+        }
+      ]);
+  
+      res.status(200).json({
+        noComments,
+        noCommentsAfter14Days
+      });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: error.message });
     }
-
   }
-
-
-
 };
 
 module.exports = contributionController;
