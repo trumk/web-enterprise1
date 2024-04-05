@@ -9,8 +9,9 @@ const router = require("express").Router();
 router.use(authorization.verifyToken);
 
 router.post("/submit", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.submitContribution)
-router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.editContribution)
-router.get("/getAllContributions", contributionController.getContribution);
+router.post("/edit/:id", authorization.verifyUserOrAdmin, upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.editContribution)
+router.get("/getAllContributions", contributionController.getContributionByDashBoard);
+router.get("/getAllContributionsByEvent", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.get("/statistic", contributionController.getStatistic);
 router.get("/:id", contributionController.getOneContribution);

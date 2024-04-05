@@ -31,7 +31,7 @@ const authorization ={
     },
     verifyUserOrAdmin : (req, res, next)=>{
         authorization.verifyToken(req, res , ()=> {
-            if(req.user.id == req.cookies.userId || req.user.role == "admin"){
+            if(req.user.id == req.params.id ||req.user.id == req.cookies.userId || req.user.role == "admin"){
                 next();
             }
             else{
