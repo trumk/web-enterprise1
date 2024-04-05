@@ -36,7 +36,10 @@ import {
   editFacultyFailed,
   deleteFacultyStart,
   deleteFacultySuccess,
-  deleteFacultyFailed
+  deleteFacultyFailed,
+  searchFacultyStart,
+  searchFacultySuccess,
+  searchFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -199,4 +202,26 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
     console.log(error);
   }
 };
+
+export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
+  dispatch(searchFacultyStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
+      keyword:searchTerm,
+    }, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(searchFacultySuccess(response.data));
+  } catch (error) {
+    dispatch(searchFacultyFailed(error.message));
+    console.log(error)
+  }
+};
+
+
+
+
+
 
