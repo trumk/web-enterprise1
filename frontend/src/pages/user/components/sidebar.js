@@ -3,7 +3,7 @@ import {
     List,
   } from "@material-tailwind/react";
   import {
-    FileSliders, PartyPopper, Users, Home, Contact, KeyRound
+    Contact, KeyRound
   } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useSelector } from "react-redux";

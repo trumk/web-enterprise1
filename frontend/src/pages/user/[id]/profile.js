@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import NavbarDefault from '../../../components/navbar'
 import { Button, Card, CardBody, CardHeader, Typography } from '@material-tailwind/react'
-import logo from '../../../components/assets/logo.jpg'
 import DefaultSidebar from '../components/sidebar'
 import { useDispatch, useSelector } from 'react-redux'
 import { getSelf } from '../../../redux/apiRequest'

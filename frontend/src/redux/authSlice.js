@@ -22,6 +22,11 @@ const authSlice = createSlice({
             isFetching: false,
             error: false,
         },
+        changePassword: {
+            currentUser: null,
+            isFetching: false,
+            error: false,
+        }
     },
     reducers: {
         loginStart: (state) => {
@@ -74,6 +79,18 @@ const authSlice = createSlice({
         logoutStart: (state) => {
             state.logout.isFetching = true;
         },
+        changePasswordStart: (state) => {
+            state.changePassword.isFetching = true;
+        },
+        changePasswordSuccess: (state, action) => {
+            state.changePassword.isFetching = false;
+            state.changePassword.currentUser = action.payload;
+            state.changePassword.error = false;
+        },
+        changePasswordFailed: (state) => {
+            state.changePassword.isFetching = false;
+            state.changePassword.error = true;
+        }
     }
 });
 
@@ -89,7 +106,10 @@ export const {
     verifyFailed,
     logoutStart,
     logoutSuccess,
-    logoutFailed
+    logoutFailed,
+    changePasswordStart,
+    changePasswordSuccess,
+    changePasswordFailed,
 } = authSlice.actions;
 
 export default authSlice.reducer;
