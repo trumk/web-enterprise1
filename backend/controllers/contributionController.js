@@ -81,12 +81,33 @@ const contributionController = {
       res.status(500).json({ message: error.message, ...error });
     }
   },
-  getContribution: async (req, res) => {
+  getContributionByEvent: async (req, res) => {
     try {
       let query = { isPublic: true, eventID: req.cookies.eventId };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
         query = { eventID: req.cookies.eventId };
+      }
+      const contributions = await Contribution.find(query)
+        .populate({
+          path: 'userID',
+          select: 'userName -_id'
+        })
+        .populate({
+          path: 'comments.userID',
+          select: 'userName -_id'
+        });
+      res.status(200).json(contributions);
+    } catch (error) {
+      res.status(500).json({ message: error.message, ...error });
+    }
+  },
+  getContributionByDashBoard: async (req, res) => {
+    try {
+      let query = { isPublic: true };
+      const role = req.user.role;
+      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+        query = {};
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -135,6 +156,12 @@ const contributionController = {
           path: 'comments.userID',
           select: 'userName -_id'
         });
+        await res.cookie('userId', contribution.userID, {
+          httpOnly: true,
+          secure: false,
+          path: "/",
+          sameSite: "strict"
+      });
       if (!contribution) {
         return res.status(404).json({ message: "Contribution not found." });
       }
@@ -146,6 +173,12 @@ const contributionController = {
   editContribution: async (req, res) => {
     try {
       const contribution = await Contribution.findById(req.params.id);
+      await res.cookie('userId', contribution.userID, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict"
+    });
       if (!contribution) {
         return res.status(404).send('Contribution not found');
       }
@@ -211,6 +244,12 @@ const contributionController = {
   deleteContribution: async (req, res) => {
     try {
       const conntribution = await Contribution.findById(req.params.id)
+      await res.cookie('userId', contribution.userID, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict"
+    });
       if (!conntribution) {
         return res.status(404).json("conntribution not found");
       }
