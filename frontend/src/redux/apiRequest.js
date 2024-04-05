@@ -1,5 +1,8 @@
 import axios from "axios";
 import {
+  changePasswordFailed,
+  changePasswordStart,
+  changePasswordSuccess,
   loginFailed,
   loginStart,
   loginSuccess,
@@ -39,9 +42,10 @@ import {
   deleteFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { addEventFailed, addEventStart, addEventSuccess, getEventFailed, getEventStart, getEventSuccess, getEventsFailed, getEventsStart, getEventsSuccess } from "./eventSlice";
 
 const BACKEND_URL = "http://localhost:5503";
-
+//auth
 export const loginUser = async (user, dispatch, navigate) => {
   dispatch(loginStart());
   try {
@@ -112,9 +116,23 @@ export const getSelf = (id) => async (dispatch) => {
     dispatch(getSelfSuccess(res.data));
   } catch (err) {
     dispatch(getSelfFailed());
+    console.log(err)
   }
 };
-
+export const changeUserPassword = async (id, accessToken, password, dispatch) => {
+  dispatch(changePasswordStart());
+  try{
+    const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(changePasswordSuccess(res.data));
+  } catch(err){
+    dispatch(changePasswordFailed())
+  }
+}
+//faculty
 export const getAllFaculties = (accessToken) => async (dispatch) => {
   dispatch(getFacultiesStart());
   try {
@@ -199,4 +217,47 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
     console.log(error);
   }
 };
+//event
+export const getAllEvents = (accessToken) => async (dispatch) => {
+  dispatch(getEventsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/event/events`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventsSuccess(res.data));
+  } catch (err) {
+    dispatch(getEventsFailed());
+  }
+};
+export const addEvent = (accessToken, event) => async (dispatch) => {
+  dispatch(addEventStart());
+  try {
+    await axios.post(`${BACKEND_URL}/event/create`, event, {
+      headers: {
+        token: `Bearer ${accessToken}`
+      }
+    });
+    dispatch(addEventSuccess());
+  } catch (error) {
+    dispatch(addEventFailed());
+    console.error(error);
+    throw error; 
+  }
+}
 
+export const getOneEvent = (id, accessToken) => async (dispatch) => {
+  dispatch(getEventStart());
+  try{
+    const res = await axios.get(`${BACKEND_URL}/event/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventSuccess(res.data));
+  }
+  catch(err){
+    dispatch(getEventFailed())
+  }
+}

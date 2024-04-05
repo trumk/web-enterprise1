@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import NavbarDefault from '../../../components/navbar'
 import DefaultSidebar from '../components/sidebar'
 import { Button, Card, CardBody, CardHeader, Input, Popover, PopoverContent, PopoverHandler, Textarea, Typography } from '@material-tailwind/react'
-import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon, ChevronRightIcon, ImageUpIcon, PencilLine } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, } from 'lucide-react'
 import { getSelf } from '../../../redux/apiRequest'
 
 export const EditProfile = () => {
@@ -131,18 +130,19 @@ export const EditProfile = () => {
                   <div className="p-4 flex flex-col items-center gap-2 bg-violet-50 text-violet-500 rounded-lg hover:bg-violet-100 cursor-pointer border">
                     {profile.avatar ? (
                       <>
-                        <ImageUpIcon className="w-6 h-6" />
-                        <span>Choose some files to upload</span>
+                        <input type="file" />
                       </>
                     ) : (
-                      <img src={profile.avatar} alt="profile-picture" className="w-80 border rounded-md" />
+                      <>
+                      <input type="file" />
+                      </>
                     )}
-                    <input type="file" className="hidden" />
+                    
                   </div>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Description
                   </Typography>
-                  <Textarea label="Message" />
+                  <Textarea label="Something about you" />
                 </div>
                 <Button className="mt-6" fullWidth>
                   Save

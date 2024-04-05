@@ -18,6 +18,8 @@ import { Event } from './pages/admin/event';
 import AddFaculty from './pages/admin/faculty/add';
 import { FacultyDetail } from './pages/admin/faculty/[id]/detail';
 import EditFaculty from './pages/admin/faculty/[id]/edit';
+import AddEvent from './pages/admin/event/add';
+import { EventDetail } from './pages/admin/event/[id]/detail';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
         <Route path="/admin/faculty/add" element={<AddFaculty/>} />
         <Route path="/admin/faculty/:id/edit" element={<EditFaculty/>} />
         <Route path="/admin/event" element={<Event/>} />
+        <Route path="/admin/event/:id" element={<EventDetail/>} />
+        <Route path="/admin/event/add" element={<AddEvent/>} />
       </Routes>
     </BrowserRouter>
     </>

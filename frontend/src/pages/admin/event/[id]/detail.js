@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
-import { deleteFaculty, getOneFaculty } from "../../../../redux/apiRequest";
+import { deleteEvent, getOneEvent, getOneFaculty } from "../../../../redux/apiRequest";
 import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -11,35 +11,29 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
+import { format } from "date-fns";
 
 
-export const FacultyDetail = () => {
+export const EventDetail = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
+  const event = useSelector((state) => state.event.event.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
   useEffect(() => {
     if (user && user.accessToken) {
-      dispatch(getOneFaculty(id, user.accessToken));
+      dispatch(getOneEvent(id, user.accessToken));
     }
   }, [dispatch, id, user]);
-  const detail = faculty.Faculty
-  console.log(id)
-  const handleDelete = () => {
-    const confirmation = window.confirm("Are you sure you want to delete this faculty?");
-    if (confirmation) {
-      dispatch(deleteFaculty(id, user.accessToken, navigate)); 
-    }
-  };
-  console.log(faculty)
+  const detail = event.Event;
+  console.log(detail.facultyId.facultyName)
   return (
     <>
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar />
         <div className="mt-2.5 ml-5 w-full">
-          {faculty && (
+          {Event && (
             <Card className="mt-5">
               <CardHeader
                 variant="gradient"
@@ -47,23 +41,32 @@ export const FacultyDetail = () => {
                 className="mb-4 grid h-28 place-items-center"
               >
                 <Typography variant="h3" color="white">
-                  {detail.facultyName}
+                  {detail.topic}
                 </Typography>
               </CardHeader>
-              <Typography variant="h5" className="ml-3">
-                Enroll Key: {detail.enrollKey}
+              <Typography variant="h6" className="ml-3">
+                Topic: {detail.content}
               </Typography>
-              <Typography variant="h5" className="ml-3">
-                Description: {detail.descActive}
+              <Typography variant="h6" className="ml-3">
+                Closure Date: {format(detail.closureDate, 'MMMM dd,yyyy')}
+              </Typography>
+              <Typography variant="h6" className="ml-3">
+                Final Date: {format(detail.finalDate, 'MMMM dd,yyyy')}
+              </Typography>
+              <Typography variant="h6" className="ml-3">
+                Create Date: {format(detail.createEvent, 'MMMM dd,yyyy')}
+              </Typography>
+              <Typography variant="h6" className="ml-3">
+              Faculty: {detail.facultyId.facultyName}
               </Typography>
               <CardFooter>
-                <Link to="/admin/faculty">
+                <Link to="/admin/event">
                   <Button>Back to List</Button>
                 </Link>
-                <Link to={`/admin/faculty/${id}/edit`}> 
+                <Link to={`/admin/event/${id}/edit`}> 
                 <Button className="ml-3">Edit</Button> 
                 </Link>
-                <Button className="ml-3" onClick={handleDelete}>Delete</Button>
+                <Button className="ml-3" onClick={()=>{}}>Delete</Button>
               </CardFooter>
             </Card>
           )}
