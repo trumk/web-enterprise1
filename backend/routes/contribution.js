@@ -13,7 +13,7 @@ router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 
 router.get("/getAllContributions", contributionController.getContribution);
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.get("/statistic", contributionController.getStatistic);
-router.get("/:id", contributionController.getOneContribution);
+
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
 router.post("/searchByTitle", upload1.none(),  contributionController.searchByTitleContribution);
@@ -22,6 +22,9 @@ router.get("/sort/asc", contributionController.filterContributionAsc);
 router.get("/sort/desc", contributionController.filterContributionDesc);
 router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
 router.post("/comment/:id", contributionController.commentContribution);
+router.get("/exception", contributionController.getExceptionReports);
+router.get("/:id", contributionController.getOneContribution);
+
 
 
 module.exports = router;
