@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   CardFooter,
+  CardBody,
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
@@ -30,7 +31,7 @@ export const EventDetail = () => {
   const handleDelete = () => {
     const confirmation = window.confirm(`Are you sure you want to delete ${detail.topic}?`);
     if (confirmation) {
-      dispatch(deleteThisEvent(id, user.accessToken, navigate)); 
+      dispatch(deleteThisEvent(id, user.accessToken, navigate));
     }
   };
   return (
@@ -50,29 +51,32 @@ export const EventDetail = () => {
                   {detail?.topic}
                 </Typography>
               </CardHeader>
-              <Typography variant="h6" className="ml-3">
-                Topic: {detail?.content}
-              </Typography>
-              <Typography variant="h6" className="ml-3">
-                Closure Date: {format(detail?.closureDate, 'MMMM dd,yyyy')}
-              </Typography>
-              <Typography variant="h6" className="ml-3">
-                Final Date: {format(detail?.finalDate, 'MMMM dd,yyyy')}
-              </Typography>
-              <Typography variant="h6" className="ml-3">
-                Create Date: {format(detail?.createEvent, 'MMMM dd,yyyy')}
-              </Typography>
-              <Typography variant="h6" className="ml-3">
-              Faculty: {detail?.facultyId.facultyName}
-              </Typography>
+              <CardBody className="">
+                <Typography variant="h6" className="ml-3">
+                  Topic: {detail?.content}
+                </Typography>
+                <Typography variant="h6" className="ml-3">
+                  Closure Date: {format(detail?.closureDate, 'MMMM dd,yyyy')}
+                </Typography>
+                <Typography variant="h6" className="ml-3">
+                  Final Date: {format(detail?.finalDate, 'MMMM dd,yyyy')}
+                </Typography>
+                <Typography variant="h6" className="ml-3">
+                  Create Date: {format(detail?.createEvent, 'MMMM dd,yyyy')}
+                </Typography>
+                <Typography variant="h6" className="ml-3">
+                  Faculty: {detail?.facultyId.facultyName}
+                </Typography>
+              </CardBody>
+
               <CardFooter>
                 <Link to="/admin/event">
-                  <Button>Back to List</Button>
+                  <Button color="blue">Back to List</Button>
                 </Link>
-                <Link to={`/admin/event/${id}/edit`}> 
-                <Button className="ml-3">Edit</Button> 
+                <Link to={`/admin/event/${id}/edit`}>
+                  <Button color="amber" className="ml-3">Edit</Button>
                 </Link>
-                <Button className="ml-3" onClick={handleDelete}>Delete</Button>
+                <Button color="red" className="ml-3" onClick={handleDelete}>Delete</Button>
               </CardFooter>
             </Card>
           )}

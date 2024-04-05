@@ -42,7 +42,10 @@ import {
   editFacultyFailed,
   deleteFacultyStart,
   deleteFacultySuccess,
-  deleteFacultyFailed
+  deleteFacultyFailed,
+  getEventsByFacultyStart,
+  getEventsByFacultySuccess,
+  getEventsByFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { 
@@ -252,6 +255,21 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
     console.log(error);
   }
 };
+
+export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
+  dispatch(getEventsByFacultyStart());
+  try{
+    const res = await axios.get(`${BACKEND_URL}/event/${id}/events`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventsByFacultySuccess(res.data));
+  } catch(err) {
+    dispatch(getEventsByFacultyFailed());
+    console.log(err);
+  }
+}
 //event
 export const getAllEvents = (accessToken) => async (dispatch) => {
   dispatch(getEventsStart());
