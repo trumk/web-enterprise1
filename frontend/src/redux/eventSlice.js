@@ -16,7 +16,16 @@ const eventSlice = createSlice({
         addEvent: {
             isFetching: false,
             error: false,
-        }
+        },
+        editEvent: {
+            currentEvent: null,
+            isFetching: false,
+            error: false
+        },
+        deleteEvent: { 
+            isFetching: false,
+            error: false,
+          },
     },
     reducers: {
         getEventsStart: (state) => {
@@ -54,6 +63,31 @@ const eventSlice = createSlice({
             state.addEvent.isFetching = false;
             state.addEvent.error = true;
         },
+        editEventStart: (state) => {
+            state.editEvent.isFetching = true;
+            state.editEvent.error = false;
+        },
+        editEventSuccess: (state, action) => {
+            state.editEvent.currentEvent = action.payload;
+            state.editEvent.isFetching = false;
+            state.editEvent.error = false;
+        },
+        editEventFailed: (state) => {
+            state.editEvent.isFetching = false;
+            state.editEvent.error = true;
+        },
+        deleteEventStart: (state) => { 
+            state.deleteEvent.isFetching = true;
+            state.deleteEvent.error = false;
+          },
+          deleteEventSuccess: (state) => { 
+            state.deleteEvent.isFetching = false;
+            state.deleteEvent.error = false;
+          },
+          deleteEventFailed: (state) => { 
+            state.deleteEvent.isFetching = false;
+            state.deleteEvent.error = true;
+          },
     }
 })
 export const {
@@ -65,6 +99,12 @@ export const {
     getEventFailed,
     addEventStart,
     addEventSuccess,
-    addEventFailed
-  } = eventSlice.actions;
-  export default eventSlice.reducer;
+    addEventFailed,
+    editEventStart,
+    editEventSuccess,
+    editEventFailed,
+    deleteEventStart,
+    deleteEventSuccess,
+    deleteEventFailed
+} = eventSlice.actions;
+export default eventSlice.reducer;

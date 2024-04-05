@@ -86,8 +86,11 @@ export default function NavbarDefault() {
         dispatch(loginSuccess(refreshUser));
         config.headers["token"] = `Bearer ${data.accessToken}`;
       }
+      return config;
+    }, (err) => {
+      return Promise.reject(err);
     }
-    
+
   )
   const profile = useSelector((state) => state.user.user?.user);
   return (

@@ -17,6 +17,9 @@ import {
   verifySuccess,
 } from "./authSlice";
 import {
+  editProfileFailed,
+  editProfileStart,
+  editProfileSuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
@@ -42,7 +45,23 @@ import {
   deleteFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addEventFailed, addEventStart, addEventSuccess, getEventFailed, getEventStart, getEventSuccess, getEventsFailed, getEventsStart, getEventsSuccess } from "./eventSlice";
+import { 
+  editEventStart,
+  editEventSuccess,
+  editEventFailed,
+  addEventFailed, 
+  addEventStart, 
+  addEventSuccess, 
+  getEventFailed, 
+  getEventStart, 
+  getEventSuccess, 
+  getEventsFailed, 
+  getEventsStart, 
+  getEventsSuccess,
+  deleteEventStart,
+  deleteEventSuccess,
+  deleteEventFailed, 
+} from "./eventSlice";
 
 const BACKEND_URL = "http://localhost:5503";
 //auth
@@ -94,7 +113,7 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     console.error("Logout error:", err);
   }
 };
-
+//user
 export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
   dispatch(getUsersStart());
   try {
@@ -121,15 +140,31 @@ export const getSelf = (id) => async (dispatch) => {
 };
 export const changeUserPassword = async (id, accessToken, password, dispatch) => {
   dispatch(changePasswordStart());
-  try{
+  try {
     const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
     });
     dispatch(changePasswordSuccess(res.data));
-  } catch(err){
+  } catch (err) {
     dispatch(changePasswordFailed())
+  }
+}
+
+export const editProfile = (id, accessToken, profile, navigate) => async (dispatch) => {
+  dispatch(editProfileStart())
+  try {
+    const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editProfileSuccess(res.data));
+    navigate(`user/${id}/profile`)
+  } catch (err) {
+    dispatch(editProfileFailed())
+    console.log(err)
   }
 }
 //faculty
@@ -149,7 +184,7 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
 
 export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getFacultyStart());
-  try{
+  try {
     const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -157,37 +192,37 @@ export const getOneFaculty = (id, accessToken) => async (dispatch) => {
     });
     dispatch(getFacultySuccess(res.data));
   }
-  catch(err){
+  catch (err) {
     dispatch(getFacultyFailed())
   }
 }
 
-export const addFaculty = createAsyncThunk( "faculty/add", async (facultyData, { getState, dispatch}) => {
-    dispatch(addFacultyStart());
-    try {
-      const { accessToken } = getState().auth.login.currentUser;
-      const response = await axios.post(
-        `${BACKEND_URL}/faculty/add`,
-        facultyData,
-        {
-          headers: {
-            token: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      dispatch(addFacultySuccess(response.data));
-      return response.data;
-    } catch (error) {
-      dispatch(addFacultyFailed());
-      console.error(error);
-      throw error; 
-    }
+export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { getState, dispatch }) => {
+  dispatch(addFacultyStart());
+  try {
+    const { accessToken } = getState().auth.login.currentUser;
+    const response = await axios.post(
+      `${BACKEND_URL}/faculty/add`,
+      facultyData,
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(addFacultySuccess(response.data));
+    return response.data;
+  } catch (error) {
+    dispatch(addFacultyFailed());
+    console.error(error);
+    throw error;
   }
+}
 );
 
 export const editFaculty = (id, faculty, accessToken, navigate) => async (dispatch) => {
   dispatch(editFacultyStart());
-  try{
+  try {
     const res = await axios.put(`${BACKEND_URL}/faculty/${id}`, faculty, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -196,14 +231,14 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
     dispatch(editFacultySuccess(res.data));
     navigate("/admin/faculty")
   }
-  catch(error){
+  catch (error) {
     dispatch(editFacultyFailed())
     console.log(error)
   }
 }
 
 export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => {
-  dispatch(deleteFacultyStart()); 
+  dispatch(deleteFacultyStart());
   try {
     await axios.delete(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
@@ -243,13 +278,13 @@ export const addEvent = (accessToken, event) => async (dispatch) => {
   } catch (error) {
     dispatch(addEventFailed());
     console.error(error);
-    throw error; 
+    throw error;
   }
 }
 
 export const getOneEvent = (id, accessToken) => async (dispatch) => {
   dispatch(getEventStart());
-  try{
+  try {
     const res = await axios.get(`${BACKEND_URL}/event/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -257,7 +292,40 @@ export const getOneEvent = (id, accessToken) => async (dispatch) => {
     });
     dispatch(getEventSuccess(res.data));
   }
-  catch(err){
+  catch (err) {
     dispatch(getEventFailed())
+  }
+}
+
+export const editEvent = (id, event, accessToken, navigate) => async (dispatch) => {
+  dispatch(editEventStart());
+  try {
+    const res = await axios.put(`${BACKEND_URL}/event/update/${id}`, event, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editEventSuccess(res.data));
+    navigate("/admin/event")
+  }
+  catch (error) {
+    dispatch(editEventFailed())
+    console.log(error)
+  }
+}
+
+export const deleteThisEvent = (id, accessToken, navigate) => async (dispatch) => {
+  dispatch(deleteEventStart());
+  try {
+    await axios.delete(`${BACKEND_URL}/event/delete/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(deleteEventSuccess());
+    navigate("/admin/event")
+  } catch (error) {
+    dispatch(deleteEventFailed());
+    console.log(error);
   }
 }

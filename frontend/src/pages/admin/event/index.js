@@ -3,9 +3,11 @@ import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
 import { getAllEvents } from "../../../redux/apiRequest";
 import { useEffect } from "react";
-import { Button, Card, Option, Select, Typography } from "@material-tailwind/react";
+import { Button, Card, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { IconButton } from "@material-tailwind/react";
+import { Info, Trash2, PenLine } from 'lucide-react';
 
 export const Event = () => {
   const events = useSelector((state)=>state.event.events.allEvents)
@@ -16,7 +18,7 @@ export const Event = () => {
       dispatch(getAllEvents(user.accessToken, dispatch));
     }
   }, [user, dispatch]);
-  const details = events.events;
+  const details = events?.events;
   console.log(details)
   
   return (
@@ -126,10 +128,10 @@ export const Event = () => {
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
-                          <Select label="Select action below">
-                            <Option> <Link to={`/admin/event/${detail._id}`}> Detail </Link></Option>
-                            <Option><Link to={`/admin/event/${detail._id}/edit`}> Edit </Link></Option>
-                            </Select>
+                          <div className="flex gap-2 items-center">
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/event/${detail._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/event/${detail._id}/edit`}> <PenLine/> </Link></IconButton>
+                            </div>
                         </td>
                       </tr>
                       

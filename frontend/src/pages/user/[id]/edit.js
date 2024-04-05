@@ -4,15 +4,17 @@ import DefaultSidebar from '../components/sidebar'
 import { Button, Card, CardBody, CardHeader, Input, Popover, PopoverContent, PopoverHandler, Textarea, Typography } from '@material-tailwind/react'
 import { format } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
 import { ChevronLeftIcon, ChevronRightIcon, } from 'lucide-react'
-import { getSelf } from '../../../redux/apiRequest'
+import { editProfile, getSelf } from '../../../redux/apiRequest'
 
 export const EditProfile = () => {
   const [date, setDate] = useState();
   const user = useSelector((state) => state.auth.login.currentUser);
   const dispatch = useDispatch();
-  
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (user && user._id) {
       dispatch(getSelf(user._id));
@@ -20,38 +22,69 @@ export const EditProfile = () => {
   }, [dispatch, user]);
 
   const profile = useSelector((state) => state.user.user.user);
-  const [firstName, setFirstName] = useState(profile?.firstName || '');
-  const [lastName, setLastName] = useState(profile?.lastName || '');
-  const [description, setDescription] = useState(profile?.description || '');
-  const [avatar, setAvatar] = useState(profile?.avatar || '');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthDay, setBirthDay] = useState(new Date());
+  const [description, setDescription] = useState('');
+  const [avatar, setAvatar] = useState('');
+ 
 
-  useEffect(() => {
-    if (profile) {
-      setFirstName(profile.firstName || '');
-      setLastName(profile.lastName || '');
-      setDescription(profile.description || '');
-      setAvatar(profile.avatar || '');
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  let base64Avatar;
+  if (avatar instanceof File) {
+    base64Avatar = fileToBase64(avatar);
+  }
+  const editedProfile = {
+    firstName: firstName,
+    lastName: lastName,
+    birthDay: birthDay,
+    avatar: base64Avatar || avatar,
+    description: description,
+  }
+  console.log(avatar)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let base64Avatar;
+  if (avatar instanceof File) {
+    base64Avatar = await fileToBase64(avatar);
+  }
+    const editedProfile = {
+      firstName: firstName,
+      lastName: lastName,
+      birthDay: birthDay,
+      avatar: base64Avatar || avatar,
+      description: description,
     }
-  }, [profile]);
+    console.log(editedProfile)
+    dispatch(editProfile(profile._id, user.accessToken, editedProfile, dispatch, navigate))
+  }
   return (
     <>
       <NavbarDefault />
-      <div className='flex gap-6'>
+      <div className='flex'>
         <DefaultSidebar />
-        <div className='w-full flex justify-center items-center'>
-          <Card className="w-[900px] h-full mt-20 border">
+        <div className='ml-5 w-full'>
+          <Card className="w-[900px] mt-20 border">
             <CardHeader>
               <Typography variant='h4' className='mt-2 mb-2'>{profile?.firstName} {profile?.lastName}&apos;s profile</Typography>
             </CardHeader>
             <CardBody className='flex gap-5 items-center'>
-              <form className="mt-8 mb-2 w-full sm:w-96">
+              <form className="mt-8 mb-2 grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
                 <div className="mb-1 flex flex-col gap-6">
                   <Typography variant="h6" color="blue-gray" className="-mb-3 w-full">
                     First Name
                   </Typography>
                   <Input
                     size="lg"
-                    value={profile?.firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
                       className: "before:content-none after:content-none",
@@ -62,7 +95,7 @@ export const EditProfile = () => {
                   </Typography>
                   <Input
                     size="lg"
-                    value={profile?.lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
                       className: "before:content-none after:content-none",
@@ -79,15 +112,15 @@ export const EditProfile = () => {
                         labelProps={{
                           className: "before:content-none after:content-none",
                         }}
-                        onChange={() => null}
-                        value={format(profile?.birthDay, 'MMMM dd,yyyy')}
+                        value={format(birthDay, 'MMMM, dd, yyyy')} // Add this line
+                        onChange={(e) => setBirthDay(new Date(e.target.value))}
                       />
                     </PopoverHandler>
                     <PopoverContent>
                       <DayPicker
                         mode="single"
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={setBirthDay}
                         showOutsideDays
                         className="border-0"
                         classNames={{
@@ -124,29 +157,27 @@ export const EditProfile = () => {
                       />
                     </PopoverContent>
                   </Popover>
+                </div>
+                <div className="mb-1 flex flex-col gap-6">
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Avatar
                   </Typography>
                   <div className="p-4 flex flex-col items-center gap-2 bg-violet-50 text-violet-500 rounded-lg hover:bg-violet-100 cursor-pointer border">
-                    {profile.avatar ? (
-                      <>
-                        <input type="file" />
-                      </>
-                    ) : (
-                      <>
-                      <input type="file" />
-                      </>
-                    )}
-                    
+                    <div className="">
+                      <Input type="file" className="" onChange={(e) => setAvatar(e.target.files[0])} />
+                      <img src={profile.avatar} alt="User avatar" className="h-24" />
+                    </div>
+
                   </div>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Description
                   </Typography>
-                  <Textarea label="Something about you" />
+                  <Textarea label="Something about you"
+                    onChange={(e) => setDescription(e.target.value)} />
+                  <Button className="mt-6" fullWidth onClick={handleSubmit}>
+                    Save
+                  </Button>
                 </div>
-                <Button className="mt-6" fullWidth>
-                  Save
-                </Button>
               </form>
             </CardBody>
           </Card>

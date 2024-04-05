@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
-import { deleteEvent, getOneEvent, getOneFaculty } from "../../../../redux/apiRequest";
+import { deleteEvent, getOneEvent, deleteThisEvent } from "../../../../redux/apiRequest";
 import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -26,7 +26,13 @@ export const EventDetail = () => {
     }
   }, [dispatch, id, user]);
   const detail = event.Event;
-  console.log(detail.facultyId.facultyName)
+  console.log(detail)
+  const handleDelete = () => {
+    const confirmation = window.confirm(`Are you sure you want to delete ${detail.topic}?`);
+    if (confirmation) {
+      dispatch(deleteThisEvent(id, user.accessToken, navigate)); 
+    }
+  };
   return (
     <>
       <NavbarDefault />
@@ -41,23 +47,23 @@ export const EventDetail = () => {
                 className="mb-4 grid h-28 place-items-center"
               >
                 <Typography variant="h3" color="white">
-                  {detail.topic}
+                  {detail?.topic}
                 </Typography>
               </CardHeader>
               <Typography variant="h6" className="ml-3">
-                Topic: {detail.content}
+                Topic: {detail?.content}
               </Typography>
               <Typography variant="h6" className="ml-3">
-                Closure Date: {format(detail.closureDate, 'MMMM dd,yyyy')}
+                Closure Date: {format(detail?.closureDate, 'MMMM dd,yyyy')}
               </Typography>
               <Typography variant="h6" className="ml-3">
-                Final Date: {format(detail.finalDate, 'MMMM dd,yyyy')}
+                Final Date: {format(detail?.finalDate, 'MMMM dd,yyyy')}
               </Typography>
               <Typography variant="h6" className="ml-3">
-                Create Date: {format(detail.createEvent, 'MMMM dd,yyyy')}
+                Create Date: {format(detail?.createEvent, 'MMMM dd,yyyy')}
               </Typography>
               <Typography variant="h6" className="ml-3">
-              Faculty: {detail.facultyId.facultyName}
+              Faculty: {detail?.facultyId.facultyName}
               </Typography>
               <CardFooter>
                 <Link to="/admin/event">
@@ -66,7 +72,7 @@ export const EventDetail = () => {
                 <Link to={`/admin/event/${id}/edit`}> 
                 <Button className="ml-3">Edit</Button> 
                 </Link>
-                <Button className="ml-3" onClick={()=>{}}>Delete</Button>
+                <Button className="ml-3" onClick={handleDelete}>Delete</Button>
               </CardFooter>
             </Card>
           )}

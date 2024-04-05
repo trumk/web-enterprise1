@@ -24,7 +24,7 @@ export const FacultyDetail = () => {
       dispatch(getOneFaculty(id, user.accessToken));
     }
   }, [dispatch, id, user]);
-  const detail = faculty.Faculty
+  const detail = faculty?.Faculty
   console.log(id)
   const handleDelete = () => {
     const confirmation = window.confirm("Are you sure you want to delete this faculty?");

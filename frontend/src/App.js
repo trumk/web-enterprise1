@@ -20,6 +20,7 @@ import { FacultyDetail } from './pages/admin/faculty/[id]/detail';
 import EditFaculty from './pages/admin/faculty/[id]/edit';
 import AddEvent from './pages/admin/event/add';
 import { EventDetail } from './pages/admin/event/[id]/detail';
+import EditEvent from './pages/admin/event/[id]/edit';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/admin/event" element={<Event/>} />
         <Route path="/admin/event/:id" element={<EventDetail/>} />
         <Route path="/admin/event/add" element={<AddEvent/>} />
+        <Route path="/admin/event/:id/edit" element={<EditEvent/>}/>
       </Routes>
     </BrowserRouter>
     </>

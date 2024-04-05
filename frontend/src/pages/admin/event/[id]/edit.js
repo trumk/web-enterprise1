@@ -1,56 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addEvent } from "../../../redux/apiRequest";
-import { useNavigate } from "react-router-dom";
-import NavbarDefault from "../../../components/navbar";
-import DefaultSidebar from "../../../components/sidebar";
-import DatePicker from "../../../components/manage/date-picker";
+import { useParams, useNavigate } from "react-router-dom";
+import NavbarDefault from "../../../../components/navbar";
+import DefaultSidebar from "../../../../components/sidebar";
+import {  editEvent, getOneEvent, } from "../../../../redux/apiRequest";
+import { format } from "date-fns";
+import DatePicker from "../../../../components/manage/date-picker";
 import { Select, Option } from "@material-tailwind/react";
 
-const AddEvent = () => {
+const EditEvent = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
+  const { id } = useParams();
+  const faculties = useSelector((state) => state.faculty.faculties.allFaculties);
+  const eventData = useSelector((state) => state.event.event.currentEvent);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [topic, setTopic] = useState("");
   const [content, setContent] = useState("");
   const [closureDate, setClosureDate] = useState(null);
   const [finalDate, setFinalDate] = useState(null);
   const [faculty, setFaculty] = useState("");
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const faculties = useSelector((state) => state.faculty.faculties.allFaculties)
   const selectFaculty = faculties.Faculty
-  console.log(faculty)
+
+  useEffect(() => {
+    if (user && user.accessToken) {
+      dispatch(getOneEvent(id, user.accessToken));
+    }
+  }, [dispatch, id, user]);
+
+  useEffect(() => {
+    if (eventData) {
+      setTopic(eventData.Event.topic || "");
+      setContent(eventData.Event.content || "");
+      setClosureDate(format(eventData.Event.closureDate, 'MMMM dd,yyyy') || "");
+      setFinalDate(format(eventData.Event.finalDate, 'MMMM dd,yyyy') || "");
+      setFaculty(eventData.Event.facultyId._id || "")
+    }
+  }, [eventData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const event = {
-      topic: topic,
-      content: content,
-      closureDate: closureDate,
-      finalDate: finalDate,
-      facultyId: faculty,
-    };
-    try {
-      await dispatch(addEvent(user.accessToken, event));
-      navigate("/admin/event");
-    } catch (error) {
-      console.log("Error:", error);
-    }
-
-    setTopic("");
-    setContent("");
-    setClosureDate("");
-    setFinalDate("");
-    setFaculty("");
+        topic: topic,
+        content: content,
+        closureDate: closureDate,
+        finalDate: finalDate,
+        facultyId: faculty,
+      };
+    dispatch(editEvent(id, event, user.accessToken, navigate))
   };
+
   return (
     <>
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar />
         <div className="mt-2.5 ml-5 w-full">
-          <h1 className="text-3xl font-bold mb-4">Add Event</h1>
+          <h1 className="text-3xl font-bold mb-4">Edit faculty</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-md font-medium text-gray-700">
@@ -58,8 +66,8 @@ const AddEvent = () => {
               </label>
               <input
                 type="text"
-                value={topic}
                 onChange={(e) => setTopic(e.target.value)}
+                value={topic}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
@@ -69,8 +77,8 @@ const AddEvent = () => {
               </label>
               <input
                 type="text"
-                value={content}
                 onChange={(e) => setContent(e.target.value)}
+                value={content}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
@@ -107,9 +115,8 @@ const AddEvent = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              onClick={handleSubmit}
             >
-              Add Event
+              Save
             </button>
           </form>
         </div>
@@ -118,4 +125,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default EditEvent;
