@@ -11,7 +11,7 @@ router.post("/submit", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'f
 router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.editContribution)
 router.get("/getAllContributions", contributionController.getContribution);
 router.get("/getMyContribution", contributionController.getMyContribution);
-router.get("/statistic/:year", contributionController.getStatistic);
+router.get("/statistic", contributionController.getStatistic);
 
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
