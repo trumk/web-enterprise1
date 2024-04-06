@@ -173,14 +173,11 @@ const contributionController = {
   editContribution: async (req, res) => {
     try {
       const contribution = await Contribution.findById(req.params.id);
-      await res.cookie('userId', contribution.userID, {
-        httpOnly: true,
-        secure: false,
-        path: "/",
-        sameSite: "strict"
-    });
       if (!contribution) {
         return res.status(404).send('Contribution not found');
+      }
+      if(req.user.id != contribution.userID && !(req.user.role == 'admin'|| req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')){
+        return res.status(404).json("You do not have permission");
       }
       const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
       const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
@@ -243,15 +240,12 @@ const contributionController = {
   },
   deleteContribution: async (req, res) => {
     try {
-      const conntribution = await Contribution.findById(req.params.id)
-      await res.cookie('userId', contribution.userID, {
-        httpOnly: true,
-        secure: false,
-        path: "/",
-        sameSite: "strict"
-    });
-      if (!conntribution) {
-        return res.status(404).json("conntribution not found");
+      const contribution = await Contribution.findById(req.params.id)
+      if (!contribution) {
+        return res.status(404).json("contribution not found");
+      }
+      if(req.user.id != contribution.userID && !(req.user.role == 'admin'|| req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')){
+        return res.status(404).json("You do not have permission");
       }
       await Contribution.findByIdAndDelete(req.params.id)
       res.status(200).json("Delete Successfully")
