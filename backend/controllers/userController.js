@@ -73,6 +73,10 @@ const profileController = {
   updateProfile: async (req, res) => {
     try {
       const { id } = req.params;
+      const profile = await Profile.findById(id);
+      if(req.user.id != profile.userID && req.user.role != "admin"){
+        return res.status(403).json("You do not have permission");
+      }
       req.body.avatar = req.file.path;
       const updateObject = req.body;
       if (!updateObject.firstName || !updateObject.lastName || !updateObject.birthDay) {
