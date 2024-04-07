@@ -330,7 +330,7 @@ const contributionController = {
         query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .populate({
           path: 'userID',
           select: 'userName -_id'

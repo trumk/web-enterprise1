@@ -178,7 +178,7 @@ async function enrollStudent(req, res) {
     }
 
     if (faculty.enrollKey === req.body.enrollKey) {
-      const result = await Profile.updateOne({ userID: req.user.id }, { facultyID: id }).exec();
+      const result = await Profile.updateOne({ userID: req.user.id }, { $push:{facultyID: id}}).exec();
       if (result.nModified === 0) {
         return res.status(404).json({
           success: false,
