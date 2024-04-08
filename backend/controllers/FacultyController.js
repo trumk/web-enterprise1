@@ -168,7 +168,7 @@ function updateFaculty(req, res) {
 };
 async function enrollStudent(req, res) {
   try {
-    const id = req.cookies.facultyId;
+    const id = req.params.id;
     const faculty = await Faculty.findById(id);
     if (!faculty) {
       return res.status(404).json({
