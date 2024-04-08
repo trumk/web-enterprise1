@@ -15,6 +15,6 @@ router.put("/:facultyId", authorization.verifyManager, FacultyController.updateF
 router.delete("/:facultyId", authorization.verifyManager, FacultyController.deleteFaculty);
 router.post("/search", upload.none(), FacultyController.searchFaculty);
 router.get("/:id", FacultyController.getOneFaculty);
-router.post("/enroll", FacultyController.enrollStudent)
+router.post("/enroll/:id", FacultyController.enrollStudent)
 
 module.exports = router;
