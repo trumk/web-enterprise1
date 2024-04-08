@@ -369,7 +369,7 @@ const contributionController = {
       res.status(500).json({ message: error });
     }
   },
-getStatistic: async (req, res) => {
+  getStatistic: async (req, res) => {
     try {
       //check validate date
         var startDate = new Date(req.body.startDate);
@@ -475,7 +475,37 @@ getStatistic: async (req, res) => {
         console.error("Error fetching faculty statistics:", error);
         res.status(500).json({ message: error.message });
     }
-}
+},
+  getExceptionReports: async (req, res) => {
+    try {
+      const noComments = await Contribution.aggregate([
+        {
+          $match: {
+            comments: { $size: 0 }
+          }
+        }
+      ]);
+      const noCommentsAfter14Days = await Contribution.aggregate([
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: [{ $size: "$comments" }, 0] },
+                { $lt: ["$createdAt", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)] }
+              ]
+            }
+          }
+        }
+      ]);
+  
+      res.status(200).json({
+        noComments,
+        noCommentsAfter14Days
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 };
 
 module.exports = contributionController;
