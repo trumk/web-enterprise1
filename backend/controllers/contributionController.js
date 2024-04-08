@@ -9,6 +9,7 @@ dotenv.config();
 const sanitizeHtml = require('sanitize-html');
 
 
+
 const transporter = nodemailer.createTransport({
   service: 'hotmail',
   auth: {
@@ -20,8 +21,8 @@ const transporter = nodemailer.createTransport({
 const contributionController = {
   submitContribution: async (req, res) => {
     try {
-      const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
-      const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
+      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
       console.log(imagesPaths)
       console.log(filesPaths)
       if (imagesPaths.length === 0) {
@@ -156,11 +157,11 @@ const contributionController = {
           path: 'comments.userID',
           select: 'userName -_id'
         });
-        await res.cookie('userId', contribution.userID, {
-          httpOnly: true,
-          secure: false,
-          path: "/",
-          sameSite: "strict"
+      await res.cookie('userId', contribution.userID, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict"
       });
       if (!contribution) {
         return res.status(404).json({ message: "Contribution not found." });
@@ -176,63 +177,34 @@ const contributionController = {
       if (!contribution) {
         return res.status(404).send('Contribution not found');
       }
-      if(req.user.id != contribution.userID && !(req.user.role == 'admin'|| req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')){
+      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
         return res.status(404).json("You do not have permission");
       }
-      const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
-      const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
-      if (imagesPaths.length === 0) {
-        return res.status(403).json("Image is required");
-      }
-      if (filesPaths.length === 0) {
-        return res.status(403).json("File is required");
-      }
+
+      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+
+      const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
+      const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
+
       if (req.body.title === "") {
         return res.status(403).json("Title is not null");
       }
       if (req.body.content === "") {
         return res.status(403).json("Content is not null");
       }
-      if (imagesPaths && !filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            image: imagesPaths,
-          },
-          { new: true });
-        res.status(201).json(newContribution);
-      }
-      if (!imagesPaths && filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            file: filesPaths
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
-      if (imagesPaths && filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            image: imagesPaths,
-            file: filesPaths
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
-      if (!imagesPaths && !filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
+
+      const updatedImages = [...imagesPaths, ...existingImages];
+      const updatedFiles = [...filesPaths, ...existingFiles];
+
+      const updatedContribution = await Contribution.findByIdAndUpdate(req.params.id, {
+        title: req.body.title,
+        content: req.body.content,
+        image: updatedImages.length > 0 ? updatedImages : contribution.image,
+        file: updatedFiles.length > 0 ? updatedFiles : contribution.file 
+      }, { new: true });
+
+      res.status(200).json(updatedContribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message, ...error });
@@ -244,7 +216,7 @@ const contributionController = {
       if (!contribution) {
         return res.status(404).json("contribution not found");
       }
-      if(req.user.id != contribution.userID && !(req.user.role == 'admin'|| req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')){
+      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
         return res.status(404).json("You do not have permission");
       }
       await Contribution.findByIdAndDelete(req.params.id)
@@ -397,7 +369,7 @@ const contributionController = {
       res.status(500).json({ message: error });
     }
   },
-  getStatistic: async (req, res) => {
+getStatistic: async (req, res) => {
     try {
       //check validate date
         var startDate = new Date(req.body.startDate);
@@ -503,37 +475,7 @@ const contributionController = {
         console.error("Error fetching faculty statistics:", error);
         res.status(500).json({ message: error.message });
     }
-},
-  getExceptionReports: async (req, res) => {
-    try {
-      const noComments = await Contribution.aggregate([
-        {
-          $match: {
-            comments: { $size: 0 }
-          }
-        }
-      ]);
-      const noCommentsAfter14Days = await Contribution.aggregate([
-        {
-          $match: {
-            $expr: {
-              $and: [
-                { $eq: [{ $size: "$comments" }, 0] },
-                { $lt: ["$createdAt", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)] }
-              ]
-            }
-          }
-        }
-      ]);
-  
-      res.status(200).json({
-        noComments,
-        noCommentsAfter14Days
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
+}
 };
 
 module.exports = contributionController;
