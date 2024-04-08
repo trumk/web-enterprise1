@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addFaculty } from "../../../redux/apiRequest"; // import action for adding faculty
+import { addFaculty } from "../../../redux/apiRequest";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";

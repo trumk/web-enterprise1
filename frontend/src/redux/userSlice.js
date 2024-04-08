@@ -13,6 +13,11 @@ const userSlice = createSlice({
             isFetching: false,
             error: false,
         },
+        editProfile: {
+            currentProfile: null,
+            isFetching: false,
+            error: false,
+        }
     },
     reducers: {
         getUsersStart: (state) => {
@@ -39,6 +44,18 @@ const userSlice = createSlice({
             state.user.isFetching = false;
             state.user.error = true;
         },
+        editProfileStart: (state) => { 
+            state.editProfile.isFetching = true;
+        },
+        editProfileSuccess: (state, action) => {
+            state.editProfile.isFetching = false;
+            state.editProfile.currentProfile = action.payload;
+            state.editProfile.error = false;
+        },
+        editProfileFailed: (state) => {
+            state.editProfile.isFetching = false;
+            state.editProfile.error = true;
+        }
     }
 });
 
@@ -49,6 +66,9 @@ export const {
     getSelfStart,
     getSelfSuccess,
     getSelfFailed,
+    editProfileStart,
+    editProfileSuccess,
+    editProfileFailed
 } = userSlice.actions;
 
 export default userSlice.reducer;

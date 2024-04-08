@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice"
 import userReducer from "./userSlice"
 import facultyReducer from "./facultySlice"
+import eventReducer from "./eventSlice"
 import {thunk} from "redux-thunk";
 import {
     persistStore,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     auth: authReducer,
     user: userReducer,
     faculty: facultyReducer,
+    event: eventReducer,
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

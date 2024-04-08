@@ -23,6 +23,7 @@ const EditFaculty = () => {
     }
   }, [dispatch, id, user]);
 
+  console.log(facultyData);
   useEffect(() => {
     if (facultyData) {
       setFacultyName(facultyData.Faculty.facultyName || "");
