@@ -40,7 +40,7 @@ export const UserProfile = () => {
           Last Name:  {profile.lastName}
         </Typography>
         <Typography variant="h5" color="blue-gray" className="mb-2 font-medium">
-          Birthday: {format(profile?.birthDay, 'dd/MM/yyyy')}
+          Birthday: {profile?.birthDay ? format(new Date(profile?.birthDay), 'dd/MM/yyyy') : 'N/A'}
           </Typography>
           <Typography variant='h5' color="blue-gray" className="mb-2 font-medium">
             Description: {profile?.description}
