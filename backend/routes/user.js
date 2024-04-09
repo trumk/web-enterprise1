@@ -8,11 +8,13 @@ router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers
 
 router.get("/profile", authorization.verifyToken, profileController.readProfile);
 
-router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
+router.delete("/delete/:id", authorization.verifyAdmin, userController.deleteUser)
 
 router.get("/:userID", profileController.readProfile);
 
-router.put("/:id", authorization.verifyUserOrAdmin, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
+router.put("/:id", authorization.verifyToken, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
+
+router.post("/setRole", authorization.verifyAdmin, userController.setRoleUser);
 
 module.exports = router;
 

@@ -156,6 +156,7 @@ function getOneEvent(req, res) {
     sameSite: "strict",
   });
   Event.findById(id)
+  .populate('facultyId', 'facultyName')
     .then(event => {
       if (!event) {
         return res.status(404).json({
@@ -177,6 +178,7 @@ function getOneEvent(req, res) {
       });
     });
 };
+
 
 function updateEvent(req, res) {
   const id = req.params.eventId;

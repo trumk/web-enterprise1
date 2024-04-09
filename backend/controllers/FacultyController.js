@@ -82,7 +82,9 @@ async function getOneFaculty(req, res) {
   const profile = await Profile.findOne({ userID: req.user.id });
   const facultyID = String(profile?.facultyID);
   const role = req.user.role;
+
   if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== id) {
+
     return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
   }
   Faculty.findById(id)
@@ -107,6 +109,7 @@ async function getOneFaculty(req, res) {
       });
     });
 };
+
 
 async function searchFaculty(req, res) {
   try {
@@ -168,7 +171,7 @@ function updateFaculty(req, res) {
 };
 async function enrollStudent(req, res) {
   try {
-    const id = req.cookies.facultyId;
+    const id = req.params.id;
     const faculty = await Faculty.findById(id);
     if (!faculty) {
       return res.status(404).json({
@@ -178,7 +181,7 @@ async function enrollStudent(req, res) {
     }
 
     if (faculty.enrollKey === req.body.enrollKey) {
-      const result = await Profile.updateOne({ userID: req.user.id }, { facultyID: id }).exec();
+      const result = await Profile.updateOne({ userID: req.user.id }, { $push:{facultyID: id}}).exec();
       if (result.nModified === 0) {
         return res.status(404).json({
           success: false,

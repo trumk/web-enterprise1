@@ -23,11 +23,11 @@ const profileSchema = new Schema({
         type : String,
         default: null
     },
-    facultyID:{
+    facultyID:[{
         type: Schema.Types.ObjectId,
         ref: "Faculty",
         default: null
-    },
+    }],
     userID:{
         type: Schema.Types.ObjectId,
         ref: "User",

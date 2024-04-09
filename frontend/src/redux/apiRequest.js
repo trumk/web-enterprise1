@@ -1,5 +1,8 @@
 import axios from "axios";
 import {
+  changePasswordFailed,
+  changePasswordStart,
+  changePasswordSuccess,
   loginFailed,
   loginStart,
   loginSuccess,
@@ -14,6 +17,9 @@ import {
   verifySuccess,
 } from "./authSlice";
 import {
+  editProfileFailed,
+  editProfileStart,
+  editProfileSuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
@@ -37,14 +43,42 @@ import {
   deleteFacultyStart,
   deleteFacultySuccess,
   deleteFacultyFailed,
+  getEventsByFacultyStart,
+  getEventsByFacultySuccess,
+  getEventsByFacultyFailed,
   searchFacultyStart,
   searchFacultySuccess,
   searchFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { 
+  editEventStart,
+  editEventSuccess,
+  editEventFailed,
+  addEventFailed, 
+  addEventStart, 
+  addEventSuccess, 
+  getEventFailed, 
+  getEventStart, 
+  getEventSuccess, 
+  getEventsFailed, 
+  getEventsStart, 
+  getEventsSuccess,
+  deleteEventStart,
+  deleteEventSuccess,
+  deleteEventFailed, 
+} from "./eventSlice";
+import { 
+  getContributionFailed,
+  getContributionStart,
+  getContributionSuccess,
+  getContributionsFailed, 
+  getContributionsStart, 
+  getContributionsSuccess 
+} from "./contributionSlice";
 
 const BACKEND_URL = "http://localhost:5503";
-
+//auth
 export const loginUser = async (user, dispatch, navigate) => {
   dispatch(loginStart());
   try {
@@ -69,12 +103,12 @@ export const registerUser = async (user, dispatch, handleSuccess) => {
 export const verifyAccount = async (otp, dispatch, navigate) => {
   dispatch(verifyStart());
   try {
-    await axios.post(`${BACKEND_URL}/verify`, otp);
-    dispatch(verifySuccess());
+    const res = await axios.post(`${BACKEND_URL}/verify`, otp);
+    dispatch(verifySuccess(res.data));
     navigate("/login");
   } catch (err) {
     dispatch(verifyFailed());
-    console.error("Verification error:", err);
+    console.error("Verification error:", err.respone.data);
   }
 };
 
@@ -93,7 +127,7 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     console.error("Logout error:", err);
   }
 };
-
+//user
 export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
   dispatch(getUsersStart());
   try {
@@ -115,9 +149,39 @@ export const getSelf = (id) => async (dispatch) => {
     dispatch(getSelfSuccess(res.data));
   } catch (err) {
     dispatch(getSelfFailed());
+    console.log(err)
   }
 };
+export const changeUserPassword = async (id, accessToken, password, dispatch) => {
+  dispatch(changePasswordStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(changePasswordSuccess(res.data));
+  } catch (err) {
+    dispatch(changePasswordFailed())
+  }
+}
 
+export const editProfile = (id, userId, accessToken, profile, navigate) => async (dispatch) => {
+  dispatch(editProfileStart())
+  try {
+    const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editProfileSuccess(res.data));
+    navigate(`/user/${userId}/profile`)
+  } catch (err) {
+    dispatch(editProfileFailed())
+    console.log(err)
+  }
+}
+//faculty
 export const getAllFaculties = (accessToken) => async (dispatch) => {
   dispatch(getFacultiesStart());
   try {
@@ -134,7 +198,7 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
 
 export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getFacultyStart());
-  try{
+  try {
     const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -142,37 +206,37 @@ export const getOneFaculty = (id, accessToken) => async (dispatch) => {
     });
     dispatch(getFacultySuccess(res.data));
   }
-  catch(err){
+  catch (err) {
     dispatch(getFacultyFailed())
   }
 }
 
-export const addFaculty = createAsyncThunk( "faculty/add", async (facultyData, { getState, dispatch}) => {
-    dispatch(addFacultyStart());
-    try {
-      const { accessToken } = getState().auth.login.currentUser;
-      const response = await axios.post(
-        `${BACKEND_URL}/faculty/add`,
-        facultyData,
-        {
-          headers: {
-            token: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      dispatch(addFacultySuccess(response.data));
-      return response.data;
-    } catch (error) {
-      dispatch(addFacultyFailed());
-      console.error(error);
-      throw error; 
-    }
+export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { getState, dispatch }) => {
+  dispatch(addFacultyStart());
+  try {
+    const { accessToken } = getState().auth.login.currentUser;
+    const response = await axios.post(
+      `${BACKEND_URL}/faculty/add`,
+      facultyData,
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(addFacultySuccess(response.data));
+    return response.data;
+  } catch (error) {
+    dispatch(addFacultyFailed());
+    console.error(error);
+    throw error;
   }
+}
 );
 
 export const editFaculty = (id, faculty, accessToken, navigate) => async (dispatch) => {
   dispatch(editFacultyStart());
-  try{
+  try {
     const res = await axios.put(`${BACKEND_URL}/faculty/${id}`, faculty, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -181,14 +245,14 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
     dispatch(editFacultySuccess(res.data));
     navigate("/admin/faculty")
   }
-  catch(error){
+  catch (error) {
     dispatch(editFacultyFailed())
     console.log(error)
   }
 }
 
 export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => {
-  dispatch(deleteFacultyStart()); 
+  dispatch(deleteFacultyStart());
   try {
     await axios.delete(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
@@ -202,6 +266,22 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
     console.log(error);
   }
 };
+
+export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
+  dispatch(getEventsByFacultyStart());
+  try{
+    const res = await axios.get(`${BACKEND_URL}/event/${id}/events`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventsByFacultySuccess(res.data));
+  } catch(err) {
+    dispatch(getEventsByFacultyFailed());
+    console.log(err);
+  }
+}
+
 
 export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
   dispatch(searchFacultyStart());
@@ -220,8 +300,111 @@ export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
   }
 };
 
+//event
+export const getAllEvents = (accessToken) => async (dispatch) => {
+  dispatch(getEventsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/event/events`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventsSuccess(res.data));
+  } catch (err) {
+    dispatch(getEventsFailed());
+  }
+};
+export const addEvent = (accessToken, event) => async (dispatch) => {
+  dispatch(addEventStart());
+  try {
+    await axios.post(`${BACKEND_URL}/event/create`, event, {
+      headers: {
+        token: `Bearer ${accessToken}`
+      }
+    });
+    dispatch(addEventSuccess());
+  } catch (error) {
+    dispatch(addEventFailed());
+    console.error(error);
+    throw error;
+  }
+}
 
+export const getOneEvent = (id, accessToken) => async (dispatch) => {
+  dispatch(getEventStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/event/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getEventSuccess(res.data));
+  }
+  catch (err) {
+    dispatch(getEventFailed())
+    console.log(err)
+  }
+}
 
+export const editEvent = (id, event, accessToken, navigate) => async (dispatch) => {
+  dispatch(editEventStart());
+  try {
+    const res = await axios.put(`${BACKEND_URL}/event/update/${id}`, event, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editEventSuccess(res.data));
+    navigate("/admin/event")
+  }
+  catch (error) {
+    dispatch(editEventFailed())
+    console.log(error)
+  }
+}
 
+export const deleteThisEvent = (id, accessToken, navigate) => async (dispatch) => {
+  dispatch(deleteEventStart());
+  try {
+    await axios.delete(`${BACKEND_URL}/event/delete/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(deleteEventSuccess());
+    navigate("/admin/event")
+  } catch (error) {
+    dispatch(deleteEventFailed());
+    console.log(error);
+  }
+}
 
+//contribution
+export const getAllContributions = (accessToken) => async (dispatch) => {
+  dispatch(getContributionsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getAllContributions`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionsSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionsFailed());
+  }
+};
 
+export const getOneContribution = (id, accessToken) => async (dispatch) => {
+  dispatch(getContributionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionSuccess(res.data));
+  }
+  catch (err) {
+    dispatch(getContributionFailed())
+  }
+}

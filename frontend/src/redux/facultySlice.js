@@ -25,6 +25,11 @@ const facultySlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getEventsByFaculty: {
+      filterEvent: null,
+      isFetching: false,
+      error: false
+    },
     searchFaculty: { 
       filterFaculty: null,
       isFetching: false,
@@ -92,6 +97,18 @@ const facultySlice = createSlice({
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = true;
     },
+    getEventsByFacultyStart: (state) => {
+      state.getEventsByFaculty.isFetching = true;
+    },
+    getEventsByFacultySuccess: (state, action) => {
+      state.getEventsByFaculty.filterEvent = action.payload
+      state.getEventsByFaculty.isFetching = false;
+      state.getEventsByFaculty.error = false;
+    },
+    getEventsByFacultyFailed: (state) => {
+      state.getEventsByFaculty.isFetching = false;
+      state.getEventsByFaculty.error = true;
+    },
     searchFacultyStart: (state) => {
       state.searchFaculty.isFetching = true;
       state.searchFaculty.error = false;
@@ -123,6 +140,9 @@ export const {
   deleteFacultyStart,
   deleteFacultySuccess,
   deleteFacultyFailed,
+  getEventsByFacultyStart,
+  getEventsByFacultySuccess,
+  getEventsByFacultyFailed,
   searchFacultyStart,
   searchFacultySuccess,
   searchFacultyFailed

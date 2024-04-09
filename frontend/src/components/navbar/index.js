@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import {
   Navbar,
-  MobileNav,
   Typography,
   Button,
   IconButton,
@@ -16,7 +15,7 @@ import { ChevronDownIcon, PowerOff, UserCircleIcon } from "lucide-react";
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { createAxios } from "../../redux/createInstance";
+//import { createAxios } from "../../redux/createInstance";
 import {jwtDecode} from "jwt-decode";
 import { loginSuccess } from "../../redux/authSlice";
 import { getSelf, logout } from "../../redux/apiRequest";
@@ -27,7 +26,7 @@ export default function NavbarDefault() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let axiosJWT = createAxios(user, dispatch, loginSuccess);
+  let axiosJWT = axios.create();
   const id = user?._id;
   const accessToken = user?.accessToken;
 
@@ -49,8 +48,9 @@ export default function NavbarDefault() {
       action: handleLogout,
     },
   ];
-  const isAdmin = user && user.role == "admin";
-  const isUser = user && user.role == "user";
+  const isAdmin = user && user.role === "admin";
+  const isUser = user && user.role === "user";
+  //const isMarketingCoordinator = user && user.role == "marketing coordinator";
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -62,7 +62,36 @@ export default function NavbarDefault() {
       dispatch(getSelf(user._id));
     }
   }, [dispatch, user]);
+  const refreshToken = async () => {
+    try{
+      const res = await axios.post("http://localhost:5503/refresh", 
+      {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const decodedToken = jwtDecode(user.accessToken);
+      let date = new Date();
+      if(decodedToken.exp < date.getTime() / 1000) {
+        const data = refreshToken();
+        const refreshUser = {
+          ...user,
+          accessToken: data.accessToken,
+        };
+        dispatch(loginSuccess(refreshUser));
+        config.headers["token"] = `Bearer ${data.accessToken}`;
+      }
+      return config;
+    }, (err) => {
+      return Promise.reject(err);
+    }
 
+  )
   const profile = useSelector((state) => state.user.user?.user);
   return (
     <div className="max-h-[768px] w-full">
@@ -111,7 +140,7 @@ export default function NavbarDefault() {
                     size="sm"
                     className="hidden lg:inline-block"
                   >
-                    <span>Exit</span>
+                    <span>Admin mode</span>
                   </Button>
                 </Link>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -127,7 +156,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile?.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}
@@ -140,6 +169,7 @@ export default function NavbarDefault() {
                     {profileMenuItems.map(({ label, icon, href, action }, key) => {
                       const isLastItem = key === profileMenuItems.length - 1;
                       return (
+                        <Link to={href}>
                         <MenuItem
                           key={label}
                           onClick={()=> {
@@ -155,7 +185,6 @@ export default function NavbarDefault() {
                             className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
                             strokeWidth: 2,
                           })}
-                          <Link to href>
                             <Typography
                               as="span"
                               variant="small"
@@ -164,13 +193,12 @@ export default function NavbarDefault() {
                             >
                               {label}
                             </Typography>
-                          </Link>
                         </MenuItem>
+                        </Link>
                       );
                     })}
                   </MenuList>
                 </Menu>
-                <Button onClick={handleLogout}>Log Out</Button>
                 </>
             ) : isUser && (
               <>

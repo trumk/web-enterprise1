@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import NavbarDefault from '../../../components/navbar'
 import { Button, Card, CardBody, CardHeader, Typography } from '@material-tailwind/react'
-import logo from '../../../components/assets/logo.jpg'
 import DefaultSidebar from '../components/sidebar'
 import { useDispatch, useSelector } from 'react-redux'
 import { getSelf } from '../../../redux/apiRequest'
@@ -41,7 +40,7 @@ export const UserProfile = () => {
           Last Name:  {profile.lastName}
         </Typography>
         <Typography variant="h5" color="blue-gray" className="mb-2 font-medium">
-          Birthday: {format(profile?.birthDay, 'dd/MM/yyyy')}
+          Birthday: {profile?.birthDay ? format(new Date(profile?.birthDay), 'dd/MM/yyyy') : 'N/A'}
           </Typography>
           <Typography variant='h5' color="blue-gray" className="mb-2 font-medium">
             Description: {profile?.description}
