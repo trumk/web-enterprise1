@@ -99,7 +99,7 @@ export const Contribution = () => {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {contribution.title}
+                              {contribution?.title}
                             </Typography>
                           </Link>
                         </td>
@@ -110,21 +110,21 @@ export const Contribution = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {contribution.content}
+                            {contribution?.content}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
-                          <img src={contribution.image} alt="contribution" className="h-[80px]" />
+                          <img src={contribution?.image} alt="contribution" className="h-[80px]" />
 
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                           <Badge 
                           className='w-[100px]'
-                            content={contribution.isPublished === true ? "Published" : "Not Published"}
-                            color={contribution.isPublished === true ? "green" : "red"}
+                            content={contribution?.isPublished === true ? "Published" : "Not Published"}
+                            color={contribution?.isPublished === true ? "green" : "red"}
 
                           >
-                            {contribution.isPublished}
+                            {contribution?.isPublished}
                           </Badge>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
@@ -133,7 +133,7 @@ export const Contribution = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {contribution.userID.userName}
+                            {contribution?.userID.userName}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">

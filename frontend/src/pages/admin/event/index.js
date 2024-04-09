@@ -20,7 +20,6 @@ export const Event = () => {
   }, [user, dispatch]);
   const details = events?.events;
   console.log(details)
-  
   return (
     <>
       <NavbarDefault />

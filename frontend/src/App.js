@@ -23,6 +23,7 @@ import { EventDetail } from './pages/admin/event/[id]/detail';
 import EditEvent from './pages/admin/event/[id]/edit';
 import { Contribution } from './pages/admin/contribution';
 import { ContributionDetail } from './pages/admin/contribution/[id]/detail';
+import { User } from './pages/admin/user';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <Route path="/admin/event/:id/edit" element={<EditEvent/>}/>
         <Route path="/admin/contribution" element={<Contribution />} />
         <Route path='/admin/contribution/:id' element={<ContributionDetail />} />
+        <Route path='/admin/user/' element={<User />} />
       </Routes>
     </BrowserRouter>
     </>

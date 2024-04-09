@@ -127,18 +127,19 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     console.error("Logout error:", err);
   }
 };
-//user
-export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
+
+export const getAllUsers = (accessToken) => async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/user/getAllUsers`, {
+    const res = await axios.get(`${BACKEND_URL}/user/getAllUsers`, {
       headers: {
-        token: `Bearer  + ${accessToken}`,
+        token: `Bearer ${accessToken}`,
       },
     });
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
     dispatch(getUsersFailed());
+    console.log(err);
   }
 };
 
