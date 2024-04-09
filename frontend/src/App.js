@@ -23,6 +23,9 @@ import { EventDetail } from './pages/admin/event/[id]/detail';
 import EditEvent from './pages/admin/event/[id]/edit';
 import { Contribution } from './pages/admin/contribution';
 import { ContributionDetail } from './pages/admin/contribution/[id]/detail';
+import { EnrollFaculty } from './pages/faculty/[id]/enroll';
+import { FacultyMainPage } from './pages/faculty/[id]';
+import { EventInfo } from './pages/faculty/[id]/event/[eventId]';
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/terms" element={<Term />} />
+        <Route path="/faculty/:id/enroll" element={<EnrollFaculty />} />
+        <Route path="/faculty/:id" element={<FacultyMainPage />} />
+        <Route path="faculty/:id/event/:id" element={<EventInfo />} />
         <Route path="/admin/users" element={<ManageUser />} />
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />

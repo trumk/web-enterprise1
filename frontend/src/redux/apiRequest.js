@@ -20,6 +20,9 @@ import {
   editProfileFailed,
   editProfileStart,
   editProfileSuccess,
+  enrollFacultyFailed,
+  enrollFacultyStart,
+  enrollFacultySuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
@@ -72,6 +75,9 @@ import {
   getContributionFailed,
   getContributionStart,
   getContributionSuccess,
+  getContributionsByEventFailed,
+  getContributionsByEventStart,
+  getContributionsByEventSuccess,
   getContributionsFailed, 
   getContributionsStart, 
   getContributionsSuccess 
@@ -152,6 +158,7 @@ export const getSelf = (id) => async (dispatch) => {
     console.log(err)
   }
 };
+
 export const changeUserPassword = async (id, accessToken, password, dispatch) => {
   dispatch(changePasswordStart());
   try {
@@ -178,6 +185,22 @@ export const editProfile = (id, userId, accessToken, profile, navigate) => async
     navigate(`/user/${userId}/profile`)
   } catch (err) {
     dispatch(editProfileFailed())
+    console.log(err)
+  }
+}
+
+export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) => {
+  dispatch(enrollFacultyStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/faculty/enroll/${id}`, key, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(enrollFacultySuccess(res.data));
+    navigate(`/faculty/${id}`)
+  } catch (err) {
+    dispatch(enrollFacultyFailed());
     console.log(err)
   }
 }
@@ -406,5 +429,20 @@ export const getOneContribution = (id, accessToken) => async (dispatch) => {
   }
   catch (err) {
     dispatch(getContributionFailed())
+  }
+}
+
+export const allContributionsByEventData = (id, accessToken) => async (dispatch) => {
+  dispatch(getContributionsByEventStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getAllContributionsByEvent/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionsByEventSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionsByEventFailed());
+    console.log(err);
   }
 }

@@ -97,60 +97,60 @@ export const Faculty = () => {
               </thead>
               <tbody>
                 {
-                faculties ? (
-                  faculties.Faculty && faculties.Faculty.length > 0 ? (
-                    faculties.Faculty.map((faculty, index) => (
-                      <tr key={index}>
-                        <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                          <Link to={`/admin/faculty/${faculty._id}`}>
+                  faculties ? (
+                    faculties.Faculty && faculties.Faculty.length > 0 ? (
+                      faculties.Faculty.map((faculty, index) => (
+                        <tr key={index}>
+                          <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                            <Link to={`/admin/faculty/${faculty._id}`}>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {faculty.facultyName}
+                              </Typography>
+                            </Link>
+                          </td>
+                          <td className="p-4 border-b border-blue-gray-50">
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {faculty.facultyName}
+                              {faculty.descActive}
                             </Typography>
-                          </Link>
-                        </td>
-                        <td className="p-4 border-b border-blue-gray-50">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {faculty.descActive}
-                          </Typography>
-                        </td>
-                        <td className="p-4 border-b border-blue-gray-50 w-20">
-                          <Select label="Select action below">
-                            <Option>
-                              <Link to={`/admin/faculty/${faculty._id}`}>
-                                Detail
-                              </Link>
-                            </Option>
-                            <Option>
-                              <Link to={`/admin/faculty/${faculty._id}/edit`}>
-                                Edit
-                              </Link>
-                            </Option>
-                          </Select>
+                          </td>
+                          <td className="p-4 border-b border-blue-gray-50 w-20">
+                            <Select label="Select action below">
+                              <Option>
+                                <Link to={`/admin/faculty/${faculty._id}`}>
+                                  Detail
+                                </Link>
+                              </Option>
+                              <Option>
+                                <Link to={`/admin/faculty/${faculty._id}/edit`}>
+                                  Edit
+                                </Link>
+                              </Option>
+                            </Select>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={3} className="p-4">
+                          No faculties found
                         </td>
                       </tr>
-                    ))
+                    )
                   ) : (
                     <tr>
                       <td colSpan={3} className="p-4">
-                        No faculties found
+                        Loading...
                       </td>
                     </tr>
-                  )
-                ) : (
-                  <tr>
-                    <td colSpan={3} className="p-4">
-                      Loading...
-                    </td>
-                  </tr>
-                )}
+                  )}
               </tbody>
             </table>
           </Card>
