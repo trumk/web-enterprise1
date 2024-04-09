@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { format } from "date-fns";
+import { Preview } from "../../../../components/manage/preview";
 
 
 export const EventDetail = () => {
@@ -53,16 +54,17 @@ export const EventDetail = () => {
               </CardHeader>
               <CardBody className="">
                 <Typography variant="h6" className="ml-3">
-                  Topic: {detail?.content}
+                  Content: 
+                </Typography>
+                <Preview value={detail?.content} />
+                <Typography variant="h6" className="ml-3">
+                  Closure Date: {detail?.closureDate ? format(new Date(detail?.closureDate), 'MMMM dd,yyyy') : 'N/A'}
                 </Typography>
                 <Typography variant="h6" className="ml-3">
-                  Closure Date: {format(detail?.closureDate, 'MMMM dd,yyyy')}
+                  Final Date: {detail?.finalDate ? format(new Date(detail?.finalDate), 'MMMM dd,yyyy') : 'N/A'}
                 </Typography>
                 <Typography variant="h6" className="ml-3">
-                  Final Date: {format(detail?.finalDate, 'MMMM dd,yyyy')}
-                </Typography>
-                <Typography variant="h6" className="ml-3">
-                  Create Date: {format(detail?.createEvent, 'MMMM dd,yyyy')}
+                  Create Date: {detail?.createEvent ? format(new Date(detail?.createEvent), 'MMMM dd,yyyy') : 'N/A'}
                 </Typography>
                 <Typography variant="h6" className="ml-3">
                   Faculty: {detail?.facultyId.facultyName}

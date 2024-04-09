@@ -68,6 +68,14 @@ import {
   deleteEventSuccess,
   deleteEventFailed, 
 } from "./eventSlice";
+import { 
+  getContributionFailed,
+  getContributionStart,
+  getContributionSuccess,
+  getContributionsFailed, 
+  getContributionsStart, 
+  getContributionsSuccess 
+} from "./contributionSlice";
 
 const BACKEND_URL = "http://localhost:5503";
 //auth
@@ -95,12 +103,12 @@ export const registerUser = async (user, dispatch, handleSuccess) => {
 export const verifyAccount = async (otp, dispatch, navigate) => {
   dispatch(verifyStart());
   try {
-    await axios.post(`${BACKEND_URL}/verify`, otp);
-    dispatch(verifySuccess());
+    const res = await axios.post(`${BACKEND_URL}/verify`, otp);
+    dispatch(verifySuccess(res.data));
     navigate("/login");
   } catch (err) {
     dispatch(verifyFailed());
-    console.error("Verification error:", err);
+    console.error("Verification error:", err.respone.data);
   }
 };
 
@@ -158,7 +166,7 @@ export const changeUserPassword = async (id, accessToken, password, dispatch) =>
   }
 }
 
-export const editProfile = (id, accessToken, profile, navigate) => async (dispatch) => {
+export const editProfile = (id, userId, accessToken, profile, navigate) => async (dispatch) => {
   dispatch(editProfileStart())
   try {
     const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
@@ -167,7 +175,7 @@ export const editProfile = (id, accessToken, profile, navigate) => async (dispat
       },
     });
     dispatch(editProfileSuccess(res.data));
-    navigate(`user/${id}/profile`)
+    navigate(`/user/${userId}/profile`)
   } catch (err) {
     dispatch(editProfileFailed())
     console.log(err)
@@ -273,6 +281,25 @@ export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
     console.log(err);
   }
 }
+
+
+export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
+  dispatch(searchFacultyStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
+      keyword:searchTerm,
+    }, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(searchFacultySuccess(response.data));
+  } catch (error) {
+    dispatch(searchFacultyFailed(error.message));
+    console.log(error)
+  }
+};
+
 //event
 export const getAllEvents = (accessToken) => async (dispatch) => {
   dispatch(getEventsStart());
@@ -315,6 +342,7 @@ export const getOneEvent = (id, accessToken) => async (dispatch) => {
   }
   catch (err) {
     dispatch(getEventFailed())
+    console.log(err)
   }
 }
 
@@ -350,23 +378,33 @@ export const deleteThisEvent = (id, accessToken, navigate) => async (dispatch) =
     console.log(error);
   }
 }
-export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
-  dispatch(searchFacultyStart());
+
+//contribution
+export const getAllContributions = (accessToken) => async (dispatch) => {
+  dispatch(getContributionsStart());
   try {
-    const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
-      keyword:searchTerm,
-    }, {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getAllContributions`, {
       headers: {
-        token: `Bearer ${accessToken}`, 
+        token: `Bearer ${accessToken}`,
       },
     });
-    dispatch(searchFacultySuccess(response.data));
-  } catch (error) {
-    dispatch(searchFacultyFailed(error.message));
-    console.log(error)
+    dispatch(getContributionsSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionsFailed());
   }
 };
 
-
-
-
+export const getOneContribution = (id, accessToken) => async (dispatch) => {
+  dispatch(getContributionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionSuccess(res.data));
+  }
+  catch (err) {
+    dispatch(getContributionFailed())
+  }
+}

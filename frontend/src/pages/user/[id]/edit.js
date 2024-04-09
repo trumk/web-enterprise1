@@ -10,7 +10,6 @@ import { ChevronLeftIcon, ChevronRightIcon, } from 'lucide-react'
 import { editProfile, getSelf } from '../../../redux/apiRequest'
 
 export const EditProfile = () => {
-  const [date, setDate] = useState();
   const user = useSelector((state) => state.auth.login.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -26,46 +25,36 @@ export const EditProfile = () => {
   const [lastName, setLastName] = useState('');
   const [birthDay, setBirthDay] = useState(new Date());
   const [description, setDescription] = useState('');
-  const [avatar, setAvatar] = useState('');
- 
+  const [avatar, setAvatar] = useState(profile.avatar);
 
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-  let base64Avatar;
-  if (avatar instanceof File) {
-    base64Avatar = fileToBase64(avatar);
-  }
-  const editedProfile = {
-    firstName: firstName,
-    lastName: lastName,
-    birthDay: birthDay,
-    avatar: base64Avatar || avatar,
-    description: description,
-  }
-  console.log(avatar)
+ 
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.firstName || '');
+      setLastName(profile.lastName || '');
+      setBirthDay(profile.birthDay ? new Date(profile.birthDay) : new Date());
+      setDescription(profile.description || '');
+    }
+  }, [profile]);
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    setAvatar(file);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let base64Avatar;
-  if (avatar instanceof File) {
-    base64Avatar = await fileToBase64(avatar);
-  }
-    const editedProfile = {
-      firstName: firstName,
-      lastName: lastName,
-      birthDay: birthDay,
-      avatar: base64Avatar || avatar,
-      description: description,
+  
+    const editedProfile = new FormData();
+    editedProfile.append("firstName", firstName);
+    editedProfile.append("lastName", lastName);
+    editedProfile.append("birthDay", birthDay);
+    if (avatar) {
+      editedProfile.append("avatar", avatar);
     }
-    console.log(editedProfile)
-    dispatch(editProfile(profile._id, user.accessToken, editedProfile, dispatch, navigate))
-  }
+    editedProfile.append("description", description);
+
+  
+    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));  
+  };
   return (
     <>
       <NavbarDefault />
@@ -84,6 +73,7 @@ export const EditProfile = () => {
                   </Typography>
                   <Input
                     size="lg"
+                    value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
@@ -95,6 +85,7 @@ export const EditProfile = () => {
                   </Typography>
                   <Input
                     size="lg"
+                    value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                     labelProps={{
@@ -112,14 +103,14 @@ export const EditProfile = () => {
                         labelProps={{
                           className: "before:content-none after:content-none",
                         }}
-                        value={format(birthDay, 'MMMM, dd, yyyy')} // Add this line
+                        value={format(birthDay, 'MMMM, dd, yyyy')}
                         onChange={(e) => setBirthDay(new Date(e.target.value))}
                       />
                     </PopoverHandler>
                     <PopoverContent>
                       <DayPicker
                         mode="single"
-                        selected={date}
+                        selected={birthDay}
                         onSelect={setBirthDay}
                         showOutsideDays
                         className="border-0"
@@ -164,15 +155,16 @@ export const EditProfile = () => {
                   </Typography>
                   <div className="p-4 flex flex-col items-center gap-2 bg-violet-50 text-violet-500 rounded-lg hover:bg-violet-100 cursor-pointer border">
                     <div className="">
-                      <Input type="file" className="" onChange={(e) => setAvatar(e.target.files[0])} />
-                      <img src={profile.avatar} alt="User avatar" className="h-24" />
+                      <input type="file" className="" onChange={handleImageUpload} />
+                      <img src={profile.avatar} alt="User avatar" className="h-24 mt-2" />
                     </div>
 
                   </div>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Description
                   </Typography>
-                  <Textarea label="Something about you"
+                  <Textarea
+                  value={description}
                     onChange={(e) => setDescription(e.target.value)} />
                   <Button className="mt-6" fullWidth onClick={handleSubmit}>
                     Save

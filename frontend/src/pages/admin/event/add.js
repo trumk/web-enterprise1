@@ -6,6 +6,7 @@ import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
 import DatePicker from "../../../components/manage/date-picker";
 import { Select, Option } from "@material-tailwind/react";
+import { Editor } from "../../../components/manage/editor";
 
 const AddEvent = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -20,7 +21,7 @@ const AddEvent = () => {
 
   const faculties = useSelector((state) => state.faculty.faculties.allFaculties)
   const selectFaculty = faculties.Faculty
-  console.log(faculty)
+  console.log(content)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,10 +68,9 @@ const AddEvent = () => {
               <label className="block text-md font-medium text-gray-700">
                 Content:
               </label>
-              <input
-                type="text"
+              <Editor
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={setContent}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
