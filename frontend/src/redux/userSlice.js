@@ -55,6 +55,18 @@ const userSlice = createSlice({
         editProfileFailed: (state) => {
             state.editProfile.isFetching = false;
             state.editProfile.error = true;
+        },
+        setRoleStart: (state) => {
+            state.user.isFetching = true;
+        },
+        setRoleSuccess: (state, action) => {
+            state.user.isFetching = false;
+            state.user.user = action.payload;
+            state.user.error = false;
+        },
+        setRoleFailed: (state) => {
+            state.user.isFetching = false;
+            state.user.error = true;
         }
     }
 });
@@ -68,7 +80,10 @@ export const {
     getSelfFailed,
     editProfileStart,
     editProfileSuccess,
-    editProfileFailed
+    editProfileFailed,
+    setRoleStart,
+    setRoleSuccess,
+    setRoleFailed
 } = userSlice.actions;
 
 export default userSlice.reducer;

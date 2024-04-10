@@ -24,6 +24,8 @@ import EditEvent from './pages/admin/event/[id]/edit';
 import { Contribution } from './pages/admin/contribution';
 import { ContributionDetail } from './pages/admin/contribution/[id]/detail';
 import { User } from './pages/admin/user';
+import { UserDetail } from './pages/admin/user/[id]/detail';
+import { EditUser } from './pages/admin/user/[id]/edit';
 
 function App() {
   return (
@@ -50,6 +52,8 @@ function App() {
         <Route path="/admin/contribution" element={<Contribution />} />
         <Route path='/admin/contribution/:id' element={<ContributionDetail />} />
         <Route path='/admin/user/' element={<User />} />
+        <Route path='/admin/user/:userId' element={<UserDetail/>} />
+        <Route path='/admin/user/:userId/edit' element={<EditUser/>} />
       </Routes>
     </BrowserRouter>
     </>

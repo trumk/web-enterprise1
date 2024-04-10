@@ -26,6 +26,9 @@ import {
   getUsersFailed,
   getUsersStart,
   getUsersSuccess,
+  setRoleFailed,
+  setRoleStart,
+  setRoleSuccess,
 } from "./userSlice";
 import {
   getFacultiesStart,
@@ -153,6 +156,26 @@ export const getSelf = (id) => async (dispatch) => {
     console.log(err)
   }
 };
+
+export const setRole = (userId, role, accessToken) => async (dispatch) => {
+  dispatch(setRoleStart());
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/user/setRole/${userId}`,
+      { role },
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(setRoleSuccess(response.data));
+  } catch (error) {
+    dispatch(setRoleFailed());
+  }
+};
+
+
 export const changeUserPassword = async (id, accessToken, password, dispatch) => {
   dispatch(changePasswordStart());
   try {

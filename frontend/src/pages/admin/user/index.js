@@ -20,8 +20,6 @@ export const User = () => {
     }
   }, [user, dispatch]);
 
-  console.log(user?.accessToken);
-  console.log(users)
   return (
     <>
       <NavbarDefault />
@@ -65,14 +63,16 @@ export const User = () => {
                 {users ? (
                   users.map((user, index) => (
                     <tr key={index}>
-                      <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {user.userName}
-                        </Typography>
+                      <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                      <Link to={`/admin/user/${user._id}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {user.userName}
+                          </Typography>
+                        </Link>
                       </td>
                       <td className="p-4 border-b border-blue-gray-50">
                         <Typography
