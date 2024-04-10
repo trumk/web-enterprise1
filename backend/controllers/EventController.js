@@ -150,11 +150,12 @@ async function getAllEvent(req, res) {
 function getOneEvent(req, res) {
   const id = req.params.eventId;
   res.cookie("eventId", id, {
-    httpOnly: true,
+    httpOnly: false,
     secure: false,
     path: "/",
-    sameSite: "strict",
+    sameSite: "strict"
   });
+  console.log(req.cookies.eventId);
   Event.findById(id)
   .populate('facultyId', 'facultyName')
     .then(event => {

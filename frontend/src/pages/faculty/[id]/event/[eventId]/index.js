@@ -42,6 +42,7 @@ export const EventInfo = () => {
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
+          <Link to={`/faculty/${id}/event/${id}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader

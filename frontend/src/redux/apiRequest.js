@@ -83,7 +83,10 @@ import {
   getContributionsByEventSuccess,
   getContributionsFailed, 
   getContributionsStart, 
-  getContributionsSuccess 
+  getContributionsSuccess, 
+  submitContributionFailed, 
+  submitContributionStart,
+  submitContributionSuccess
 } from "./contributionSlice";
 
 const BACKEND_URL = "http://localhost:5503";
@@ -468,5 +471,21 @@ export const allContributionsByEventData = (id, accessToken) => async (dispatch)
   } catch (err) {
     dispatch(getContributionsByEventFailed());
     console.log(err);
+  }
+}
+
+export const postContribution = (facultyId, eventId, contribution, accessToken, navigate) => async (dispatch) => {
+  dispatch(submitContributionStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/contribution/submit`, contribution, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(submitContributionSuccess(res.data));
+    navigate(`/faculty/${facultyId}/event/${eventId}`);
+  } catch (error) {
+    dispatch(submitContributionFailed());
+    console.error(error);
   }
 }
