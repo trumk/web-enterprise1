@@ -39,17 +39,17 @@ export const EnrollFaculty = () => {
   };
 
   const studentFaculty = useSelector((state) => state.user.user.user.facultyID)
-  const isEnrolled = studentFaculty.some(facultyId => facultyId === id);
-  
+  const isEnrolled = studentFaculty?.some(facultyId => facultyId === id);
+  console.log(faculty?.Faculty.enrollKey)
   return (
     
     <>
     <NavbarDefault />
       <div className="flex">
+        
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full h-full">
           <div className='mt-10'>
-            
             <Typography variant='h4'>
               Enroll Faculty:
             </Typography>

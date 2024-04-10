@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
 
+const session = require('express-session');
+
 dotenv.config();
 
 const app = express();
@@ -34,7 +36,12 @@ app.use(bodyParser.json());
 app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
-
+app.use(session({
+  secret: "123456cat",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 
 //routes

@@ -12,17 +12,18 @@ import {
   CardBody,
   CardHeader,
   Typography,
-  Badge,
 } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { Preview } from '../../../../../components/manage/preview';
-const TABLE_HEAD = ["Title", "Image", "Published", "User Name", ""];
 export const EventInfo = () => {
   const { id } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
   const contributionData = useSelector((state) => state.contribution.getContributionsByEvent?.contributions);
   const dispatch = useDispatch();
+
+  const currentUrl = window.location.pathname;
+  const submitUrl = `${currentUrl}/contribution/submit`
   useEffect(() => {
     if (user) {
       dispatch(getOneEvent(id, user.accessToken));
@@ -34,13 +35,14 @@ export const EventInfo = () => {
     }
   }, [user, id, dispatch]);
   const eventData = event?.Event;
-  console.log(contributionData[0]?.isPublic);
+  console.log(contributionData);
   return (
     <>
       <NavbarDefault />
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
+          <Link to={`/faculty/${id}/event/${id}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -68,7 +70,7 @@ export const EventInfo = () => {
                 </Typography>
               </CardBody>
               <CardFooter className='mt-[-20px]'>
-                <Button color='green'>Post new contribution</Button>
+                <Link to={submitUrl}><Button color='green'>Post new contribution</Button></Link>
                 <Typography variant="h4" color='black' className="ml-3 mb-2">
                   Related Contribution
                   </Typography>
@@ -97,7 +99,7 @@ export const EventInfo = () => {
                             </Typography>
                         </CardBody>
                         <CardFooter className="pt-0">
-                          <Button>Read More</Button>
+                          <Link to={`${currentUrl}/contribution/${detail._id}/read`}><Button>Read More</Button></Link>
                         </CardFooter>
                       </Card>
 

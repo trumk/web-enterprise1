@@ -85,7 +85,7 @@ const uploadToFirebase = (req, res, next) => {
 const multerErrorHandler = (error, req, res, next) => {
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_UNEXPECTED_FILE") {
-        return res.status(401).json({ error: error });
+        return res.status(400).json({ error: error });
       }
     }
     next(error);

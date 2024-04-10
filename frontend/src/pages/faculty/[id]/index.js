@@ -43,14 +43,13 @@ export const FacultyMainPage = () => {
                         {eventData?.map(event => (
                             <div key={event._id} className="m-2 flex-none relative" style={{width: '26rem'}}>
                                 <div className="absolute w-full h-full bg-teal-900 rounded-xl"/>
-                                <Card color="teal" shadow={false} className="w-full cursor-pointer transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
+                                <Card color="teal" shadow={false} className="w-full cursor-pointer transform transition-transform duration-200 hover:translate-x-1 hover:-translate-y-1 z-10">
                                     <CardHeader
                                         color="transparent"
                                         floated={false}
                                         shadow={false}
                                         className="mx-0 flex items-start gap-4 pt-0 pb-8"
                                     >
-                                        
                                         <div className="flex w-full flex-col gap-0.5">
                                             <div className="flex items-start justify-between ml-3">
                                                 <Typography variant="h4" color="white">
