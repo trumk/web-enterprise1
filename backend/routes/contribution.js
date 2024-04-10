@@ -17,7 +17,7 @@ router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 
     uploadToFirebase, multerErrorHandler,
     contributionController.editContribution)
 router.get("/getAllContributions", contributionController.getContributionByDashBoard);
-router.get("/getAllContributionsByEvent", contributionController.getContributionByEvent)
+router.get("/getAllContributionsByEvent/:id", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.get("/statistic", contributionController.getStatistic);
 

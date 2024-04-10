@@ -84,10 +84,10 @@ const contributionController = {
   },
   getContributionByEvent: async (req, res) => {
     try {
-      let query = { isPublic: true, eventID: req.cookies.eventId };
+      let query = { isPublic: true, eventID: req.params.id };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+        query = { eventID: req.params.id };
       }
       const contributions = await Contribution.find(query)
         .populate({
