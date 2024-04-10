@@ -4,7 +4,7 @@ const router = require("express").Router();
 const multer = require('multer');
 const upload = multer();
 
-const {uploadImage, uploadFile, upload, multerErrorHandler} = require("../middlewares/cloudinary");
+const {uploadImage, multerErrorHandler} = require("../middlewares/cloudinary");
 
 router.get("/getAllUsers", authorization.verifyAdmin, userController.getAllUsers);
 

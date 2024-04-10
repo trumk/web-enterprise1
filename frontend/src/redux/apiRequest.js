@@ -157,12 +157,12 @@ export const getSelf = (id) => async (dispatch) => {
   }
 };
 
-export const setRole = (userId, role, accessToken) => async (dispatch) => {
+export const setRole = (id, role, accessToken, navigate) => async (dispatch) => {
   dispatch(setRoleStart());
   try {
     const response = await axios.post(
-      `${BACKEND_URL}/user/setRole/${userId}`,
-      { role },
+      `${BACKEND_URL}/user/setRole/${id}`,
+     role ,
       {
         headers: {
           token: `Bearer ${accessToken}`,
@@ -170,8 +170,10 @@ export const setRole = (userId, role, accessToken) => async (dispatch) => {
       }
     );
     dispatch(setRoleSuccess(response.data));
+    navigate("/admin/user")
   } catch (error) {
     dispatch(setRoleFailed());
+    console.log(error)
   }
 };
 

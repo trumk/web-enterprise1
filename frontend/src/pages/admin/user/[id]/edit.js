@@ -2,33 +2,38 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
-import { getSelf, setRole } from "../../../../redux/apiRequest";
+import { setRole } from "../../../../redux/apiRequest";
 import { useParams } from "react-router-dom";
 import {
   Button,
   Card,
-  CardFooter,
+  Input,
   CardHeader,
+  CardFooter,
+  Option,
+  Select,
   Typography,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 export const EditUser = () => {
   const { userId } = useParams();
-  const [updatedRole, setUpdatedRole] = useState(""); 
+  const [updatedRole, setUpdatedRole] = useState("");
   const users = useSelector((state) => state.user.users.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
 
   const selectedUser = users.find((u) => u._id === userId);
 
-  const handleChange = (e) => {
-    const { value } = e.target;
-    setUpdatedRole(value); 
-  };
-
+  console.log(updatedRole);
+  console.log(userId);
+    
   const handleSave = () => {
-    dispatch(setRole(userId, updatedRole, user.accessToken)); 
+    const roleUser = {
+      role: updatedRole,
+    };
+    dispatch(setRole(userId, roleUser, user.accessToken, navigate));
   };
 
   return (
@@ -56,20 +61,22 @@ export const EditUser = () => {
                 >
                   Current Role: {selectedUser.role}
                 </Typography>
-                <select
-                  name="role"
-                  value={updatedRole || selectedUser.role}
-                  onChange={handleChange}
-                  className="border-b border-blue-gray-400 px-4 py-2 focus:outline-none focus:border-indigo-500"
-                >
-                  <option value="">Select Role</option>
-                  <option value="admin">Admin</option>
-                  <option value="marketing manager">Marketing Manager</option>
-                  <option value="marketing coordinator">Marketing Coordinator</option>
-                  <option value="student">Student</option>
-                  <option value="user">User</option>
-                  <option value="guest">Guest</option>
-                </select>
+                <div className="w-[200px]">
+                  <Select
+                    name="role"
+                    value={updatedRole || selectedUser.role}
+                    onChange={(value) => setUpdatedRole(value)}
+                    className="border-b border-blue-gray-400 px-4 py-2 focus:outline-none focus:border-indigo-500"
+                  >
+                    <Option value="">Select Role</Option>
+                    <Option value="marketing manager">Marketing Manager</Option>
+                    <Option value="marketing coordinator">
+                      Marketing Coordinator
+                    </Option>
+                    <Option value="student">User</Option>
+                    <Option value="guest">Guest</Option>
+                  </Select>
+                </div>
               </div>
               <CardFooter>
                 <Button onClick={handleSave}>Save</Button>

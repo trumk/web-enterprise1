@@ -3,11 +3,8 @@ import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
 import { getAllUsers } from "../../../redux/apiRequest";
 import { useEffect } from "react";
-import { Button, Card, Typography } from "@material-tailwind/react";
+import { Card, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { IconButton } from "@material-tailwind/react";
-import { Info, PenLine } from "lucide-react";
 
 export const User = () => {
   const users = useSelector((state) => state.user.users.allUsers);
@@ -19,7 +16,8 @@ export const User = () => {
       dispatch(getAllUsers(user.accessToken));
     }
   }, [user, dispatch]);
-
+  //bỏ user có role là admin
+  const filteredUsers = users.filter((user) => user.role !== "admin");
   return (
     <>
       <NavbarDefault />
@@ -60,8 +58,8 @@ export const User = () => {
                 </tr>
               </thead>
               <tbody>
-                {users ? (
-                  users.map((user, index) => (
+                {filteredUsers ? (
+                  filteredUsers.map((user, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
                       <Link to={`/admin/user/${user._id}`}>

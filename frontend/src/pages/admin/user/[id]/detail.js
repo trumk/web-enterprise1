@@ -11,7 +11,6 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
-import { format } from "date-fns";
 
 export const UserDetail = () => {
   const userId = useParams().userId;
