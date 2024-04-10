@@ -99,7 +99,7 @@ export const Contribution = () => {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {contribution.title}
+                              {contribution?.title}
                             </Typography>
                           </Link>
                         </td>
@@ -110,7 +110,7 @@ export const Contribution = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {contribution.content}
+                            {contribution?.content}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
@@ -133,7 +133,7 @@ export const Contribution = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {contribution.userID.userName}
+                            {contribution?.userID.userName}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
