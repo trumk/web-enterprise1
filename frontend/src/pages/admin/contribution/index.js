@@ -1,35 +1,31 @@
+import React, { useEffect } from 'react'
+import NavbarDefault from '../../../components/navbar'
+import DefaultSidebar from '../../../components/sidebar'
 import { useDispatch, useSelector } from "react-redux";
-import NavbarDefault from "../../../components/navbar";
-import DefaultSidebar from "../../../components/sidebar";
-import { getAllEvents } from "../../../redux/apiRequest";
-import { useEffect } from "react";
-import { Button, Card, Typography } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import { getAllContributions } from '../../../redux/apiRequest';
+import { Badge, Card, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
-import { Info, PenLine } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Info, Trash } from 'lucide-react';
 
-export const Event = () => {
-  const events = useSelector((state)=>state.event.events.allEvents)
-  const user = useSelector((state)=>state.auth.login?.currentUser) 
-  const dispatch = useDispatch();
+export const Contribution = () => {
+  const contributions = useSelector((state) => state.contribution.contributions.allContributions)
+  const user = useSelector((state) => state.auth.login?.currentUser)
+  const dispatch = useDispatch()
   useEffect(() => {
     if (user) {
-      dispatch(getAllEvents(user.accessToken, dispatch));
+      dispatch(getAllContributions(user.accessToken, dispatch))
     }
-  }, [user, dispatch]);
-  const details = events?.events;
-  console.log(details)
+  }, [user, dispatch])
+  console.log(contributions)
+
   return (
     <>
       <NavbarDefault />
       <div className="flex">
-        <DefaultSidebar className="flex" />
-        <div className="ml-5 w-full">
-          <Button className="mt-2.5 mb-2.5">
-            <Link to="/admin/event/add">Create new</Link>
-          </Button>
-          <Card className="h-full w-full">
+        <DefaultSidebar />
+        <div className='ml-5 w-full'>
+          <Card className="h-full w-full mt-5">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -39,7 +35,7 @@ export const Event = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Topic
+                      Title
                     </Typography>
                   </th>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -48,7 +44,7 @@ export const Event = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Closure Date
+                      Content
                     </Typography>
                   </th>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -57,7 +53,7 @@ export const Event = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Final Date
+                      Image
                     </Typography>
                   </th>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -66,7 +62,7 @@ export const Event = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Faculty
+                      Published
                     </Typography>
                   </th>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -75,38 +71,61 @@ export const Event = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Action
+                      User
+                    </Typography>
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      Actions
                     </Typography>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {details ? (
-                  details && details.length > 0 ? (
-                    details.map((detail, index) => (
-                      
-                        <tr key={index}>
-                          
+                {contributions ? (
+                  contributions && contributions.length > 0 ? (
+                    contributions.map((contribution, index) => (
+
+                      <tr key={index}>
+
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/event/${detail._id}`}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {detail.topic}
-                          </Typography>
+                          <Link to={`/admin/contribution/${contribution._id}`}>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {contribution?.title}
+                            </Typography>
                           </Link>
                         </td>
-                        
+
                         <td className="p-4 border-b border-blue-gray-50">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {format(detail.closureDate, 'MMMM dd,yyyy')}
+                            {contribution?.content}
                           </Typography>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                        {Array.isArray(contribution.image) && contribution.image.length > 0 && (
+                            <img src={contribution.image[0]} alt="contribution" className='h-[80px]'/>
+                          )}
+
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                          <Badge 
+                          className='w-[100px]'
+                            content={contribution.isPublic === true ? "Published" : "Not Published"}
+                            color={contribution.isPublic === true ? "green" : "red"}
+
+                          />
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                           <Typography
@@ -114,26 +133,17 @@ export const Event = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {format(detail.finalDate, 'MMMM dd,yyyy')}
-                          </Typography>
-                        </td>
-                        <td className="p-4 border-b border-blue-gray-50">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {detail.facultyId.facultyName}
+                            {contribution?.userID.userName}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/event/${detail._id}`}> <Info/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/event/${detail._id}/edit`}> <PenLine/> </Link></IconButton>
-                            </div>
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/contribution/${contribution._id}`}> <Info /> </Link></IconButton>
+                            <IconButton color="red"> <Trash /> </IconButton>
+                          </div>
                         </td>
                       </tr>
-                      
+
                     ))
                   ) : (
                     <tr>
@@ -153,7 +163,7 @@ export const Event = () => {
             </table>
           </Card>
         </div>
-          </div>
+      </div>
     </>
-  );
-};
+  )
+}

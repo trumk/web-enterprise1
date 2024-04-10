@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import {
   Navbar,
-  MobileNav,
   Typography,
   Button,
   IconButton,
@@ -16,7 +15,7 @@ import { ChevronDownIcon, PowerOff, UserCircleIcon } from "lucide-react";
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { createAxios } from "../../redux/createInstance";
+//import { createAxios } from "../../redux/createInstance";
 import {jwtDecode} from "jwt-decode";
 import { loginSuccess } from "../../redux/authSlice";
 import { getSelf, logout } from "../../redux/apiRequest";
@@ -49,8 +48,9 @@ export default function NavbarDefault() {
       action: handleLogout,
     },
   ];
-  const isAdmin = user && user.role == "admin";
-  const isUser = user && user.role == "user";
+  const isAdmin = user && user.role === "admin";
+  const isUser = user && user.role === "user";
+  //const isMarketingCoordinator = user && user.role == "marketing coordinator";
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -156,7 +156,7 @@ export default function NavbarDefault() {
                         size="sm"
                         alt="tania andrew"
                         className="border border-gray-900 p-0.5"
-                        src={logo}
+                        src={profile?.avatar}
                       />
                       <ChevronDownIcon
                         strokeWidth={2.5}

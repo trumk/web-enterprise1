@@ -10,14 +10,14 @@ router.use(authorization.verifyToken);
 
 router.post("/submit",
     upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]),
-    uploadToFirebase, multerErrorHandler,
+    uploadToFirebase,
     contributionController.submitContribution
 );
 router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]),
     uploadToFirebase, multerErrorHandler,
     contributionController.editContribution)
 router.get("/getAllContributions", contributionController.getContributionByDashBoard);
-router.get("/getAllContributionsByEvent", contributionController.getContributionByEvent)
+router.get("/getAllContributionsByEvent/:id", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.get("/statistic", contributionController.getStatistic);
 

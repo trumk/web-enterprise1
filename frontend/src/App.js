@@ -21,6 +21,16 @@ import EditFaculty from './pages/admin/faculty/[id]/edit';
 import AddEvent from './pages/admin/event/add';
 import { EventDetail } from './pages/admin/event/[id]/detail';
 import EditEvent from './pages/admin/event/[id]/edit';
+import { Contribution } from './pages/admin/contribution';
+import { ContributionDetail } from './pages/admin/contribution/[id]/detail';
+import { User } from './pages/admin/user';
+import { UserDetail } from './pages/admin/user/[id]/detail';
+import { EditUser } from './pages/admin/user/[id]/edit';
+import { EnrollFaculty } from './pages/faculty/[id]/enroll';
+import { FacultyMainPage } from './pages/faculty/[id]';
+import { EventInfo } from './pages/faculty/[id]/event/[eventId]';
+import { SubmitContribution } from './pages/faculty/[id]/event/[eventId]/contribution/submit';
+import { ReadContribution } from './pages/faculty/[id]/event/[eventId]/contribution/[contributionId]/read';
 
 function App() {
   return (
@@ -32,6 +42,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/terms" element={<Term />} />
+        <Route path="/faculty/:id/enroll" element={<EnrollFaculty />} />
+        <Route path="/faculty/:id" element={<FacultyMainPage />} />
+        <Route path="/faculty/:id/event/:id" element={<EventInfo />} />
+        <Route path="/faculty/:id/event/:id/contribution/submit" element={<SubmitContribution />} />
+        <Route path="/faculty/:id/event/:id/contribution/:contributionId/read" element={<ReadContribution />} />
         <Route path="/admin/users" element={<ManageUser />} />
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />
@@ -44,6 +59,11 @@ function App() {
         <Route path="/admin/event/:id" element={<EventDetail/>} />
         <Route path="/admin/event/add" element={<AddEvent/>} />
         <Route path="/admin/event/:id/edit" element={<EditEvent/>}/>
+        <Route path="/admin/contribution" element={<Contribution />} />
+        <Route path='/admin/contribution/:id' element={<ContributionDetail />} />
+        <Route path='/admin/user/' element={<User />} />
+        <Route path='/admin/user/:userId' element={<UserDetail/>} />
+        <Route path='/admin/user/:userId/edit' element={<EditUser/>} />
       </Routes>
     </BrowserRouter>
     </>

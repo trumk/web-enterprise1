@@ -25,7 +25,7 @@ export const UserProfile = () => {
     <NavbarDefault/>
     <div className='flex gap-6'>
       <DefaultSidebar/>
-    <div className='w-full flex justify-center items-center'>
+    <div className='w-full'>
     <Card className="w-[900px] h-full mt-20 border">
       <CardHeader>
         <Typography variant='h4' className='mt-2 mb-2'>{profile?.firstName} {profile?.lastName}&apos;s profile</Typography>
@@ -40,7 +40,7 @@ export const UserProfile = () => {
           Last Name:  {profile.lastName}
         </Typography>
         <Typography variant="h5" color="blue-gray" className="mb-2 font-medium">
-          Birthday: {format(profile?.birthDay, 'dd/MM/yyyy')}
+          Birthday: {profile?.birthDay ? format(new Date(profile?.birthDay), 'dd/MM/yyyy') : 'N/A'}
           </Typography>
           <Typography variant='h5' color="blue-gray" className="mb-2 font-medium">
             Description: {profile?.description}

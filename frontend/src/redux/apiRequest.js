@@ -20,12 +20,18 @@ import {
   editProfileFailed,
   editProfileStart,
   editProfileSuccess,
+  enrollFacultyFailed,
+  enrollFacultyStart,
+  enrollFacultySuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
   getUsersFailed,
   getUsersStart,
   getUsersSuccess,
+  setRoleFailed,
+  setRoleStart,
+  setRoleSuccess,
 } from "./userSlice";
 import {
   getFacultiesStart,
@@ -68,6 +74,20 @@ import {
   deleteEventSuccess,
   deleteEventFailed, 
 } from "./eventSlice";
+import { 
+  getContributionFailed,
+  getContributionStart,
+  getContributionSuccess,
+  getContributionsByEventFailed,
+  getContributionsByEventStart,
+  getContributionsByEventSuccess,
+  getContributionsFailed, 
+  getContributionsStart, 
+  getContributionsSuccess, 
+  submitContributionFailed, 
+  submitContributionStart,
+  submitContributionSuccess
+} from "./contributionSlice";
 
 const BACKEND_URL = "http://localhost:5503";
 //auth
@@ -95,12 +115,12 @@ export const registerUser = async (user, dispatch, handleSuccess) => {
 export const verifyAccount = async (otp, dispatch, navigate) => {
   dispatch(verifyStart());
   try {
-    await axios.post(`${BACKEND_URL}/verify`, otp);
-    dispatch(verifySuccess());
+    const res = await axios.post(`${BACKEND_URL}/verify`, otp);
+    dispatch(verifySuccess(res.data));
     navigate("/login");
   } catch (err) {
     dispatch(verifyFailed());
-    console.error("Verification error:", err);
+    console.error("Verification error:", err.respone.data);
   }
 };
 
@@ -119,18 +139,19 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     console.error("Logout error:", err);
   }
 };
-//user
-export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
+
+export const getAllUsers = (accessToken) => async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/user/getAllUsers`, {
+    const res = await axios.get(`${BACKEND_URL}/user/getAllUsers`, {
       headers: {
-        token: `Bearer  + ${accessToken}`,
+        token: `Bearer ${accessToken}`,
       },
     });
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
     dispatch(getUsersFailed());
+    console.log(err);
   }
 };
 
@@ -144,6 +165,27 @@ export const getSelf = (id) => async (dispatch) => {
     console.log(err)
   }
 };
+
+export const setRole = (id, role, accessToken, navigate) => async (dispatch) => {
+  dispatch(setRoleStart());
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/user/setRole/${id}`,
+     role ,
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(setRoleSuccess(response.data));
+    navigate("/admin/user")
+  } catch (error) {
+    dispatch(setRoleFailed());
+    console.log(error)
+  }
+};
+
 export const changeUserPassword = async (id, accessToken, password, dispatch) => {
   dispatch(changePasswordStart());
   try {
@@ -158,7 +200,7 @@ export const changeUserPassword = async (id, accessToken, password, dispatch) =>
   }
 }
 
-export const editProfile = (id, accessToken, profile, navigate) => async (dispatch) => {
+export const editProfile = (id, userId, accessToken, profile, navigate) => async (dispatch) => {
   dispatch(editProfileStart())
   try {
     const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
@@ -167,9 +209,25 @@ export const editProfile = (id, accessToken, profile, navigate) => async (dispat
       },
     });
     dispatch(editProfileSuccess(res.data));
-    navigate(`user/${id}/profile`)
+    navigate(`/user/${userId}/profile`)
   } catch (err) {
     dispatch(editProfileFailed())
+    console.log(err)
+  }
+}
+
+export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) => {
+  dispatch(enrollFacultyStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/faculty/enroll/${id}`, key, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(enrollFacultySuccess(res.data));
+    navigate(`/faculty/${id}`)
+  } catch (err) {
+    dispatch(enrollFacultyFailed());
     console.log(err)
   }
 }
@@ -273,6 +331,25 @@ export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
     console.log(err);
   }
 }
+
+
+export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
+  dispatch(searchFacultyStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
+      keyword:searchTerm,
+    }, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(searchFacultySuccess(response.data));
+  } catch (error) {
+    dispatch(searchFacultyFailed(error.message));
+    console.log(error)
+  }
+};
+
 //event
 export const getAllEvents = (accessToken) => async (dispatch) => {
   dispatch(getEventsStart());
@@ -315,6 +392,7 @@ export const getOneEvent = (id, accessToken) => async (dispatch) => {
   }
   catch (err) {
     dispatch(getEventFailed())
+    console.log(err)
   }
 }
 
@@ -350,23 +428,64 @@ export const deleteThisEvent = (id, accessToken, navigate) => async (dispatch) =
     console.log(error);
   }
 }
-export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
-  dispatch(searchFacultyStart());
+
+//contribution
+export const getAllContributions = (accessToken) => async (dispatch) => {
+  dispatch(getContributionsStart());
   try {
-    const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
-      keyword:searchTerm,
-    }, {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getAllContributions`, {
       headers: {
-        token: `Bearer ${accessToken}`, 
+        token: `Bearer ${accessToken}`,
       },
     });
-    dispatch(searchFacultySuccess(response.data));
-  } catch (error) {
-    dispatch(searchFacultyFailed(error.message));
-    console.log(error)
+    dispatch(getContributionsSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionsFailed());
   }
 };
 
+export const getOneContribution = (id, accessToken) => async (dispatch) => {
+  dispatch(getContributionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionSuccess(res.data));
+  }
+  catch (err) {
+    dispatch(getContributionFailed())
+  }
+}
 
+export const allContributionsByEventData = (id, accessToken) => async (dispatch) => {
+  dispatch(getContributionsByEventStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getAllContributionsByEvent/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionsByEventSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionsByEventFailed());
+    console.log(err);
+  }
+}
 
-
+export const postContribution = (facultyId, eventId, contribution, accessToken, navigate) => async (dispatch) => {
+  dispatch(submitContributionStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/contribution/submit`, contribution, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(submitContributionSuccess(res.data));
+    navigate(`/faculty/${facultyId}/event/${eventId}`);
+  } catch (error) {
+    dispatch(submitContributionFailed());
+    console.error(error);
+  }
+}

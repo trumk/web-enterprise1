@@ -7,6 +7,7 @@ import {  editEvent, getOneEvent, } from "../../../../redux/apiRequest";
 import { format } from "date-fns";
 import DatePicker from "../../../../components/manage/date-picker";
 import { Select, Option } from "@material-tailwind/react";
+import { Editor } from "../../../../components/manage/editor";
 
 const EditEvent = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -75,10 +76,9 @@ const EditEvent = () => {
               <label className="block text-md font-medium text-gray-700">
                 Content:
               </label>
-              <input
-                type="text"
-                onChange={(e) => setContent(e.target.value)}
+              <Editor
                 value={content}
+                onChange={setContent}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
               />
             </div>
