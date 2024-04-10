@@ -32,7 +32,7 @@ export const FacultyDetail = () => {
     }
   }, [user, dispatch])
   const detail = faculty?.Faculty
-  const eventData = eventInFaculty.events
+  const eventData = eventInFaculty?.events
   console.log(eventData)
   const handleDelete = () => {
     const confirmation = window.confirm("Are you sure you want to delete this faculty?");

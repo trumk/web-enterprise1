@@ -23,8 +23,8 @@ const contributionController = {
     try {
       const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
       const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
-      console.log(imagesPaths)
-      console.log(filesPaths)
+      // console.log(imagesPaths)
+      // console.log(filesPaths)
       if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }

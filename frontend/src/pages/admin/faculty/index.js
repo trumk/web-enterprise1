@@ -34,7 +34,6 @@ export const Faculty = () => {
     if (user && searchTerm !== "") {
       dispatch(searchFaculty(searchTerm, user.accessToken));
     } else {
-      // Đặt filterFaculty về giá trị trống khi không có từ khóa tìm kiếm
       dispatch({
         type: "SET_FILTER_FACULTY",
         payload: { filterFaculty: { faculties: [], message: "" } }
@@ -134,7 +133,7 @@ export const Faculty = () => {
                       </td>
                     </tr>
                   ))
-                ) : faculties ? (
+                ):faculties ? (
                   faculties.Faculty && faculties.Faculty.length > 0 ? (
                     faculties.Faculty.map((faculty, index) => (
                       <tr key={index}>
