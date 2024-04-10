@@ -10,7 +10,7 @@ router.use(authorization.verifyToken);
 
 router.post("/submit",
     upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]),
-    uploadToFirebase,
+    uploadToFirebase,multerErrorHandler,
     contributionController.submitContribution
 );
 router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]),
