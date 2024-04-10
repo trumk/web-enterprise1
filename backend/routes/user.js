@@ -14,7 +14,7 @@ router.get("/:userID", profileController.readProfile);
 
 router.put("/:id", authorization.verifyToken, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
 
-router.post("/setRole", authorization.verifyAdmin, userController.setRoleUser);
+router.post("/setRole/:id", authorization.verifyAdmin, userController.setRoleUser);
 
 module.exports = router;
 
