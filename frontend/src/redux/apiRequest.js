@@ -29,6 +29,9 @@ import {
   getUsersFailed,
   getUsersStart,
   getUsersSuccess,
+  setRoleFailed,
+  setRoleStart,
+  setRoleSuccess,
 } from "./userSlice";
 import {
   getFacultiesStart,
@@ -133,18 +136,19 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     console.error("Logout error:", err);
   }
 };
-//user
-export const getAllUsers = async (accessToken, dispatch, axiosJWT) => {
+
+export const getAllUsers = (accessToken) => async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/user/getAllUsers`, {
+    const res = await axios.get(`${BACKEND_URL}/user/getAllUsers`, {
       headers: {
-        token: `Bearer  + ${accessToken}`,
+        token: `Bearer ${accessToken}`,
       },
     });
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
     dispatch(getUsersFailed());
+    console.log(err);
   }
 };
 
@@ -156,6 +160,26 @@ export const getSelf = (id) => async (dispatch) => {
   } catch (err) {
     dispatch(getSelfFailed());
     console.log(err)
+  }
+};
+
+export const setRole = (id, role, accessToken, navigate) => async (dispatch) => {
+  dispatch(setRoleStart());
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/user/setRole/${id}`,
+     role ,
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(setRoleSuccess(response.data));
+    navigate("/admin/user")
+  } catch (error) {
+    dispatch(setRoleFailed());
+    console.log(error)
   }
 };
 

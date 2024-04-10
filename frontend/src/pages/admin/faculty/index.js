@@ -20,12 +20,9 @@ export const Faculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
-  // const filterFaculty = useSelector(
-  //   (state) => state.faculty.searchFaculty.filterFaculty
-  // );
-  // const searchResult = useSelector(
-  //   (state) => state.faculty.searchFaculty.searchResult
-  // );
+  const filterFaculty = useSelector(
+    (state) => state.faculty.searchFaculty.filterFaculty
+  );
 
   useEffect(() => {
     if (user) {
@@ -33,14 +30,18 @@ export const Faculty = () => {
     }
   }, [user, dispatch]);
 
-  const handleSearch = async () => {
-    try {
+  useEffect(() => {
+    if (user && searchTerm !== "") {
       dispatch(searchFaculty(searchTerm, user.accessToken));
-    } catch (error) {
-      console.error("Error searching faculties:", error);
+    } else {
+      dispatch({
+        type: "SET_FILTER_FACULTY",
+        payload: { filterFaculty: { faculties: [], message: "" } }
+      });
     }
-  };
-  //console.log(filterFaculty);
+  }, [searchTerm, user, dispatch]);
+  
+  console.log(filterFaculty)
   return (
     <>
       <NavbarDefault />
@@ -58,11 +59,8 @@ export const Faculty = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-1/3 mb-4"
             />
-            <Button onClick={handleSearch} className="mb-2.5 mt-2.5">
-              Search
-            </Button>
           </div>
-          <Card className="h-full w-full">
+          <Card className="h-full w-full mt-2">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -96,61 +94,101 @@ export const Faculty = () => {
                 </tr>
               </thead>
               <tbody>
-                {
-                  faculties ? (
-                    faculties.Faculty && faculties.Faculty.length > 0 ? (
-                      faculties.Faculty.map((faculty, index) => (
-                        <tr key={index}>
-                          <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                {searchTerm && filterFaculty.faculties && filterFaculty.faculties.length > 0 ? (
+                  filterFaculty.faculties.map((faculty, index) => (
+                    <tr key={index}>
+                      <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                        <Link to={`/admin/faculty/${faculty._id}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {faculty.facultyName}
+                          </Typography>
+                        </Link>
+                      </td>
+                      <td className="p-4 border-b border-blue-gray-50">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {faculty.descActive}
+                        </Typography>
+                      </td>
+                      <td className="p-4 border-b border-blue-gray-50 w-20">
+                        <Select label="Select action below">
+                          <Option>
                             <Link to={`/admin/faculty/${faculty._id}`}>
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-normal"
-                              >
-                                {faculty.facultyName}
-                              </Typography>
+                              Detail
                             </Link>
-                          </td>
-                          <td className="p-4 border-b border-blue-gray-50">
+                          </Option>
+                          <Option>
+                            <Link to={`/admin/faculty/${faculty._id}/edit`}>
+                              Edit
+                            </Link>
+                          </Option>
+                        </Select>
+                      </td>
+                    </tr>
+                  ))
+                ):faculties ? (
+                  faculties.Faculty && faculties.Faculty.length > 0 ? (
+                    faculties.Faculty.map((faculty, index) => (
+                      <tr key={index}>
+                        <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                          <Link to={`/admin/faculty/${faculty._id}`}>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {faculty.descActive}
+                              {faculty.facultyName}
                             </Typography>
-                          </td>
-                          <td className="p-4 border-b border-blue-gray-50 w-20">
-                            <Select label="Select action below">
-                              <Option>
-                                <Link to={`/admin/faculty/${faculty._id}`}>
-                                  Detail
-                                </Link>
-                              </Option>
-                              <Option>
-                                <Link to={`/admin/faculty/${faculty._id}/edit`}>
-                                  Edit
-                                </Link>
-                              </Option>
-                            </Select>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={3} className="p-4">
-                          No faculties found
+                          </Link>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {faculty.descActive}
+                          </Typography>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                          <Select label="Select action below">
+                            <Option>
+                              <Link to={`/admin/faculty/${faculty._id}`}>
+                                Detail
+                              </Link>
+                            </Option>
+                            <Option>
+                              <Link to={`/admin/faculty/${faculty._id}/edit`}>
+                                Edit
+                              </Link>
+                            </Option>
+                          </Select>
                         </td>
                       </tr>
-                    )
+                    ))
                   ) : (
+                    // Hiển thị thông báo khi không tìm thấy faculty nào khớp với từ khóa
                     <tr>
                       <td colSpan={3} className="p-4">
-                        Loading...
+                        No faculties found
                       </td>
                     </tr>
-                  )}
+                  )
+                ) : (
+                  // Hiển thị thông báo khi đang tải dữ liệu
+                  <tr>
+                    <td colSpan={3} className="p-4">
+                      Loading...
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </Card>
@@ -158,4 +196,5 @@ export const Faculty = () => {
       </div>
     </>
   );
+  
 };

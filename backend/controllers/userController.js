@@ -16,7 +16,7 @@ const userController = {
   setRoleUser: async (req, res) => {
     try {
       const userUpdated = await User.findByIdAndUpdate(
-        req.body.userID,
+        req.params.id,
         { role: req.body.role },
         { new: true }
       );

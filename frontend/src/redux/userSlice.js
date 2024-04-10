@@ -60,6 +60,18 @@ const userSlice = createSlice({
             state.editProfile.isFetching = false;
             state.editProfile.error = true;
         },
+        setRoleStart: (state) => {
+            state.user.isFetching = true;
+        },
+        setRoleSuccess: (state, action) => {
+            state.user.isFetching = false;
+            state.user.user = action.payload;
+            state.user.error = false;
+        },
+        setRoleFailed: (state) => {
+            state.user.isFetching = false;
+            state.user.error = true;
+        },
         enrollFacultyStart: (state) => {
             state.enrollFaculty.isFetching = true;
         },
@@ -84,6 +96,9 @@ export const {
     editProfileStart,
     editProfileSuccess,
     editProfileFailed,
+    setRoleStart,
+    setRoleSuccess,
+    setRoleFailed,
     enrollFacultyStart,
     enrollFacultySuccess,
     enrollFacultyFailed
