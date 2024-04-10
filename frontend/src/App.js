@@ -26,6 +26,8 @@ import { ContributionDetail } from './pages/admin/contribution/[id]/detail';
 import { EnrollFaculty } from './pages/faculty/[id]/enroll';
 import { FacultyMainPage } from './pages/faculty/[id]';
 import { EventInfo } from './pages/faculty/[id]/event/[eventId]';
+import { SubmitContribution } from './pages/faculty/[id]/event/[eventId]/contribution/submit';
+import { ReadContribution } from './pages/faculty/[id]/event/[eventId]/contribution/[contributionId]/read';
 
 function App() {
   return (
@@ -39,7 +41,9 @@ function App() {
         <Route path="/terms" element={<Term />} />
         <Route path="/faculty/:id/enroll" element={<EnrollFaculty />} />
         <Route path="/faculty/:id" element={<FacultyMainPage />} />
-        <Route path="faculty/:id/event/:id" element={<EventInfo />} />
+        <Route path="/faculty/:id/event/:id" element={<EventInfo />} />
+        <Route path="/faculty/:id/event/:id/contribution/submit" element={<SubmitContribution />} />
+        <Route path="/faculty/:id/event/:id/contribution/:contributionId/read" element={<ReadContribution />} />
         <Route path="/admin/users" element={<ManageUser />} />
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />

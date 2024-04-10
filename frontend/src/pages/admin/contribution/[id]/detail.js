@@ -25,7 +25,7 @@ export const ContributionDetail = () => {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    console.log(contribution)
+    console.log(id)
     return (
         <>
             <NavbarDefault />
