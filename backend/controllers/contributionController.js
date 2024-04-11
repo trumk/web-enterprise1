@@ -7,6 +7,9 @@ const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
 const sanitizeHtml = require('sanitize-html');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+const Profile = require("../models/Profile");
 
 
 
@@ -52,7 +55,7 @@ const contributionController = {
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
-        eventID: req.body.eventID
+        eventID: req.cookies.eventId
       });
       const contribution = await newContribution.save();
       const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
@@ -84,10 +87,10 @@ const contributionController = {
   },
   getContributionByEvent: async (req, res) => {
     try {
-      let query = { isPublic: true, eventID: req.params.id };
+      let query = { isPublic: true, eventID: req.cookies.eventId };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.params.id };
+        query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -148,27 +151,92 @@ const contributionController = {
 
   getOneContribution: async (req, res) => {
     try {
-      const contribution = await Contribution.findById(req.params.id)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
-      await res.cookie('userId', contribution.userID, {
-        httpOnly: true,
-        secure: false,
-        path: "/",
-        sameSite: "strict"
-      });
-      if (!contribution) {
+      const contributions = await Contribution.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(req.params.id)
+          }
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            let: { user_ids: "$comments.userID" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$userID", "$$user_ids"]
+                  }
+                }
+              }
+            ],
+            as: "commentProfiles"
+          }
+        },
+        {
+          $addFields: {
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      userProfile: {
+                        $first: {
+                          $filter: {
+                            input: "$commentProfiles",
+                            as: "profile",
+                            cond: { $eq: ["$$profile.userID", "$$comment.userID"] }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            comments: 1
+          }
+        }
+      ]);
+  
+      if (contributions.length === 0) {
         return res.status(404).json({ message: "Contribution not found." });
       }
-      res.status(200).json(contribution);
+  
+      await res.status(200).json(contributions[0]);
     } catch (error) {
-      res.status(500).json({ message: error.message, ...error });
+      res.status(500).json({ message: error.message });
     }
   },
   editContribution: async (req, res) => {
@@ -342,6 +410,12 @@ const contributionController = {
     try {
       const contributionId = req.params.id;
       const userId = req.user.id;
+      const user = await Profile.findOne({userID : userId})
+      
+      if(!user.firstName || !user.lastName || !user.avatar){
+        return res.status(403).json({ message: "You need to set your name and your avatar before comment" })
+      }
+
       const commentContent = req.body.comment;
 
       var contribution1 = await Contribution.findById(contributionId);
@@ -353,7 +427,7 @@ const contributionController = {
       var targetDate = new Date(contributionDate);
       targetDate.setDate(targetDate.getDate() + 14);
       if (currentDate.getTime() > targetDate.getTime()) {
-        return res.status(404).json({ message: "You cannot comment because the contribution is expired" });
+        return res.status(403).json({ message: "You cannot comment because the contribution is expired" });
       }
       const newComment = {
         comment: commentContent,
