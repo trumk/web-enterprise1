@@ -20,9 +20,9 @@ export const SubmitContribution = () => {
   const [file, setFile] = useState([]);
   const [message, setMessage] = useState('');
 
-  const user = useSelector((state) => state.auth.login.currentUser);
+  const user = useSelector((state) => state.auth.login?.currentUser);
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
-  const event = useSelector((state) => state.event.event.currentEvent);
+  const event = useSelector((state) => state.event.event?.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   console.log(event.Event._id)

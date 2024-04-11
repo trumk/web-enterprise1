@@ -44,15 +44,6 @@ export const Contribution = () => {
                       color="blue-gray"
                       className="font-normal leading-none opacity-70"
                     >
-                      Content
-                    </Typography>
-                  </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
                       Image
                     </Typography>
                   </th>
@@ -104,15 +95,6 @@ export const Contribution = () => {
                           </Link>
                         </td>
 
-                        <td className="p-4 border-b border-blue-gray-50">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {contribution?.content}
-                          </Typography>
-                        </td>
                         <td className="p-4 border-b border-blue-gray-50">
                         {Array.isArray(contribution.image) && contribution.image.length > 0 && (
                             <img src={contribution.image[0]} alt="contribution" className='h-[80px]'/>

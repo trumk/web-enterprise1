@@ -54,6 +54,14 @@ import { useLocation } from "react-router-dom";
         label: 'Manage Contribution'
       }
     ];
+    const marketingCoordinatorRoutes = [
+      {
+        href: '/marketingCoordinator/contribution',
+        icon: FileSliders,
+        label: 'Manage Contribution'
+      }
+    ]
+    const isMarketingCoordinatorPage = window.location.pathname.startsWith("/marketingCoordinator")
     const isAdminPage = window.location.pathname.startsWith("/admin");
     const routes = isAdminPage? adminRoutes : guestRoutes;
     return (
