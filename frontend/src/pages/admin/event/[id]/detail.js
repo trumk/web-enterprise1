@@ -18,7 +18,7 @@ import { Preview } from "../../../../components/manage/preview";
 
 export const EventDetail = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const event = useSelector((state) => state.event.event.currentEvent);
+  const event = useSelector((state) => state.event.event?.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -34,7 +34,7 @@ export const EventDetail = () => {
     if (confirmation) {
       dispatch(deleteThisEvent(id, user.accessToken, navigate));
     }
-  };
+  };  
   return (
     <>
       <NavbarDefault />
