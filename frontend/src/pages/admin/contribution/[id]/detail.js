@@ -43,7 +43,7 @@ export const ContributionDetail = () => {
                             </Typography>
                         </CardHeader>
                         <Typography variant="h5" className="ml-3">
-                            Student: {contribution?.userID.userName}
+                            Student: {contribution?.author.firstName} {contribution?.author.lastName}
                         </Typography>
                         <Typography variant="h5" className="ml-3">
                             Content:

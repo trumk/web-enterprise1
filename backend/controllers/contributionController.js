@@ -55,7 +55,7 @@ const contributionController = {
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
-        eventID: req.cookies.eventId
+        eventID: req.body.eventID
       });
       const contribution = await newContribution.save();
       const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
@@ -87,10 +87,10 @@ const contributionController = {
   },
   getContributionByEvent: async (req, res) => {
     try {
-      let query = { isPublic: true, eventID: req.cookies.eventId };
+      let query = { isPublic: true, eventID: req.params.id };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+        query = { eventID: req.params.id };
       }
       const contributions = await Contribution.find(query)
         .populate({

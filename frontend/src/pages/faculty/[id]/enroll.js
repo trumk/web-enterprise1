@@ -20,13 +20,13 @@ export const EnrollFaculty = () => {
   const [enrollKey, setEnrollKey] = useState('');
   const {id} = useParams()
 
-  const user = useSelector((state) => state.auth.login.currentUser);
-  const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    if (user && user.accessToken) {
-      dispatch(getOneFaculty(id, user.accessToken));
+    if (user && user?.accessToken) {
+      dispatch(getOneFaculty(id, user?.accessToken));
     }
   }, [dispatch, id, user]);
 
@@ -38,9 +38,9 @@ export const EnrollFaculty = () => {
     dispatch(joinFaculty(id, user.accessToken, enroll, navigate));
   };
 
-  const studentFaculty = useSelector((state) => state.user.user.user.facultyID)
+  const studentFaculty = useSelector((state) => state.user.user.user?.facultyID)
   const isEnrolled = studentFaculty?.some(facultyId => facultyId === id);
-  console.log(faculty?.Faculty.enrollKey)
+  console.log(studentFaculty)
   return (
     
     <>
@@ -64,7 +64,7 @@ export const EnrollFaculty = () => {
             />
             <Button color='blue' className='mt-2' onClick={handleEnroll}>Enroll</Button>
               </form>
-              {isEnrolled && <Typography variant='h6'>You are already enrolled in this faculty, <Link to={`/faculty/${id}`}>go to dashboard?</Link></Typography>}
+              {/* {isEnrolled && <Typography variant='h6'>You are already enrolled in this faculty, <Link to={`/faculty/${id}`}>go to dashboard?</Link></Typography>} */}
             </div>
           </div>
         </div>

@@ -9,12 +9,12 @@ import { PencilLine } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export const UserProfile = () => {
-  const user = useSelector((state) => state.auth.login.currentUser);
+  const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if(user && user._id) {
-      dispatch(getSelf(user._id));
+    if(user && user?._id) {
+      dispatch(getSelf(user?._id));
     }
   }, [dispatch, user]);
 
@@ -49,7 +49,7 @@ export const UserProfile = () => {
           Role: {user?.role} 
         </Typography>
         
-        <Link to={`../user/${user._id}/edit`}><Button className='flex items-center gap-1 mt-2' color='amber'><PencilLine className='h-4 w-4'/> Edit</Button></Link>
+        <Link to={`../user/${user?._id}/edit`}><Button className='flex items-center gap-1 mt-2' color='amber'><PencilLine className='h-4 w-4'/> Edit</Button></Link>
         </div>
       </CardBody>
     </Card>

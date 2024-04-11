@@ -26,7 +26,7 @@ export const UserDetail = () => {
   }, [user, dispatch]);
 
   console.log(userId)
-  const selectedUser = users.find((u) => u._id === userId);
+  const selectedUser = users?.find((u) => u._id === userId);
 
   return (
     <>

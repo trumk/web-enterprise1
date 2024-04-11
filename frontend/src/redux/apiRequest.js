@@ -91,12 +91,11 @@ import {
 
 const BACKEND_URL = "http://localhost:5503";
 //auth
-export const loginUser = async (user, dispatch, navigate) => {
+export const loginUser = async (user, dispatch) => {
   dispatch(loginStart());
   try {
     const res = await axios.post(`${BACKEND_URL}/login`, user);
     dispatch(loginSuccess(res.data));
-    navigate("/");
   } catch (err) {
     dispatch(loginFailed());
   }
