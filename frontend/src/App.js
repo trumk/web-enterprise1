@@ -8,7 +8,6 @@ import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import { Homepage } from './pages/Homepage';
 import "react-toastify/dist/ReactToastify.css";
-import { ManageUser } from './pages/admin/users';
 import { UserProfile } from './pages/user/[id]/profile';
 import { Term } from './pages/Term';
 import { ChangePassword } from './pages/user/[id]/changePassword';
@@ -47,7 +46,6 @@ function App() {
         <Route path="/faculty/:id/event/:id" element={<EventInfo />} />
         <Route path="/faculty/:id/event/:id/contribution/submit" element={<SubmitContribution />} />
         <Route path="/faculty/:id/event/:id/contribution/:contributionId/read" element={<ReadContribution />} />
-        <Route path="/admin/users" element={<ManageUser />} />
         <Route path="/user/:id/profile" element={<UserProfile/>} />
         <Route path="/user/:id/changePassword" element={<ChangePassword/>} />
         <Route path="/user/:id/edit" element={<EditProfile/>} />
