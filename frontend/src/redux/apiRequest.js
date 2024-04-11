@@ -119,7 +119,7 @@ export const verifyAccount = async (otp, dispatch, navigate) => {
     navigate("/login");
   } catch (err) {
     dispatch(verifyFailed());
-    console.error("Verification error:", err.respone.data);
+    console.error(err);
   }
 };
 
