@@ -33,8 +33,10 @@ export default function Login(){
         if (currentUser) {
             if (currentUser.role === "admin") {
                 navigate("/admin/user");
-            } else {
-                navigate("/");
+            } else if (currentUser.role === "marketing coordinator"){
+                navigate("/marketingCoordinator");
+            } else{
+                navigate("/")
             }
         }
     }, [currentUser, navigate]);
