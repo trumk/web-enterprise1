@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import NavbarDefault from '../../../../../components/navbar';
 import DefaultSidebar from '../../../../../components/sidebar';
@@ -12,15 +12,30 @@ import {
   CardBody,
   CardHeader,
   Typography,
+  IconButton
 } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { Preview } from '../../../../../components/manage/preview';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+
 export const EventInfo = () => {
   const { id } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
+  const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const contributionData = useSelector((state) => state.contribution.getContributionsByEvent?.contributions);
   const dispatch = useDispatch();
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handlePrev = () => {
+    setCurrentIndex((oldIndex) => Math.max(oldIndex - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((oldIndex) => Math.min(oldIndex + 1, contributionData.length - 3));
+  };
 
   const currentUrl = window.location.pathname;
   const submitUrl = `${currentUrl}/contribution/submit`
@@ -42,7 +57,7 @@ export const EventInfo = () => {
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
-          <Link to={`/faculty/${id}/event/${id}`}><Button color='blue'>Back</Button></Link>
+          <Link to={`/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -73,44 +88,62 @@ export const EventInfo = () => {
                 <Link to={submitUrl}><Button color='green'>Post new contribution</Button></Link>
                 <Typography variant="h4" color='black' className="ml-3 mb-2">
                   Related Contribution
-                  </Typography>
+                </Typography>
                 <div className='flex gap-5 items-center'>
-                {contributionData ? (
-                  contributionData && contributionData.length > 0 ? (
-                    contributionData.map((detail, index) => (
-                      <Card className="mt-6 w-96 transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
-                        <CardHeader color="blue-gray" className="relative h-60">
-                          {Array.isArray(detail.image) && detail.image.length > 0 && (
-                            <img src={detail.image[0]} alt="contribution" className='w-full'/>
-                          )}
-                        </CardHeader>
-                        <CardBody>
-                          <Typography variant="h5" color="blue-gray" className="mb-2 line-clamp-2 hover:text-blue-500 hover:cursor-pointer">
-                            {detail.title}
-                          </Typography>
-                          <Typography>
-                            Created at: {format(new Date(detail.createdAt), 'MMMM dd, yyyy')}
-                          </Typography>
-                          <Typography variant="paragraph">
-                            Author: {detail.userID.userName}
-                          </Typography>
-                          <Typography variant="paragraph" className='line-clamp-3'>
+                  {
+                    contributionData && contributionData.length > 3 && (
+                      <IconButton onClick={handlePrev}><ChevronLeft /></IconButton>
+                    )
+                  }
+                  <div className='flex gap-6 item-center justify-between'>
+                  {contributionData ? (
+                    contributionData && contributionData.length > 0 ? (
+                      contributionData.slice(currentIndex, currentIndex + 3).map((detail, index) => (
+                          <Card className="mt-6 w-96 transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
+                            <CardHeader color="blue-gray" className="relative h-60">
+                              {Array.isArray(detail.image) && detail.image.length > 0 && (
+                                <img src={detail.image[0]} alt="contribution" className='w-full' />
+                              )}
+                            </CardHeader>
+                            <CardBody>
+                              <Typography variant="h5" color="blue-gray" className="mb-2 line-clamp-2 hover:text-blue-500 hover:cursor-pointer">
+                                {detail.title}
+                              </Typography>
+                              <Typography>
+                                Posted at: {format(new Date(detail.createdAt), 'MMMM dd, yyyy')}
+                              </Typography>
+                              <Typography variant="paragraph">
+                                Author: {detail.userID.userName}
+                              </Typography>
+                              {/* <Typography variant="paragraph" className='line-clamp-2'>
                             {detail.content}
-                            </Typography>
-                        </CardBody>
-                        <CardFooter className="pt-0">
-                          <Link to={`${currentUrl}/contribution/${detail._id}/read`}><Button>Read More</Button></Link>
-                        </CardFooter>
-                      </Card>
-
-                    ))
+                            </Typography> */}
+                            </CardBody>
+                            <CardFooter className="pt-0">
+                              <Link to={`${currentUrl}/contribution/${detail._id}/read`}><Button>Read More</Button></Link>
+                            </CardFooter>
+                          </Card>
+                      ))
+                    ) : (
+                      <>
+                        <Typography variant="h6" color="gray" className="ml-3">
+                          No contribution found
+                        </Typography>
+                      </>
+                    )
                   ) : (
-                    <></>
-                  )
-                ) : (
-                  <>
-                  </>
-                )}
+                    <>
+                      <Typography variant="h6" color="gray" className="ml-3">
+                        Loading faculty, this may need a few seconds
+                      </Typography>
+                    </>
+                  )}
+                  </div>
+                  {
+                    contributionData && contributionData.length > 3 && (
+                      <IconButton onClick={handleNext}><ChevronRight /></IconButton>
+                    )
+                  }
                 </div>
               </CardFooter>
             </Card>

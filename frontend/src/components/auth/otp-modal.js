@@ -26,7 +26,6 @@ export const OTPModal = ({open, onClose, email}) => {
   
         setOtp(newOTP);
       };
-
     const handleOnKeyDown = (event, index) => {
         const { key } = event;
         if (key === 'Backspace') setActiveOTPIndex(index - 1);
