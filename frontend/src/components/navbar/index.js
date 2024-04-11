@@ -11,7 +11,7 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon } from "lucide-react";
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail } from "lucide-react";
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -38,6 +38,10 @@ export default function NavbarDefault() {
 
   const profileMenuItems = [
     {
+      label: `${user?.email}`,
+      icon: Mail
+    },
+    {
       label: "My Profile",
       icon: UserCircleIcon,
       href: `/user/${user?._id}/profile`,
@@ -48,9 +52,6 @@ export default function NavbarDefault() {
       action: handleLogout,
     },
   ];
-  const isAdmin = user && user.role === "admin";
-  const isUser = user && user.role === "user";
-  //const isMarketingCoordinator = user && user.role == "marketing coordinator";
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -132,75 +133,7 @@ export default function NavbarDefault() {
                   </Button>
                 </Link>
               </div>
-            ) : isAdmin ? (
-              <>
-                <Link to="/admin/faculty">
-                  <Button
-                    variant="text"
-                    size="sm"
-                    className="hidden lg:inline-block"
-                  >
-                    <span>Admin mode</span>
-                  </Button>
-                </Link>
-                <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
-                  <MenuHandler>
-                    <Button
-                      variant="text"
-                      color="blue-gray"
-                      className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
-                    >
-                      {/* TODO: User avatar */}
-                      <Avatar
-                        variant="circular"
-                        size="sm"
-                        alt="tania andrew"
-                        className="border border-gray-900 p-0.5"
-                        src={profile?.avatar}
-                      />
-                      <ChevronDownIcon
-                        strokeWidth={2.5}
-                        className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
-                          }`}
-                      />
-                    </Button>
-                  </MenuHandler>
-                  <MenuList className="p-1">
-                    {profileMenuItems.map(({ label, icon, href, action }, key) => {
-                      const isLastItem = key === profileMenuItems.length - 1;
-                      return (
-                        <Link to={href}>
-                        <MenuItem
-                          key={label}
-                          onClick={()=> {
-                            closeMenu();
-                            if(action) action()
-                          }}
-                          className={`flex items-center gap-2 rounded ${isLastItem
-                            ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                            : ""
-                            }`}
-                        >
-                          {React.createElement(icon, {
-                            className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                            strokeWidth: 2,
-                          })}
-                            <Typography
-                              as="span"
-                              variant="small"
-                              className="font-normal"
-                              color={isLastItem ? "red" : "inherit"}
-                            >
-                              {label}
-                            </Typography>
-                        </MenuItem>
-                        </Link>
-                      );
-                    })}
-                  </MenuList>
-                </Menu>
-                </>
-            ) : isUser && (
+            )  : (
               <>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
                   <MenuHandler>
