@@ -18,7 +18,7 @@ import { Preview } from "../../../../components/manage/preview";
 
 export const EventDetail = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const event = useSelector((state) => state.event.event.currentEvent);
+  const event = useSelector((state) => state.event.event?.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -27,14 +27,14 @@ export const EventDetail = () => {
       dispatch(getOneEvent(id, user.accessToken));
     }
   }, [dispatch, id, user]);
-  const detail = event.Event;
+  const detail = event?.Event;
   console.log(detail)
   const handleDelete = () => {
     const confirmation = window.confirm(`Are you sure you want to delete ${detail.topic}?`);
     if (confirmation) {
       dispatch(deleteThisEvent(id, user.accessToken, navigate));
     }
-  };
+  };  
   return (
     <>
       <NavbarDefault />

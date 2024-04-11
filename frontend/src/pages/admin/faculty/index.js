@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 export const Faculty = () => {
   const faculties = useSelector(
-    (state) => state.faculty.faculties.allFaculties
+    (state) => state.faculty.faculties?.allFaculties
   );
   const user = useSelector((state) => state.auth.login?.currentUser);
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,7 +94,7 @@ export const Faculty = () => {
                 </tr>
               </thead>
               <tbody>
-                {searchTerm && filterFaculty.faculties && filterFaculty.faculties.length > 0 ? (
+                {searchTerm && filterFaculty?.faculties && filterFaculty?.faculties.length > 0 ? (
                   filterFaculty.faculties.map((faculty, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
@@ -134,7 +134,7 @@ export const Faculty = () => {
                     </tr>
                   ))
                 ):faculties ? (
-                  faculties.Faculty && faculties.Faculty.length > 0 ? (
+                  faculties?.Faculty && faculties?.Faculty.length > 0 ? (
                     faculties.Faculty.map((faculty, index) => (
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">

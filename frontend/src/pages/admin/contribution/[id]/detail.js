@@ -59,7 +59,7 @@ export const ContributionDetail = () => {
                         <Typography variant="h5" className="ml-3">
                             Files:
                         </Typography>
-                        {contribution.file.length > 0 && (
+                        {contribution?.file.length > 0 && (
                             <div className="space-y-2">
                                 {contribution.file.map((file, index) => (
                                     <div

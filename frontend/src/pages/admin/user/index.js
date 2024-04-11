@@ -17,7 +17,7 @@ export const User = () => {
     }
   }, [user, dispatch]);
   //bỏ user có role là admin
-  const filteredUsers = users.filter((user) => user.role !== "admin");
+  const filteredUsers = users?.filter((user) => user.role !== "admin");
   return (
     <>
       <NavbarDefault />
