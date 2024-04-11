@@ -105,7 +105,7 @@ const authController = {
     },
     verifyUser: async (req, res) => {
         try {
-            const email = req.cookies.email;
+            const email = req.body.email;
             const user = await User.findOne({ email: email });
             if (!user) {
                 return res.status(404).json("User not found");
