@@ -22,7 +22,7 @@ export const FacultyMainPage = () => {
     const { id } = useParams()
     const user = useSelector((state) => state.auth.login.currentUser);
 
-    const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty.filterEvent)
+    const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty?.filterEvent)
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export const FacultyMainPage = () => {
                         {eventData?.map(event => (
                             <div key={event._id} className="m-2 flex-none relative" style={{width: '26rem'}}>
                                 <div className="absolute w-full h-full bg-teal-900 rounded-xl"/>
-                                <Card color="teal" shadow={false} className="w-full cursor-pointer transform transition-transform duration-200 hover:translate-x-1 hover:-translate-y-1 z-10">
+                                <Card color="teal" shadow={false} className="w-full cursor-pointer transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
                                     <CardHeader
                                         color="transparent"
                                         floated={false}
