@@ -25,7 +25,7 @@ export const ContributionDetail = () => {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    console.log(contribution)
+    console.log(id)
     return (
         <>
             <NavbarDefault />
@@ -53,8 +53,21 @@ export const ContributionDetail = () => {
                             Created At: {contribution?.createdAt ? format(new Date(contribution?.createdAt), 'MMMM dd, yyyy') : 'N/A'}
                         </Typography>
                         <Typography variant="h5" className="ml-3">
+                            Published: {contribution?.isPublic ? 'Yes' : 'No'}
+                            </Typography>
+                        <Typography variant="h5" className="ml-3">
                             Image:
-                            <img src={contribution?.image} alt="contribution" className='mt-2 mb-2 h-[300px]' />
+                            <div className='flex items-center gap-2'>
+                                {contribution?.image.map((imgSrc, index) => (
+                                <img
+                                    key={index}
+                                    src={imgSrc}
+                                    alt={`contribution ${index}`}
+                                    className='mt-2 mb-2 h-[300px] rounded-md border border-gray-900'
+                                />
+                            ))}
+                            </div>
+                            
                         </Typography>
                         <Typography variant="h5" className="ml-3">
                             Files:
@@ -67,7 +80,7 @@ export const ContributionDetail = () => {
                                     >
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
                                         <p className="text-xs line-clamp-1">
-                                            Contribution_Title_{index + 1}
+                                            Contribution Attachment {index + 1}
                                         </p>
                                     </div>
                                 ))}

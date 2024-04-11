@@ -114,18 +114,18 @@ export const Contribution = () => {
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
-                          <img src={contribution?.image} alt="contribution" className="h-[80px]" />
+                        {Array.isArray(contribution.image) && contribution.image.length > 0 && (
+                            <img src={contribution.image[0]} alt="contribution" className='h-[80px]'/>
+                          )}
 
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                           <Badge 
                           className='w-[100px]'
-                            content={contribution?.isPublished === true ? "Published" : "Not Published"}
-                            color={contribution?.isPublished === true ? "green" : "red"}
+                            content={contribution.isPublic === true ? "Published" : "Not Published"}
+                            color={contribution.isPublic === true ? "green" : "red"}
 
-                          >
-                            {contribution?.isPublished}
-                          </Badge>
+                          />
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                           <Typography

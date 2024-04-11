@@ -17,6 +17,11 @@ const contributionSlice = createSlice({
             isFetching: false,
             error: false,
         },
+        getContributionsByEvent: {
+            contributions: null,
+            isFetching: false,
+            error: false,
+        }
     },
     reducers: {
         getContributionsStart: (state) => {
@@ -54,6 +59,18 @@ const contributionSlice = createSlice({
             state.submitContribution.isFetching = false;
             state.submitContribution.error = true;
         },
+        getContributionsByEventStart: (state) => {
+            state.getContributionsByEvent.isFetching = true;
+        },
+        getContributionsByEventFailed: (state) => {
+            state.getContributionsByEvent.isFetching = false;
+            state.getContributionsByEvent.error = true;
+        },
+        getContributionsByEventSuccess: (state, action) => {
+            state.getContributionsByEvent.isFetching = false;
+            state.getContributionsByEvent.contributions = action.payload;
+            state.getContributionsByEvent.error = false;
+        },
     }
 },
 );
@@ -67,5 +84,8 @@ export const {
     submitContributionStart,
     submitContributionSuccess,
     submitContributionFailed,
+    getContributionsByEventStart,
+    getContributionsByEventFailed,
+    getContributionsByEventSuccess,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
