@@ -8,7 +8,7 @@ import {
 } from '@material-tailwind/react'
 import DefaultSidebar from '../../../../../../components/sidebar'
 import { Editor } from '../../../../../../components/manage/editor'
-import { ImageUp, X, FileUp } from 'lucide-react';
+import { ImageUp, X, FileUp, File } from 'lucide-react';
 import { postContribution } from '../../../../../../redux/apiRequest'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -168,7 +168,7 @@ export const SubmitContribution = () => {
                                 key={key}
                                 className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                               >
-                                <FileUp className='h-4 w-4 mr-2 flex-shrink-0' />
+                                <File className='h-4 w-4 mr-2 flex-shrink-0' />
                                 <p className="text-xs line-clamp-1">
                                   {file.name}
                                 </p>
