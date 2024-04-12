@@ -454,8 +454,8 @@ const contributionController = {
       let totalContributions = 0;
       const facultyStats = await Promise.all(allFaculties.map(async (faculty) => {
         const events = await Event.find({ facultyId: faculty._id });
-        let contributionsCount = 0;
-        let uniqueContributors = new Set();
+        let numberOfContributions = 0;
+        let numberOfContributors = new Set();
 
         for (let event of events) {
           const contributions = await Contribution.find({
@@ -463,22 +463,22 @@ const contributionController = {
             createdAt: { $gte: startDate, $lte: endDate }
           });
           contributions.forEach(contribution => {
-            contributionsCount++;
-            uniqueContributors.add(contribution.userID.toString());
+            numberOfContributions++;
+            numberOfContributors.add(contribution.userID.toString());
           });
         }
 
-        totalContributions += contributionsCount;
+        totalContributions += numberOfContributions;
         return {
           facultyName: faculty.facultyName,
-          contributionsCount,
-          uniqueContributorsCount: uniqueContributors.size
+          numberOfContributions,
+          numberOfContributors: numberOfContributors.size
         };
       }));
 
       const statistics = facultyStats.map(faculty => ({
         ...faculty,
-        contributionPercentage: (faculty.contributionsCount / totalContributions * 100).toFixed(2) + '%'
+        contributionPercentage: (faculty.numberOfContributions / totalContributions * 100)
       }));
 
       res.status(200).json({ statistics, totalContributions });
