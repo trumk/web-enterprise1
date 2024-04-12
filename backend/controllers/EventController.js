@@ -155,7 +155,6 @@ function getOneEvent(req, res) {
     path: "/",
     sameSite: "strict"
   });
-  console.log(req.cookies.eventId);
   Event.findById(id)
   .populate('facultyId', 'facultyName')
     .then(event => {

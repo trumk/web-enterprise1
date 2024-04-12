@@ -8,10 +8,10 @@ import {
 } from '@material-tailwind/react'
 import DefaultSidebar from '../../../../../../components/sidebar'
 import { Editor } from '../../../../../../components/manage/editor'
-import { ImageUp, X, FileUp } from 'lucide-react';
+import { ImageUp, X, FileUp, File } from 'lucide-react';
 import { postContribution } from '../../../../../../redux/apiRequest'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export const SubmitContribution = () => {
   const [title, setTitle] = useState('');
@@ -20,9 +20,9 @@ export const SubmitContribution = () => {
   const [file, setFile] = useState([]);
   const [message, setMessage] = useState('');
 
-  const user = useSelector((state) => state.auth.login.currentUser);
+  const user = useSelector((state) => state.auth.login?.currentUser);
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
-  const event = useSelector((state) => state.event.event.currentEvent);
+  const event = useSelector((state) => state.event.event?.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   console.log(event.Event._id)
@@ -168,7 +168,7 @@ export const SubmitContribution = () => {
                                 key={key}
                                 className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                               >
-                                <FileUp className='h-4 w-4 mr-2 flex-shrink-0' />
+                                <File className='h-4 w-4 mr-2 flex-shrink-0' />
                                 <p className="text-xs line-clamp-1">
                                   {file.name}
                                 </p>

@@ -55,7 +55,7 @@ const contributionController = {
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
-        eventID: req.cookies.eventId
+        eventID: req.body.eventID
       });
       const contribution = await newContribution.save();
       const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
@@ -87,10 +87,10 @@ const contributionController = {
   },
   getContributionByEvent: async (req, res) => {
     try {
-      let query = { isPublic: true, eventID: req.cookies.eventId };
+      let query = { isPublic: true, eventID: req.params.id };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+        query = { eventID: req.params.id };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -445,111 +445,48 @@ const contributionController = {
   },
   getStatistic: async (req, res) => {
     try {
-      //check validate date
-        var startDate = new Date(req.body.startDate);
-        var endDate = new Date(req.body.endDate);
-        if (startDate.getTime() > endDate.getTime()) {
-            return res.status(500).json({ message: "The start date must be earlier than the end date" });
+      let startDate = new Date(req.body.startDate);
+      startDate.setDate(startDate.getDate() + 151);
+      let endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 365);
+      const allFaculties = await Faculty.find();
+
+      let totalContributions = 0;
+      const facultyStats = await Promise.all(allFaculties.map(async (faculty) => {
+        const events = await Event.find({ facultyId: faculty._id });
+        let numberOfContributions = 0;
+        let numberOfContributors = new Set();
+
+        for (let event of events) {
+          const contributions = await Contribution.find({
+            eventID: event._id,
+            createdAt: { $gte: startDate, $lte: endDate }
+          });
+          contributions.forEach(contribution => {
+            numberOfContributions++;
+            numberOfContributors.add(contribution.userID.toString());
+          });
         }
-        // use agg faculty find event relate in scope date
-        const facultyStatistics = await Faculty.aggregate([
-            {
-                $lookup: {
-                    from: 'events',
-                    let: { facultyId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$facultyId', '$$facultyId'] },
-                                createEvent: { $gte: startDate, $lte: endDate }
-                            }
-                        },
-                        {
-                          //find contribution
-                            $lookup: {
-                                from: 'contributions',
-                                let: { eventId: '$_id' },
-                                pipeline: [
-                                    { 
-                                        $match: { 
-                                            $expr: { 
-                                                $and: [
-                                                  // scope date
-                                                    { $eq: ['$eventID', '$$eventId'] },
-                                                    { $gte: ['$createdAt', startDate] },
-                                                    { $lte: ['$createdAt', endDate] }
-                                                ]
-                                            } 
-                                        } 
-                                    },
-                                    { $count: 'totalContributions' },
-                                ],
-                                as: 'contributions',
-                            },
-                        },
-                        {
-                          //collect result
-                            $unwind: {
-                                path: '$contributions',
-                                preserveNullAndEmptyArrays: true,
-                            },
-                        },
-                        {
-                          //calculate total contributions and unique contributors by department:
-                            $group: {
-                                _id: '$_id',
-                                totalContributions: { $sum: '$contributions.totalContributions' },
-                                uniqueContributors: { $addToSet: '$contributions.userID' } 
-                            },
-                        },
-                    ],
-                    as: 'eventsWithStatistics',
-                },
-            },
-            {
-              //calculate total all contributions 
-                $addFields: {
-                    totalContributions: { $sum: '$eventsWithStatistics.totalContributions' },
-                    uniqueContributors: { $setUnion: ['$eventsWithStatistics.uniqueContributors'] }
-                },
-            },
-            {//faculty
-                $group: {
-                    _id: null,
-                    overallTotal: { $sum: '$totalContributions' },
-                    faculties: { $push: '$$ROOT' }
-                },
-            },
-            {
-                $unwind: '$faculties'
-            },
-            {//show result final and remove 
-              $project: {
-                _id: 0,
-                facultyName: '$faculties.facultyName',
-                totalContributions: '$faculties.totalContributions',
-                numberOfUniqueContributors: { $size: '$faculties.uniqueContributors' },
-                percentageOfTotal: {
-                    $cond: {
-                        if: { $eq: ['$overallTotal', 0] },
-                        then: 0,
-                        else: {
-                            $multiply: [
-                                { $divide: ['$faculties.totalContributions', '$overallTotal'] },
-                                100
-                            ]
-                        }
-                    }
-                }
-            }
-            }
-        ]);
-        res.status(200).json(facultyStatistics);
+
+        totalContributions += numberOfContributions;
+        return {
+          facultyName: faculty.facultyName,
+          numberOfContributions,
+          numberOfContributors: numberOfContributors.size
+        };
+      }));
+
+      const statistics = facultyStats.map(faculty => ({
+        ...faculty,
+        contributionPercentage: (faculty.numberOfContributions / totalContributions * 100)
+      }));
+
+      res.status(200).json({ statistics, totalContributions });
     } catch (error) {
-        console.error("Error fetching faculty statistics:", error);
-        res.status(500).json({ message: error.message });
+      console.error("Error in getStatistic:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-},
+  },
   getExceptionReports: async (req, res) => {
     try {
       const noComments = await Contribution.aggregate([

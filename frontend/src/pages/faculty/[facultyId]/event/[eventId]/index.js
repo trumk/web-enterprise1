@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import NavbarDefault from '../../../../../components/navbar';
+import DefaultSidebar from '../../../../../components/sidebar';
+import { allContributionsByEventData, getOneEvent } from '../../../../../redux/apiRequest';
 import { useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -12,21 +15,18 @@ import {
   IconButton
 } from "@material-tailwind/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight, ArrowLeft  } from 'lucide-react';
-import NavbarDefault from '../../../../components/navbar';
-import DefaultSidebar from '../../../../components/sidebar';
-import { Preview } from '../../../../components/manage/preview';
-import { allContributionsByEventData, getOneEvent } from '../../../../redux/apiRequest';
+import { Preview } from '../../../../../components/manage/preview';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 
-export const EventDetail = () => {
-  const { id } = useParams();
+export const EventInfo = () => {
+  const { eventId, facultyId } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const contributionData = useSelector((state) => state.contribution.getContributionsByEvent?.contributions);
   const dispatch = useDispatch();
-
+  console.log(facultyId)
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrev = () => {
@@ -38,16 +38,17 @@ export const EventDetail = () => {
   };
 
   const currentUrl = window.location.pathname;
+  const submitUrl = `${currentUrl}/contribution/submit`
   useEffect(() => {
     if (user) {
-      dispatch(getOneEvent(id, user.accessToken));
+      dispatch(getOneEvent(eventId, user.accessToken));
     }
-  }, [user, id, dispatch]);
+  }, [user, eventId, dispatch]);
   useEffect(() => {
     if (user) {
-      dispatch(allContributionsByEventData(id, user.accessToken));
+      dispatch(allContributionsByEventData(eventId, user.accessToken));
     }
-  }, [user, id, dispatch]);
+  }, [user, eventId, dispatch]);
   const eventData = event?.Event;
   console.log(contributionData);
   return (
@@ -55,8 +56,8 @@ export const EventDetail = () => {
       <NavbarDefault />
       <div className='flex'>
         <DefaultSidebar className='flex' />
-        <div className='ml-5 w-full h-full mt-2.5'>
-          <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
+        <div className='ml-5 w-full h-full'>
+          <Link to={`/faculty/${facultyId}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -84,8 +85,9 @@ export const EventDetail = () => {
                 </Typography>
               </CardBody>
               <CardFooter className='mt-[-20px]'>
+                <Link to={submitUrl}><Button color='green'>Post new contribution</Button></Link>
                 <Typography variant="h4" color='black' className="ml-3 mb-2">
-                  Contributions
+                  Related Contribution
                 </Typography>
                 <div className='flex gap-5 items-center'>
                   {
@@ -114,11 +116,11 @@ export const EventDetail = () => {
                                 Author: {detail.userID.userName}
                               </Typography>
                               {/* <Typography variant="paragraph" className='line-clamp-2'>
-                            {detail.content} 
+                            {detail.content}
                             </Typography> */}
                             </CardBody>
                             <CardFooter className="pt-0">
-                              <Link to={`/admin/contribution/${detail._id}`}><Button>Read More</Button></Link>
+                              <Link to={`${currentUrl}/contribution/${detail._id}/read`}><Button>Read More</Button></Link>
                             </CardFooter>
                           </Card>
                       ))
