@@ -80,6 +80,19 @@ export const ReadContribution = () => {
                   Post comment
                 </Button>
               </form>
+              <article class="p-6 mb-6 text-base bg-white border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                  <footer class="flex justify-between items-center mb-2">
+                      <div class="flex items-center">
+                          <p class="inline-flex items-center mr-3 font-semibold text-sm text-gray-900 dark:text-white"><img
+                                  class="mr-2 w-6 h-6 rounded-full"
+                                  src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
+                                  alt="Bonnie Green"/>Bonnie Green</p>
+                      </div>
+                  </footer>
+                  <p>The article covers the essentials, challenges, myths and stages the UX designer should consider while creating the design strategy.</p>
+                  <div class="flex items-center mt-4 space-x-4">
+                  </div>
+              </article>
             </section>
           </article>
         </div>
