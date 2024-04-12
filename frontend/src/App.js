@@ -4,7 +4,6 @@ import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import { Homepage } from "./pages/Homepage";
 import "react-toastify/dist/ReactToastify.css";
-
 import { UserProfile } from "./pages/user/[id]/profile";
 import { Term } from "./pages/Term";
 import { ChangePassword } from "./pages/user/[id]/changePassword";
@@ -22,39 +21,41 @@ import { ContributionDetail } from "./pages/admin/contribution/[id]/detail";
 import { User } from "./pages/admin/user";
 import { UserDetail } from "./pages/admin/user/[id]/detail";
 import { EditUser } from "./pages/admin/user/[id]/edit";
-import { EnrollFaculty } from "./pages/faculty/[id]/enroll";
-import { FacultyMainPage } from "./pages/faculty/[id]";
-import { EventInfo } from "./pages/faculty/[id]/event/[eventId]";
-import { SubmitContribution } from "./pages/faculty/[id]/event/[eventId]/contribution/submit";
-import { ReadContribution } from "./pages/faculty/[id]/event/[eventId]/contribution/[contributionId]/read";
+import { EnrollFaculty } from "./pages/faculty/[facultyId]/enroll";
+import { FacultyMainPage } from "./pages/faculty/[facultyId]";
+import { EventInfo } from "./pages/faculty/[facultyId]/event/[eventId]";
+import { SubmitContribution } from "./pages/faculty/[facultyId]/event/[eventId]/contribution/submit";
+import { ReadContribution } from "./pages/faculty/[facultyId]/event/[eventId]/contribution/[contributionId]/read";
 import { MarketingCoordinatorPage } from "./pages/marketingCoordinator";
-
+import { MyContributionPage } from "./pages/userContribution";
+import { EditContribution } from "./pages/userContribution/[id]/edit";
 
 function App() {
   return (
     <>
-
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/terms" element={<Term />} />
-          <Route path="/faculty/:id/enroll" element={<EnrollFaculty />} />
-          <Route path="/faculty/:id" element={<FacultyMainPage />} />
-          <Route path="/faculty/:id/event/:id" element={<EventInfo />} />
+          <Route path="/faculty/:facultyId/enroll" element={<EnrollFaculty />} />
+          <Route path="/faculty/:facultyId" element={<FacultyMainPage />} />
+          <Route path="/faculty/:facultyId/event/:eventId" element={<EventInfo />} />
           <Route
-            path="/faculty/:id/event/:id/contribution/submit"
+            path="/faculty/:facultyId/event/:eventId/contribution/submit"
             element={<SubmitContribution />}
           />
           <Route
-            path="/faculty/:id/event/:id/contribution/:contributionId/read"
+            path="/faculty/:facultyId/event/:eventId/contribution/:contributionId/read"
             element={<ReadContribution />}
           />
           {/* User Route */}
           <Route path="/user/:id/profile" element={<UserProfile />} />
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
+          <Route path="/userContribution" element={<MyContributionPage />} />
+          <Route path="/userContribution/:id/edit" element={<EditContribution />} />
           {/* Marketing Coordinator */}
           <Route path="/marketingCoordinator" element={<MarketingCoordinatorPage/>}/>
           {/* Admin Route */}
@@ -76,7 +77,6 @@ function App() {
           <Route path="/admin/user/:userId/edit" element={<EditUser />} />
         </Routes>
       </BrowserRouter>
-
     </>
   );
 }

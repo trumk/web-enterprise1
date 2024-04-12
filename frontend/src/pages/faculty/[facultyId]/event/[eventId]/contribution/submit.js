@@ -11,7 +11,7 @@ import { Editor } from '../../../../../../components/manage/editor'
 import { ImageUp, X, FileUp, File } from 'lucide-react';
 import { postContribution } from '../../../../../../redux/apiRequest'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export const SubmitContribution = () => {
   const [title, setTitle] = useState('');
