@@ -19,7 +19,7 @@ router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 
 router.get("/getAllContributions", contributionController.getContributionByDashBoard);
 router.get("/getAllContributionsByEvent/:id", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
-router.get("/statistic", contributionController.getStatistic);
+router.post("/statistic", upload1.none(), contributionController.getStatistic);
 
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);

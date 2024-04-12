@@ -26,6 +26,9 @@ import {
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
+  getStatisticFailed,
+  getStatisticStart,
+  getStatisticSuccess,
   getUsersFailed,
   getUsersStart,
   getUsersSuccess,
@@ -239,6 +242,25 @@ export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) 
     console.log(err)
   }
 }
+
+export const getStatistic = (accessToken, time) => async (dispatch) => {
+  dispatch(getStatisticStart());
+  try {
+      const res = await axios.post(
+          `${BACKEND_URL}/contribution/statistic`, time,
+          {
+              headers: {
+                  token: `Bearer ${accessToken}`,
+              },
+          }
+      );
+      dispatch(getStatisticSuccess(res.data));
+  } catch (err) {
+      dispatch(getStatisticFailed());
+      console.log(err);
+  }
+};
+
 //faculty
 export const getAllFaculties = (accessToken) => async (dispatch) => {
   dispatch(getFacultiesStart());
@@ -544,3 +566,4 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
     console.log(err);
   }
 }
+

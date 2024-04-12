@@ -4,7 +4,8 @@ import {
   PartyPopper,
   Users,
   CalendarDays,
-  School
+  School,
+  BarChart3
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
@@ -64,6 +65,11 @@ export default function DefaultSidebar() {
       icon: School,
       label: "Faculties",
     },
+    {
+      href: "/marketingManager",
+      icon: BarChart3,
+      label: "Analytics",
+    }
   ];
 
   const isMarketingCoordinatorPage = window.location.pathname.startsWith(

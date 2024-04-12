@@ -12,7 +12,7 @@ import {
   IconButton
 } from "@material-tailwind/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft  } from 'lucide-react';
 import NavbarDefault from '../../../../components/navbar';
 import DefaultSidebar from '../../../../components/sidebar';
 import { Preview } from '../../../../components/manage/preview';
@@ -55,8 +55,8 @@ export const EventDetail = () => {
       <NavbarDefault />
       <div className='flex'>
         <DefaultSidebar className='flex' />
-        <div className='ml-5 w-full h-full'>
-          <Link to={`/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
+        <div className='ml-5 w-full h-full mt-2.5'>
+          <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
