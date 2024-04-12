@@ -35,6 +35,10 @@ const contributionSlice = createSlice({
         deleteContribution: {
             isFetching: false,
             error: false,
+        },
+        comment: {
+            isFetching: false,
+            error: false,
         }
     },
     reducers: {
@@ -120,6 +124,17 @@ const contributionSlice = createSlice({
             state.deleteContribution.isFetching = false;
             state.deleteContribution.error = true;
         },
+        commentStart: (state) => {
+            state.comment.isFetching = true;
+        },
+        commentSuccess: (state) => {
+            state.comment.isFetching = false;
+            state.comment.error = false;
+        },
+        commentFailed: (state) => {
+            state.comment.isFetching = false;
+            state.comment.error = true;
+        }
     }
 },
 );
@@ -145,5 +160,8 @@ export const {
     deleteContributionStart,
     deleteContributionSuccess,
     deleteContributionFailed,
+    commentStart,
+    commentSuccess,
+    commentFailed
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
