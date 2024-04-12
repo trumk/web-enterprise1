@@ -3,7 +3,6 @@ import {
   FileSliders,
   PartyPopper,
   Users,
-  Home,
   CalendarDays,
   School
 } from "lucide-react";
@@ -11,17 +10,12 @@ import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
 
 export default function DefaultSidebar() {
-  const location = useLocation();
+  
   const guestRoutes = [
     {
       href: "/",
-      icon: Home,
-      label: "Home",
-    },
-    {
-      href: "/user",
       icon: Users,
-      label: "User",
+      label: "Faculty",
     },
     {
       href: "/event",
@@ -29,9 +23,9 @@ export default function DefaultSidebar() {
       label: "Event",
     },
     {
-      href: "/contribution",
+      href: "/userContribution",
       icon: FileSliders,
-      label: "Contribution",
+      label: "My Contribution",
     },
   ];
   const adminRoutes = [

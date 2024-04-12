@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const EnrollFaculty = () => {
   const [enrollKey, setEnrollKey] = useState('');
-  const {id} = useParams()
+  const {facultyId} = useParams()
 
   const user = useSelector((state) => state.auth.login?.currentUser);
   const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
@@ -26,21 +26,21 @@ export const EnrollFaculty = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (user && user?.accessToken) {
-      dispatch(getOneFaculty(id, user?.accessToken));
+      dispatch(getOneFaculty(facultyId, user?.accessToken));
     }
-  }, [dispatch, id, user]);
+  }, [dispatch, facultyId, user]);
 
   const handleEnroll = async (e) => {
     e.preventDefault();
     const enroll={
       enrollKey:enrollKey,
     }
-    dispatch(joinFaculty(id, user.accessToken, enroll, navigate));
+    dispatch(joinFaculty(facultyId, user.accessToken, enroll, navigate));
   };
 
   const studentFaculty = useSelector((state) => state.user.user.user?.facultyID)
-  const isEnrolled = studentFaculty?.some(facultyId => facultyId === id);
-  console.log(studentFaculty)
+  const isEnrolled = studentFaculty?.some(facultyId => facultyId === facultyId);
+  console.log(facultyId)
   return (
     
     <>
@@ -64,7 +64,6 @@ export const EnrollFaculty = () => {
             />
             <Button color='blue' className='mt-2' onClick={handleEnroll}>Enroll</Button>
               </form>
-              {/* {isEnrolled && <Typography variant='h6'>You are already enrolled in this faculty, <Link to={`/faculty/${id}`}>go to dashboard?</Link></Typography>} */}
             </div>
           </div>
         </div>

@@ -20,13 +20,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 export const EventInfo = () => {
-  const { id } = useParams();
+  const { eventId, facultyId } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const contributionData = useSelector((state) => state.contribution.getContributionsByEvent?.contributions);
   const dispatch = useDispatch();
-
+  console.log(facultyId)
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrev = () => {
@@ -41,14 +41,14 @@ export const EventInfo = () => {
   const submitUrl = `${currentUrl}/contribution/submit`
   useEffect(() => {
     if (user) {
-      dispatch(getOneEvent(id, user.accessToken));
+      dispatch(getOneEvent(eventId, user.accessToken));
     }
-  }, [user, id, dispatch]);
+  }, [user, eventId, dispatch]);
   useEffect(() => {
     if (user) {
-      dispatch(allContributionsByEventData(id, user.accessToken));
+      dispatch(allContributionsByEventData(eventId, user.accessToken));
     }
-  }, [user, id, dispatch]);
+  }, [user, eventId, dispatch]);
   const eventData = event?.Event;
   console.log(contributionData);
   return (
@@ -57,7 +57,7 @@ export const EventInfo = () => {
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
-          <Link to={`/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
+          <Link to={`/faculty/${facultyId}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader

@@ -7,13 +7,11 @@ import {
     Card,
     CardHeader,
     CardBody,
-    Avatar
 } from '@material-tailwind/react'
 import { useSelector } from 'react-redux'
 import { getAllEventsByFaculty } from '../../../redux/apiRequest'
 import { useDispatch } from 'react-redux'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Preview } from '../../../components/manage/preview'
+import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ArrowRight } from 'lucide-react';
 
@@ -39,7 +37,7 @@ export const FacultyMainPage = () => {
                 <div className="ml-5 w-full h-full">
                     <div className='mt-10 flex items-start gap-5 flex-wrap'>
                         {eventData?.map(event => (
-                            <div key={event._id} className="m-2 flex-none relative" style={{width: '26rem' }}>
+                            <div key={event._id} className="m-2 flex-none relative" style={{ width: '26rem' }}>
                                 <div className="absolute w-full h-full bg-teal-900 rounded-xl" />
                                 <Card color="teal" shadow={false} className="w-full cursor-pointer transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
                                     <CardHeader
