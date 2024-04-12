@@ -25,7 +25,7 @@ export const ContributionDetail = () => {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    console.log(id)
+    
     return (
         <>
             <NavbarDefault />
@@ -78,6 +78,7 @@ export const ContributionDetail = () => {
                                     <div
                                         className="flex items-center p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
                                     >
+                                        
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
                                         <p className="text-xs line-clamp-1">
                                             Contribution Attachment {index + 1}
