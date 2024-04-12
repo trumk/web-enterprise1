@@ -40,6 +40,7 @@ const EditEvent = () => {
     }
   }, [eventData]);
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 

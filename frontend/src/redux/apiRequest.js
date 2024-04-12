@@ -75,6 +75,12 @@ import {
   deleteEventFailed, 
 } from "./eventSlice";
 import { 
+  deleteContributionFailed,
+  deleteContributionStart,
+  deleteContributionSuccess,
+  editContributionFailed,
+  editContributionStart,
+  editContributionSuccess,
   getContributionFailed,
   getContributionStart,
   getContributionSuccess,
@@ -86,7 +92,10 @@ import {
   getContributionsSuccess, 
   submitContributionFailed, 
   submitContributionStart,
-  submitContributionSuccess
+  submitContributionSuccess,
+  userContributionsFailed,
+  userContributionsStart,
+  userContributionsSuccess
 } from "./contributionSlice";
 
 const BACKEND_URL = "http://localhost:5503";
@@ -455,6 +464,7 @@ export const getOneContribution = (id, accessToken) => async (dispatch) => {
   }
   catch (err) {
     dispatch(getContributionFailed())
+    console.log(err)
   }
 }
 
@@ -486,5 +496,51 @@ export const postContribution = (facultyId, eventId, contribution, accessToken, 
   } catch (error) {
     dispatch(submitContributionFailed());
     console.error(error);
+  }
+}
+
+export const getContributionsByUser = (accessToken) => async (dispatch) => {
+  dispatch(userContributionsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getMyContribution`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(userContributionsSuccess(res.data));
+  } catch (err) {
+    dispatch(userContributionsFailed());
+    console.log(err);
+  }
+}
+
+export const modifyContribution = (id, contribution, accessToken, navigate) => async (dispatch) => {
+  dispatch(editContributionStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/contribution/edit/${id}`, contribution, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(editContributionSuccess(res.data));
+    navigate(`/userContribution`);
+  } catch (error) {
+    dispatch(editContributionFailed());
+    console.error(error);
+  }
+}
+
+export const removeContribution = (id, accessToken) => async (dispatch) => {
+  dispatch(deleteContributionStart());
+  try{
+    await axios.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(deleteContributionSuccess());
+  } catch (err) {
+    dispatch(deleteContributionFailed());
+    console.log(err);
   }
 }

@@ -17,11 +17,11 @@ import { format } from 'date-fns';
 import { Preview } from '../../../../components/manage/preview';
 export const ContributionDetail = () => {
     const user = useSelector((state) => state.auth.login?.currentUser);
-    const contribution = useSelector((state) => state.contribution.contribution.currentContribution);
+    const contribution = useSelector((state) => state.contribution.contribution?.currentContribution);
     const { id } = useParams();
     const dispatch = useDispatch();
     useEffect(() => {
-        if (user && user.accessToken) {
+        if (user && user?.accessToken) {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);

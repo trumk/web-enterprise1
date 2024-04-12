@@ -21,6 +21,20 @@ const contributionSlice = createSlice({
             contributions: null,
             isFetching: false,
             error: false,
+        },
+        userContributions: {
+            contributions: null,
+            isFetching: false,
+            error: false,
+        },
+        editContribution: {
+            currentContribution: null,
+            isFetching: false,
+            error: false,
+        },
+        deleteContribution: {
+            isFetching: false,
+            error: false,
         }
     },
     reducers: {
@@ -71,6 +85,41 @@ const contributionSlice = createSlice({
             state.getContributionsByEvent.contributions = action.payload;
             state.getContributionsByEvent.error = false;
         },
+        userContributionsStart: (state) => {
+            state.userContributions.isFetching = true;
+        },
+        userContributionsFailed: (state) => {
+            state.userContributions.isFetching = false;
+            state.userContributions.error = true;
+        },
+        userContributionsSuccess: (state, action) => {
+            state.userContributions.isFetching = false;
+            state.userContributions.contributions = action.payload;
+            state.userContributions.error = false;
+        },
+        editContributionStart: (state) => {
+            state.editContribution.isFetching = true;
+        },
+        editContributionSuccess: (state, action) => {
+            state.editContribution.currentContribution = action.payload;
+            state.editContribution.isFetching = false;
+            state.editContribution.error = false;
+        },
+        editContributionFailed: (state) => {
+            state.editContribution.isFetching = false;
+            state.editContribution.error = true;
+        },
+        deleteContributionStart: (state) => {
+            state.deleteContribution.isFetching = true;
+        },
+        deleteContributionSuccess: (state) => {
+            state.deleteContribution.isFetching = false;
+            state.deleteContribution.error = false;
+        },
+        deleteContributionFailed: (state) => {
+            state.deleteContribution.isFetching = false;
+            state.deleteContribution.error = true;
+        },
     }
 },
 );
@@ -87,5 +136,14 @@ export const {
     getContributionsByEventStart,
     getContributionsByEventFailed,
     getContributionsByEventSuccess,
+    userContributionsStart,
+    userContributionsFailed,
+    userContributionsSuccess,
+    editContributionStart,
+    editContributionSuccess,
+    editContributionFailed,
+    deleteContributionStart,
+    deleteContributionSuccess,
+    deleteContributionFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
