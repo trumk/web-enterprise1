@@ -16,7 +16,7 @@ export const MarketingManagerPage = () => {
     series: [
       {
         name: "Total",
-        data: statistic.map((item) => item.totalContributions),
+        data: statistic?.map((item) => item.totalContributions),
       },
     ],
     options: {
@@ -53,7 +53,7 @@ export const MarketingManagerPage = () => {
             fontWeight: 400,
           },
         },
-        categories: statistic.map((item) => item.facultyName),
+        categories: statistic?.map((item) => item.facultyName),
       },
       yaxis: {
         labels: {
@@ -91,7 +91,7 @@ export const MarketingManagerPage = () => {
     type: "pie",
     width: 560,
     height: 560,
-    series: statistic.map((item) => item.percentageOfTotal),
+    series: statistic?.map((item) => item.percentageOfTotal),
 
     options: {
       chart: {
@@ -100,12 +100,12 @@ export const MarketingManagerPage = () => {
         },
       },
       title: {
-        show: statistic.map((item) => item.facultyName),
+        show: statistic?.map((item) => item.facultyName),
       },
       dataLabels: {
         enabled: false,
       },
-      labels: statistic.map((item) => item.facultyName),
+      labels: statistic?.map((item) => item.facultyName),
       colors: undefined,
       legend: {
         show: true, // Hiển thị bảng chú giải
@@ -121,7 +121,7 @@ export const MarketingManagerPage = () => {
       },
     },
   };
-  const facultyNames = statistic.map((item) => item.facultyName);
+  const facultyNames = statistic?.map((item) => item.facultyName);
   console.log(facultyNames);
   const dispatch = useDispatch();
 
