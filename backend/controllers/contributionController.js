@@ -445,13 +445,14 @@ const contributionController = {
   },
   getStatistic: async (req, res) => {
     try {
-      //check validate date
+        // Check validate date
         var startDate = new Date(req.body.startDate);
         var endDate = new Date(req.body.endDate);
         if (startDate.getTime() > endDate.getTime()) {
             return res.status(500).json({ message: "The start date must be earlier than the end date" });
         }
-        // use agg faculty find event relate in scope date
+
+        // Use aggregation to find events related in scope date and calculate contributions
         const facultyStatistics = await Faculty.aggregate([
             {
                 $lookup: {
@@ -465,7 +466,6 @@ const contributionController = {
                             }
                         },
                         {
-                          //find contribution
                             $lookup: {
                                 from: 'contributions',
                                 let: { eventId: '$_id' },
@@ -474,7 +474,6 @@ const contributionController = {
                                         $match: { 
                                             $expr: { 
                                                 $and: [
-                                                  // scope date
                                                     { $eq: ['$eventID', '$$eventId'] },
                                                     { $gte: ['$createdAt', startDate] },
                                                     { $lte: ['$createdAt', endDate] }
@@ -482,38 +481,47 @@ const contributionController = {
                                             } 
                                         } 
                                     },
-                                    { $count: 'totalContributions' },
+                                    {
+                                        $project: {
+                                            userID: 1  // Only project userID for subsequent operations
+                                        }
+                                    }
                                 ],
                                 as: 'contributions',
                             },
                         },
                         {
-                          //collect result
                             $unwind: {
                                 path: '$contributions',
                                 preserveNullAndEmptyArrays: true,
                             },
                         },
-                        {
-                          //calculate total contributions and unique contributors by department:
-                            $group: {
-                                _id: '$_id',
-                                totalContributions: { $sum: '$contributions.totalContributions' },
-                                uniqueContributors: { $addToSet: '$contributions.userID' } 
-                            },
-                        },
                     ],
-                    as: 'eventsWithStatistics',
+                    as: 'eventsWithContributions',
                 },
             },
             {
-              //calculate total all contributions 
-                $addFields: {
-                    totalContributions: { $sum: '$eventsWithStatistics.totalContributions' },
-                    uniqueContributors: { $setUnion: ['$eventsWithStatistics.uniqueContributors'] }
+                $unwind: {
+                    path: '$eventsWithContributions',
+                    preserveNullAndEmptyArrays: true,
                 },
             },
-            {//faculty
+            {
+                $group: {
+                    _id: '$_id',
+                    facultyName: { $first: '$facultyName' },
+                    totalContributions: { $sum: 1 },
+                    uniqueContributors: { $addToSet: '$eventsWithContributions.contributions.userID' }
+                },
+            },
+            {
+                $project: {
+                    facultyName: 1,
+                    totalContributions: 1,
+                    numberOfUniqueContributors: { $size: '$uniqueContributors' }
+                }
+            },
+            {
                 $group: {
                     _id: null,
                     overallTotal: { $sum: '$totalContributions' },
@@ -523,27 +531,28 @@ const contributionController = {
             {
                 $unwind: '$faculties'
             },
-            {//show result final and remove 
-              $project: {
-                _id: 0,
-                facultyName: '$faculties.facultyName',
-                totalContributions: '$faculties.totalContributions',
-                numberOfUniqueContributors: { $size: '$faculties.uniqueContributors' },
-                percentageOfTotal: {
-                    $cond: {
-                        if: { $eq: ['$overallTotal', 0] },
-                        then: 0,
-                        else: {
-                            $multiply: [
-                                { $divide: ['$faculties.totalContributions', '$overallTotal'] },
-                                100
-                            ]
+            {
+                $project: {
+                    _id: 0,
+                    facultyName: '$faculties.facultyName',
+                    totalContributions: '$faculties.totalContributions',
+                    numberOfUniqueContributors: '$faculties.numberOfUniqueContributors',
+                    percentageOfTotal: {
+                        $cond: {
+                            if: { $eq: ['$overallTotal', 0] },
+                            then: 0,
+                            else: {
+                                $multiply: [
+                                    { $divide: ['$faculties.totalContributions', '$overallTotal'] },
+                                    100
+                                ]
+                            }
                         }
                     }
                 }
             }
-            }
         ]);
+
         res.status(200).json(facultyStatistics);
     } catch (error) {
         console.error("Error fetching faculty statistics:", error);
