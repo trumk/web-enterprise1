@@ -8,8 +8,8 @@ import { Typography } from "@material-tailwind/react";
 
 export const MarketingManagerPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-
   const statistic = useSelector((state) => state.user.statistic?.data);
+  const isFetching = useSelector((state) => state.user.statistic?.isFetching); 
   const totalContributionsConfig = {
     type: "bar",
     height: 240,
@@ -136,24 +136,30 @@ export const MarketingManagerPage = () => {
   console.log(statistic);
   return (
     <>
-      <NavbarDefault />
-      <div className="flex">
-        <DefaultSidebar className="flex" />
-        <div className="ml-5 w-full">
-          <section className="mt-4">
-            <div>
-              <Typography variant="h4">Total Contribution</Typography>
-              <Chart {...totalContributionsConfig}/>
+        <NavbarDefault />
+        <div className="flex">
+            <DefaultSidebar className="flex" />
+            <div className="ml-5 w-full">
+                {isFetching ? (
+                    <div>Loading...</div> 
+                ) : (
+                    <>
+                        <section className="mt-4">
+                            <div>
+                                <Typography variant="h4">Total Contribution</Typography>
+                                <Chart {...totalContributionsConfig} />
+                            </div>
+                        </section>
+                        <section className="mt-4">
+                            <div>
+                                <Typography variant="h4">Percentage of Total</Typography>
+                                <Chart {...PercentageOfTotal} />
+                            </div>
+                        </section>
+                    </>
+                )}
             </div>
-          </section>
-          <section className="mt-4">
-            <div>
-              <Typography variant="h4">Percentage of total</Typography>
-              <Chart {...PercentageOfTotal} />
-            </div>
-          </section>
         </div>
-      </div>
     </>
-  );
+);
 };
