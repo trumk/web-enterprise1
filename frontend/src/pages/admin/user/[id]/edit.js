@@ -73,7 +73,7 @@ export const EditUser = () => {
                     <Option value="marketing coordinator">
                       Marketing Coordinator
                     </Option>
-                    <Option value="student">User</Option>
+                    <Option value="user">User</Option>
                     <Option value="guest">Guest</Option>
                   </Select>
                 </div>
