@@ -18,7 +18,7 @@ import { format } from 'date-fns'
 import { ArrowRight } from 'lucide-react';
 
 export const FacultyMainPage = () => {
-    const { id } = useParams()
+    const { facultyId } = useParams()
     const user = useSelector((state) => state.auth.login.currentUser);
 
     const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty?.filterEvent)
@@ -26,7 +26,7 @@ export const FacultyMainPage = () => {
 
     useEffect(() => {
         if (user) {
-            dispatch(getAllEventsByFaculty(id, user.accessToken))
+            dispatch(getAllEventsByFaculty(facultyId, user.accessToken))
         }
     }, [user, dispatch])
     const eventData = eventInFaculty?.events
@@ -60,7 +60,7 @@ export const FacultyMainPage = () => {
                                         </div>
                                     </CardHeader>
                                     <CardBody className="mb-6 ml-4 p-0">
-                                        <Link to={`/faculty/${id}/event/${event._id}`}><Button variant='outlined' className='flex items-center gap-2'>Explore more about the event <ArrowRight className='w-6' /> </Button> </Link>
+                                        <Link to={`/faculty/${facultyId}/event/${event._id}`}><Button variant='outlined' className='flex items-center gap-2'>Explore more about the event <ArrowRight className='w-6' /> </Button> </Link>
                                     </CardBody>
                                 </Card>
                             </div>
