@@ -33,7 +33,7 @@ export const Homepage = () => {
   // );
   const studentFaculty = useSelector((state) => state.user.user.user?.facultyID);
   const handleNavigate = (facultyId) => {  
-    if (studentFaculty.includes(facultyId)) {
+    if (studentFaculty?.includes(facultyId)) {
       navigate(`/faculty/${facultyId}`);
     } else {
       navigate(`/faculty/${facultyId}/enroll`);

@@ -11,7 +11,8 @@ import { Editor } from '../../../../../../components/manage/editor'
 import { ImageUp, X, FileUp, File } from 'lucide-react';
 import { postContribution } from '../../../../../../redux/apiRequest'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Term } from '../../../../../Term'
 
 export const SubmitContribution = () => {
   const [title, setTitle] = useState('');
@@ -19,7 +20,9 @@ export const SubmitContribution = () => {
   const [image, setImage] = useState([]);
   const [file, setFile] = useState([]);
   const [message, setMessage] = useState('');
+  const [isTermOpen, setIsTermOpen] = useState(false);
 
+  const { facultyId, eventId } = useParams();
   const user = useSelector((state) => state.auth.login?.currentUser);
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const event = useSelector((state) => state.event.event?.currentEvent);
@@ -75,14 +78,17 @@ export const SubmitContribution = () => {
       contribution.append('file', file)
     })
   };
+  const handleSuccess = () => {
+    setIsTermOpen(true);
+  }
   contribution.append('eventID', event.Event._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(postContribution(faculty?.Faculty._id, event?.Event._id, contribution, user.accessToken, navigate));
+    dispatch(postContribution(contribution, user.accessToken, handleSuccess));
   }
-  // console.log(contribution.getAll('image'));
-  // console.log(contribution.getAll('file'));
-  // console.log(user.accessToken)
+  const handleAccept = () => {
+    navigate(`/faculty/${facultyId}/event/${eventId}`);
+  }
   return (
     <>
       <NavbarDefault />
@@ -204,6 +210,7 @@ export const SubmitContribution = () => {
           </div>
         </div>
       </div>
+      {isTermOpen && <Term onAccept={handleAccept} />}
     </>
   )
 }

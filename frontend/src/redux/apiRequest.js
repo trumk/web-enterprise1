@@ -96,6 +96,9 @@ import {
   getContributionsFailed, 
   getContributionsStart, 
   getContributionsSuccess, 
+  publishFailed, 
+  publishStart, 
+  publishSuccess, 
   submitContributionFailed, 
   submitContributionStart,
   submitContributionSuccess,
@@ -200,7 +203,7 @@ export const setRole = (id, role, accessToken, navigate) => async (dispatch) => 
   }
 };
 
-export const changeUserPassword = async (id, accessToken, password, dispatch) => {
+export const changeUserPassword = async (id, accessToken, password, dispatch, navigate) => {
   dispatch(changePasswordStart());
   try {
     const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
@@ -209,6 +212,7 @@ export const changeUserPassword = async (id, accessToken, password, dispatch) =>
       },
     });
     dispatch(changePasswordSuccess(res.data));
+    navigate("/user/${id}/profile")
   } catch (err) {
     dispatch(changePasswordFailed())
   }
@@ -508,7 +512,7 @@ export const allContributionsByEventData = (id, accessToken) => async (dispatch)
   }
 }
 
-export const postContribution = (facultyId, eventId, contribution, accessToken, navigate) => async (dispatch) => {
+export const postContribution = (contribution, accessToken, handleSuccess) => async (dispatch) => {
   dispatch(submitContributionStart());
   try {
     const res = await axios.post(`${BACKEND_URL}/contribution/submit`, contribution, {
@@ -517,7 +521,7 @@ export const postContribution = (facultyId, eventId, contribution, accessToken, 
       },
     });
     dispatch(submitContributionSuccess(res.data));
-    navigate(`/faculty/${facultyId}/event/${eventId}`);
+    handleSuccess();
   } catch (error) {
     dispatch(submitContributionFailed());
     console.error(error);
@@ -583,5 +587,21 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
   } catch (error) {
     dispatch(commentFailed());
     console.error(error);
+  }
+}
+
+export const publicContribution = (id, accessToken, navigate) => async (dispatch) => {
+  dispatch(publishStart());
+  try{
+    await axios.post(`${BACKEND_URL}/contribution/public/${id}`, {}, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(publishSuccess());
+    navigate("/marketingCoordinator");
+  } catch(err){
+    dispatch(publishFailed());
+    console.log(err);
   }
 }

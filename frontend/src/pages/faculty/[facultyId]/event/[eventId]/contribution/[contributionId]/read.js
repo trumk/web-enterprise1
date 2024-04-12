@@ -1,17 +1,20 @@
-import { Avatar, Button, Textarea, Typography } from '@material-tailwind/react'
+import { Avatar, Button, Textarea, Typography } Erom '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOneContribution, allContributionsByEventData, commentContribution } from '../../../../../../../redux/apiRequest'
 import NavbarDefault from '../../../../../../../components/navbar'
 import { Preview } from '../../../../../../../components/manage/preview'
 import { DefaultPagination } from '../../../../../../../components/manage/pagination'
+import { format } from 'date-fns'
+import { Download, File } from 'lucide-react'
 
 export const ReadContribution = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const { contributionId } = useParams();
+  const { facultyId, eventId, contributionId } = useParams();
   const [comment, setComment] = useState();
   const contribution = useSelector((state) => state.contribution.contribution?.currentContribution);
+  const relatedContributions = useSelector((state) => state.contribution.getContributionsByEvent.contributions);
   const comments = contribution?.comments;
   const dispatch = useDispatch();
   const [active, setActive] = useState('');
@@ -43,25 +46,31 @@ export const ReadContribution = () => {
       comment: comment,
     }
     dispatch(commentContribution(contribution._id, userComment, user.accessToken))
-      .then((newComment) => {
+      .then(() => {
         window.location.reload();
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
+  const filteredRelatedContributions = relatedContributions.filter(
+    relatedContribution => relatedContribution._id !== contribution._id
+  );
+  console.log(relatedContributions)
   console.log(comments)
   return (
     <>
       <NavbarDefault />
+
       <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
+
           <article className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
             <header className="mb-4 lg:mb-6 not-format">
-              <address className="flex items-center mb-6 not-italic">
+              <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button variant='outlined'>Back to event</Button></Link>
+              <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
                   <div>
                     <a href="#" rel="author" className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</a>
-                    <p className="text-base text-gray-500 dark:text-gray-400"><time pubdate datetime="2022-02-08" title="February 8th, 2022">Feb. 8, 2022</time></p>
                   </div>
                 </div>
               </address>
@@ -91,6 +100,32 @@ export const ReadContribution = () => {
             <Preview value={contribution?.content} className="text-md" />
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h2>
+                  {contribution?.file.length > 0 && (
+                    <div className="space-y-2">
+                      {contribution?.file?.map((file, index) => (
+                        <div
+                          className="flex items-center justify-between mt-2 p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
+                        >
+                          <div>
+                            <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Typography>{file.name}</Typography>
+                          </div>
+                          <a href={file}>
+                            <Button>
+                              <Download className='h-4 w-4' />
+                            </Button>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+            <section className="not-format">
+              <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
               </div>
               <form className="mb-6">
@@ -99,6 +134,7 @@ export const ReadContribution = () => {
                   <Textarea
                     label="Post your opinion"
                     onChange={(e) => setComment(e.target.value)}
+                    required
                   />
                 </div>
                 <Button onClick={handleComment}
@@ -123,7 +159,11 @@ export const ReadContribution = () => {
                 </article>
               ))}
               <div className='flex items-center'>
-              <DefaultPagination totalPages={Math.ceil(comments?.length / commentsPerPage)} paginate={paginate} />
+                {comments !== 0 && (
+                  <DefaultPagination totalPages={Math.ceil(comments?.length / commentsPerPage)} paginate={paginate} />
+                )
+
+                }
               </div>
             </section>
           </article>
@@ -132,62 +172,26 @@ export const ReadContribution = () => {
 
       <aside aria-label="Related articles" className="py-8 lg:py-24 bg-gray-50 dark:bg-gray-800">
         <div className="px-4 mx-auto max-w-screen-xl">
-          <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">Related articles</h2>
+          <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">Related contributions</h2>
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            <article className="max-w-xs">
-              <a href="#">
-                <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-1.png" className="mb-5 rounded-lg" alt="Image 1" />
-              </a>
-              <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                <a href="#">Our first office</a>
-              </h2>
-              <p className="mb-4 text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-              <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
-                Read in 2 minutes
-              </a>
-            </article>
-            <article className="max-w-xs">
-              <a href="#">
-                <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-2.png" className="mb-5 rounded-lg" alt="Image 2" />
-              </a>
-              <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                <a href="#">Enterprise design tips</a>
-              </h2>
-              <p className="mb-4  text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-              <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
-                Read in 12 minutes
-              </a>
-            </article>
-            <article className="max-w-xs">
-              <a href="#">
-                <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-3.png" className="mb-5 rounded-lg" alt="Image 3" />
-              </a>
-              <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                <a href="#">We partnered with Google</a>
-              </h2>
-              <p className="mb-4  text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-              <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
-                Read in 8 minutes
-              </a>
-            </article>
-            <article className="max-w-xs">
-              <a href="#">
-                <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-4.png" className="mb-5 rounded-lg" alt="Image 4" />
-              </a>
-              <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                <a href="#">Our first project with React</a>
-              </h2>
-              <p className="mb-4  text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-              <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
-                Read in 4 minutes
-              </a>
-            </article>
+            {filteredRelatedContributions?.slice(0, 4).map((relatedContribution, index) => (
+              <article className="max-w-xs">
+                <a href="#">
+                  <img src={relatedContribution?.image[0]} className="mb-5 rounded-lg h-40" alt="Image 2" />
+                </a>
+                <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
+                  <a href="#">{relatedContribution?.title}</a>
+                </h2>
+                <Typography>Posted at : {relatedContribution?.createdAt ? format(new Date(relatedContribution?.createdAt), 'MMMM dd, yyyy') : 'N/A'}</Typography>
+                <p className="mb-4  text-gray-500 dark:text-gray-400"></p>
+                <Link to={`/faculty/${facultyId}/event/${eventId}/contribution/${relatedContribution?._id}/read`} className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
+                  Read this contribution
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
       </aside>
-
-
-      {/* //TODO: Read Contribution, with gallery images and comments */}
 
     </>
   )
