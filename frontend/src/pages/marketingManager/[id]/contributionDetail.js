@@ -87,9 +87,6 @@ export const ContributionDetailManager = () => {
                             </div>
                         )}
                         <CardFooter>
-                            <Link to={`/marketingManager/event/`}>
-                                <Button>Back to List</Button>
-                            </Link>
                         </CardFooter>
                     </Card>
                 </div>
