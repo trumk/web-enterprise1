@@ -58,8 +58,15 @@ const contributionController = {
         eventID: req.body.eventID
       });
       const contribution = await newContribution.save();
-      const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
-      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',');
+      const event = await Event.findById(req.body.eventID);
+      const profiles = await Profile.find({ facultyID: event.facultyId }).exec();
+
+      const userIds = profiles.map(profile => profile.userID);
+      const marketingCoordinators = await User.find({
+        _id: { $in: userIds },
+        role: 'marketing coordinator'
+      }).exec();
+      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',')
       const Student = await User.findById(req.user.id);
       if (!emailAddresses) {
         return res.status(500).json("Please set role for marketing coordinator");
