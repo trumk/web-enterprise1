@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getOneContribution, allContributionsByEventData, commentContribution } from '../../../../../../../redux/apiRequest'
 import NavbarDefault from '../../../../../../../components/navbar'
 import { Preview } from '../../../../../../../components/manage/preview'
+import { DefaultPagination } from '../../../../../../../components/manage/pagination'
 
 export const ReadContribution = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -15,6 +16,15 @@ export const ReadContribution = () => {
   const dispatch = useDispatch();
   const [active, setActive] = useState('');
   const event = useSelector((state) => state.event.event?.currentEvent);
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 5;
+
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
+
+
+  const paginate = pageNumber => setCurrentPage(pageNumber);
   useEffect(() => {
     if (user && user.accessToken) {
       dispatch(getOneContribution(contributionId, user.accessToken));
@@ -33,9 +43,9 @@ export const ReadContribution = () => {
       comment: comment,
     }
     dispatch(commentContribution(contribution._id, userComment, user.accessToken))
-    .then((newComment) => {
-      window.location.reload();
-    });
+      .then((newComment) => {
+        window.location.reload();
+      });
   };
   const images = contribution?.image.map(image => ({ img: image }))
   console.log(comments)
@@ -97,7 +107,7 @@ export const ReadContribution = () => {
                 </Button>
               </form>
 
-              {comments?.map((comment) => (
+              {currentComments?.map((comment) => (
                 <article className="p-6 mb-6 text-base bg-white border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
                   <footer className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
@@ -112,6 +122,9 @@ export const ReadContribution = () => {
                   </div>
                 </article>
               ))}
+              <div className='flex items-center'>
+              <DefaultPagination totalPages={Math.ceil(comments.length / commentsPerPage)} paginate={paginate} />
+              </div>
             </section>
           </article>
         </div>
