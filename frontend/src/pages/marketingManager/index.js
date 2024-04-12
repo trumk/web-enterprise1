@@ -19,8 +19,8 @@ export const MarketingManagerPage = () => {
       dispatch(getStatistic(user.accessToken, time));
     }
   }, [user, dispatch]);
-  const analytics = statistic.statistics;
-  console.log(statistic.statistics);
+  const analytics = statistic?.statistics;
+  console.log(statistic?.statistics);
   const numberOfContribution = {
     type: "bar",
     height: 240,
@@ -103,7 +103,7 @@ export const MarketingManagerPage = () => {
     type: "pie",
     width: 500,
     height: 500,
-    series: analytics.map((item) => item.contributionPercentage),
+    series: analytics?.map((item) => item.contributionPercentage),
     options: {
       chart: {
         toolbar: {
@@ -133,7 +133,7 @@ export const MarketingManagerPage = () => {
     height: 240,
     series: [
       {
-        name: "Sales",
+        name: "Total",
         data: analytics?.map((item) => item.numberOfContributors),
       },
     ],
@@ -205,7 +205,7 @@ export const MarketingManagerPage = () => {
       },
     },
   };
-  console.log(statistic.statistics);
+  console.log(statistic?.statistics);
   return (
     <>
       <NavbarDefault />
@@ -217,21 +217,21 @@ export const MarketingManagerPage = () => {
           ) : (
             <>
               <section className="mt-4">
-                <div>
+                <div className="border border-gray-900">
                   <Typography variant="h4">Total Contribution</Typography>
                   <Chart {...numberOfContribution} />
                 </div>
               </section>
               <section className="mt-4">
-                <div>
+                <div className="border border-gray-900">
                   <Typography variant="h4">Number of Contributor</Typography>
                   <Chart {...numberOfContributors} />
                 </div>
               </section>
               <section className="mt-4">
-                <div>
+                <div className="flex flex-col items-center gap-2 border border-gray-900">
                   <Typography variant="h4">Percentage of Total</Typography>
-                  <Chart {...percentageContribution} />
+                  <Chart{...percentageContribution} />
                 </div>
               </section>
             </>
