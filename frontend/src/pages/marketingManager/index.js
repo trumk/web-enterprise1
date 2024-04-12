@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllFaculties, getStatistic } from "../../redux/apiRequest";
+import { getStatistic } from "../../redux/apiRequest";
 import Chart from "react-apexcharts";
 import { Typography } from "@material-tailwind/react";
 
@@ -108,12 +108,11 @@ export const MarketingManagerPage = () => {
       labels: statistic?.map((item) => item.facultyName),
       colors: undefined,
       legend: {
-        show: true, // Hiển thị bảng chú giải
-        position: "right", // Đặt vị trí của bảng chú giải (bạn có thể thay đổi vị trí theo ý muốn)
+        show: true, 
+        position: "right", 
         labels: {
-          colors: undefined, // Để tự động chọn màu cho labels
+          colors: undefined, 
           formatter: function (val, opts) {
-            // Sử dụng `opts.seriesIndex` để lấy facultyName tương ứng từ `statistic`
             const facultyName = statistic[opts.seriesIndex].facultyName;
             return `${facultyName}`;
           },
