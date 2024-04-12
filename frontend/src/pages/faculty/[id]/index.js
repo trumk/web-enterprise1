@@ -20,7 +20,7 @@ import { ArrowRight } from 'lucide-react';
 
 export const FacultyMainPage = () => {
     const { id } = useParams()
-    const user = useSelector((state) => state.auth.login.currentUser);
+    const user = useSelector((state) => state.auth.login?.currentUser);
 
     const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty?.filterEvent)
     const dispatch = useDispatch();

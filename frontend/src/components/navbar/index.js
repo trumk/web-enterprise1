@@ -22,14 +22,14 @@ import { getSelf, logout } from "../../redux/apiRequest";
 
 export default function NavbarDefault() {
   const [openNav, setOpenNav] = React.useState(false);
-  const user = useSelector((state) => state.auth.login.currentUser);
+  const user = useSelector((state) => state.auth.login?.currentUser);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let axiosJWT = axios.create();
   const id = user?._id;
   const accessToken = user?.accessToken;
-
+console.log(user)
   const handleLogout = () => {
     logout(dispatch, id, navigate, accessToken, axiosJWT);
   };
@@ -93,24 +93,36 @@ export default function NavbarDefault() {
     }
 
   )
+
+  const handleNavigateByRole = ()=>{
+    if(user.role === 'admin'){
+      navigate('/admin/user')
+    } else if(user.role === 'marketing manager'){
+      navigate('/marketingManager')
+    } else {
+      navigate('/')
+    }
+  }
   const profile = useSelector((state) => state.user.user?.user);
   return (
     <div className="max-h-[768px] w-full">
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <div className="flex items-center">
-            <Typography as="a" href="/" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
+          <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
+  
+            <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
             <Avatar src={logo} alt="logo" size="sm" className="mr-2" />
             </Typography>
             <Typography
               as="a"
-              href="/"
               variant="h6"
               className="mr-4 cursor-pointer py-1.5 lg:ml-2"
             >
               Web Enterprise
             </Typography>
-          </div>
+
+            
+          </Button>
           <div className="flex items-center gap-4">
             {!user ? (
               <div className="flex items-center gap-x-1">

@@ -130,7 +130,7 @@ export const Contribution = () => {
                   ) : (
                     <tr>
                       <td colSpan={4} className="p-4">
-                        No events found
+                        No contribution found
                       </td>
                     </tr>
                   )

@@ -35,6 +35,8 @@ export default function Login(){
                 navigate("/admin/user");
             } else if (currentUser.role === "marketing coordinator"){
                 navigate("/marketingCoordinator");
+            } else if (currentUser.role === "marketing manager") {
+                navigate("/marketingManager")
             } else{
                 navigate("/")
             }

@@ -13,13 +13,13 @@ import {
 } from "@material-tailwind/react";
 import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import NavbarDefault from '../../../../components/navbar';
-import DefaultSidebar from '../../../../components/sidebar';
-import { Preview } from '../../../../components/manage/preview';
-import { allContributionsByEventData, getOneEvent } from '../../../../redux/apiRequest';
+import { allContributionsByEventData, getOneEvent } from '../../../redux/apiRequest';
+import NavbarDefault from '../../../components/navbar';
+import DefaultSidebar from '../../../components/sidebar';
+import { Preview } from '../../../components/manage/preview';
 
 
-export const EventDetail = () => {
+export const EventDetailManager = () => {
   const { id } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
@@ -56,7 +56,7 @@ export const EventDetail = () => {
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
-          <Link to={`/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
+          <Link to={`/marketingManager/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -118,7 +118,7 @@ export const EventDetail = () => {
                             </Typography> */}
                             </CardBody>
                             <CardFooter className="pt-0">
-                              <Link to={`/admin/contribution/${detail._id}`}><Button>Read More</Button></Link>
+                              <Link to={`/marketingManager/contribution/${detail._id}`}><Button>Read More</Button></Link>
                             </CardFooter>
                           </Card>
                       ))
