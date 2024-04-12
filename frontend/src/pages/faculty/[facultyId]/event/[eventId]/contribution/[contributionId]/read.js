@@ -21,7 +21,7 @@ export const ReadContribution = () => {
 
   const indexOfLastComment = currentPage * commentsPerPage;
   const indexOfFirstComment = indexOfLastComment - commentsPerPage;
-  const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
+  const currentComments = comments?.slice(indexOfFirstComment, indexOfLastComment);
 
 
   const paginate = pageNumber => setCurrentPage(pageNumber);
@@ -123,7 +123,7 @@ export const ReadContribution = () => {
                 </article>
               ))}
               <div className='flex items-center'>
-              <DefaultPagination totalPages={Math.ceil(comments.length / commentsPerPage)} paginate={paginate} />
+              <DefaultPagination totalPages={Math.ceil(comments?.length / commentsPerPage)} paginate={paginate} />
               </div>
             </section>
           </article>
