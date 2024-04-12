@@ -17,7 +17,7 @@ import DefaultSidebar from "../components/sidebar";
 
 export const Homepage = () => {
   const faculties = useSelector(
-    (state) => state.faculty.faculties.allFaculties
+    (state) => state.faculty.faculties?.allFaculties
   );
 
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -53,7 +53,7 @@ export const Homepage = () => {
       console.error("Error searching faculties:", error);
     }
   };
-  //console.log(filterFaculty);
+  console.log(faculties?.Faculty)
   return (
     <>
       <NavbarDefault />
@@ -75,7 +75,7 @@ export const Homepage = () => {
           <div className='mt-10 flex items-start gap-5 flex-wrap'>
           {
             faculties ? (
-              faculties.Faculty && faculties.Faculty.length > 0 ? (
+              faculties?.Faculty && faculties?.Faculty.length > 0 ? (
                 faculties.Faculty.map((faculty, index) => (
                   <div key={faculty?._id} className="m-2 flex-none relative" style={{ width: '26rem' }}>
                     <div className="absolute w-full h-full bg-teal-900 rounded-xl" />

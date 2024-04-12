@@ -29,7 +29,6 @@ export default function NavbarDefault() {
   let axiosJWT = axios.create();
   const id = user?._id;
   const accessToken = user?.accessToken;
-console.log(user)
   const handleLogout = () => {
     logout(dispatch, id, navigate, accessToken, axiosJWT);
   };
