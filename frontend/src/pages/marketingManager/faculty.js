@@ -1,7 +1,4 @@
-import NavbarDefault from "../../../components/navbar";
-import DefaultSidebar from "../../../components/sidebar";
 import { useState, useEffect } from "react";
-import { getAllFaculties, searchFaculty } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -12,8 +9,11 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import NavbarDefault from "../../components/navbar";
+import DefaultSidebar from "../../components/sidebar";
+import { getAllFaculties, searchFaculty } from "../../redux/apiRequest";
 
-export const Faculty = () => {
+export const FacultyManager = () => {
   const faculties = useSelector(
     (state) => state.faculty.faculties?.allFaculties
   );
@@ -23,7 +23,6 @@ export const Faculty = () => {
   const filterFaculty = useSelector(
     (state) => state.faculty.searchFaculty.filterFaculty
   );
-
   useEffect(() => {
     if (user) {
       dispatch(getAllFaculties(user.accessToken, dispatch));
@@ -48,10 +47,7 @@ export const Faculty = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
-          <Button className="mt-2.5 mb-2.5">
-            <Link to="/admin/faculty/add">Create new</Link>
-          </Button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2">
             <Input
               type="text"
               placeholder="Search faculty..."
@@ -98,7 +94,7 @@ export const Faculty = () => {
                   filterFaculty.faculties.map((faculty, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/faculty/${faculty._id}`}>
+                        <Link to={`/marketingManager/faculty/${faculty._id}`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -120,13 +116,8 @@ export const Faculty = () => {
                       <td className="p-4 border-b border-blue-gray-50 w-20">
                         <Select label="Select action below">
                           <Option>
-                            <Link to={`/admin/faculty/${faculty._id}`}>
+                            <Link to={`/marketingManager/faculty/${faculty._id}`}>
                               Detail
-                            </Link>
-                          </Option>
-                          <Option>
-                            <Link to={`/admin/faculty/${faculty._id}/edit`}>
-                              Edit
                             </Link>
                           </Option>
                         </Select>
@@ -138,7 +129,7 @@ export const Faculty = () => {
                     faculties.Faculty.map((faculty, index) => (
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                          <Link to={`/admin/faculty/${faculty._id}`}>
+                          <Link to={`/marketingManager/faculty/${faculty._id}`}>
                             <Typography
                               variant="small"
                               color="blue-gray"
@@ -160,13 +151,8 @@ export const Faculty = () => {
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
                             <Option>
-                              <Link to={`/admin/faculty/${faculty._id}`}>
+                              <Link to={`/marketingManager/faculty/${faculty._id}`}>
                                 Detail
-                              </Link>
-                            </Option>
-                            <Option>
-                              <Link to={`/admin/faculty/${faculty._id}/edit`}>
-                                Edit
                               </Link>
                             </Option>
                           </Select>

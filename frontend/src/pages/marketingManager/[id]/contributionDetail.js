@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getOneContribution } from '../../../../redux/apiRequest';
-import NavbarDefault from '../../../../components/navbar';
-import DefaultSidebar from '../../../../components/sidebar';
 import {
     Button,
     Card,
@@ -14,18 +11,21 @@ import {
 import { Link } from 'react-router-dom';
 import { File } from "lucide-react";
 import { format } from 'date-fns';
-import { Preview } from '../../../../components/manage/preview';
-export const ContributionDetail = () => {
+import { getOneContribution } from '../../../redux/apiRequest';
+import NavbarDefault from '../../../components/navbar';
+import DefaultSidebar from '../../../components/sidebar';
+import { Preview } from '../../../components/manage/preview';
+export const ContributionDetailManager = () => {
     const user = useSelector((state) => state.auth.login?.currentUser);
-    const contribution = useSelector((state) => state.contribution.contribution?.currentContribution);
+    const contribution = useSelector((state) => state.contribution.contribution.currentContribution);
     const { id } = useParams();
     const dispatch = useDispatch();
     useEffect(() => {
-        if (user && user?.accessToken) {
+        if (user && user.accessToken) {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    
+    console.log(id)
     return (
         <>
             <NavbarDefault />
@@ -78,7 +78,6 @@ export const ContributionDetail = () => {
                                     <div
                                         className="flex items-center p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
                                     >
-                                        
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
                                         <p className="text-xs line-clamp-1">
                                             Contribution Attachment {index + 1}
@@ -88,10 +87,6 @@ export const ContributionDetail = () => {
                             </div>
                         )}
                         <CardFooter>
-                            <Link to="/admin/contribution">
-                                <Button>Back to List</Button>
-                            </Link>
-                            <Button className="ml-3" onClick={() => { }}>Delete</Button>
                         </CardFooter>
                     </Card>
                 </div>

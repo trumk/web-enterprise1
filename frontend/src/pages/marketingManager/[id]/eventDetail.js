@@ -12,14 +12,14 @@ import {
   IconButton
 } from "@material-tailwind/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight, ArrowLeft  } from 'lucide-react';
-import NavbarDefault from '../../../../components/navbar';
-import DefaultSidebar from '../../../../components/sidebar';
-import { Preview } from '../../../../components/manage/preview';
-import { allContributionsByEventData, getOneEvent } from '../../../../redux/apiRequest';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { allContributionsByEventData, getOneEvent } from '../../../redux/apiRequest';
+import NavbarDefault from '../../../components/navbar';
+import DefaultSidebar from '../../../components/sidebar';
+import { Preview } from '../../../components/manage/preview';
 
 
-export const EventDetail = () => {
+export const EventDetailManager = () => {
   const { id } = useParams();
   const user = useSelector((state) => state.auth.login.currentUser);
   const event = useSelector((state) => state.event.event.currentEvent);
@@ -55,8 +55,8 @@ export const EventDetail = () => {
       <NavbarDefault />
       <div className='flex'>
         <DefaultSidebar className='flex' />
-        <div className='ml-5 w-full h-full mt-2.5'>
-          <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
+        <div className='ml-5 w-full h-full'>
+          <Link to={`/marketingManager/faculty/${faculty.Faculty._id}`}><Button color='blue'>Back</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -118,7 +118,7 @@ export const EventDetail = () => {
                             </Typography> */}
                             </CardBody>
                             <CardFooter className="pt-0">
-                              <Link to={`/admin/contribution/${detail._id}`}><Button>Read More</Button></Link>
+                              <Link to={`/marketingManager/contribution/${detail._id}`}><Button>Detail</Button></Link>
                             </CardFooter>
                           </Card>
                       ))
