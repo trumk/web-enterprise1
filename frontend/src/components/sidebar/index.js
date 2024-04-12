@@ -4,6 +4,7 @@ import {
   PartyPopper,
   Users,
   CalendarDays,
+  School
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
@@ -56,8 +57,20 @@ export default function DefaultSidebar() {
       label: "Manage Contribution",
     },
   ];
+
+  const marketingManagerRoutes = [
+    {
+      href: "/marketingManager/faculty",
+      icon: School,
+      label: "Faculties",
+    },
+  ];
+
   const isMarketingCoordinatorPage = window.location.pathname.startsWith(
     "/marketingCoordinator"
+  );
+  const isMarketingManagerPage = window.location.pathname.startsWith(
+    "/marketingManager"
   );
   const isAdminPage = window.location.pathname.startsWith("/admin");
   let routes;
@@ -66,7 +79,9 @@ export default function DefaultSidebar() {
     routes = adminRoutes;
   } else if (isMarketingCoordinatorPage) {
     routes = marketingCoordinatorRoutes;
-  } else {
+  } else if (isMarketingManagerPage){
+    routes = marketingManagerRoutes;
+  } else{
     routes = guestRoutes;
   }
   return (
