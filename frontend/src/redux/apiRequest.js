@@ -75,6 +75,9 @@ import {
   deleteEventFailed, 
 } from "./eventSlice";
 import { 
+  commentFailed,
+  commentStart,
+  commentSuccess,
   deleteContributionFailed,
   deleteContributionStart,
   deleteContributionSuccess,
@@ -542,5 +545,20 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
   } catch (err) {
     dispatch(deleteContributionFailed());
     console.log(err);
+  }
+}
+
+export const commentContribution = (id, comment, accessToken) => async (dispatch) => {
+  dispatch(commentStart())
+  try {
+    await axios.post(`${BACKEND_URL}/contribution/comment/${id}`, comment, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(commentSuccess());
+  } catch (error) {
+    dispatch(commentFailed());
+    console.error(error);
   }
 }

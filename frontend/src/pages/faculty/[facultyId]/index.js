@@ -28,7 +28,7 @@ export const FacultyMainPage = () => {
         }
     }, [user, dispatch])
     const eventData = eventInFaculty?.events
-    console.log(eventData)
+    console.log(facultyId)
     return (
         <>
             <NavbarDefault />
