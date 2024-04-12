@@ -118,7 +118,7 @@ export const EventDetailManager = () => {
                             </Typography> */}
                             </CardBody>
                             <CardFooter className="pt-0">
-                              <Link to={`/marketingManager/contribution/${detail._id}`}><Button>Read More</Button></Link>
+                              <Link to={`/marketingManager/contribution/${detail._id}`}><Button>Detail</Button></Link>
                             </CardFooter>
                           </Card>
                       ))
