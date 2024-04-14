@@ -115,7 +115,7 @@ export const ManageContribution = () => {
                                 <Button>Back to List</Button>
                             </Link>
                             <Tooltip
-                                content={contribution.isPublic ? "This contribution is already public" : "Make this contribution public"}
+                                content={contribution?.isPublic ? "This contribution is already public" : "Make this contribution public"}
                                 placement="right"
                                 animate={{
                                     mount: { scale: 1, y: 0 },
@@ -123,7 +123,7 @@ export const ManageContribution = () => {
                                 }}
                             >
                                 <span>
-                                    <Button className='ml-5' disabled={contribution.isPublic} onClick={handlePublic}>Public This Contribution?</Button>
+                                    <Button className='ml-5' disabled={contribution?.isPublic} onClick={handlePublic}>Public This Contribution?</Button>
                                 </span>
                             </Tooltip>
                             <div>

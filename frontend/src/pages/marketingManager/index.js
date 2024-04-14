@@ -23,7 +23,7 @@ export const MarketingManagerPage = () => {
   console.log(statistic?.statistics);
   const numberOfContribution = {
     type: "bar",
-    height: 240,
+    height: 300,
     series: [
       {
         name: "Total",
@@ -130,7 +130,7 @@ export const MarketingManagerPage = () => {
   };
   const numberOfContributors = {
     type: "bar",
-    height: 240,
+    height: 300,
     series: [
       {
         name: "Total",
