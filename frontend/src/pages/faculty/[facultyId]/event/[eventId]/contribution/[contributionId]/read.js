@@ -1,4 +1,4 @@
-import { Avatar, Button, Textarea, Typography } Erom '@material-tailwind/react'
+import { Avatar, Button, Textarea, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -90,7 +90,7 @@ export const ReadContribution = () => {
                         onClick={() => setActive(img)}
                         src={img}
                         className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
-                        alt="gallery-image"
+                        alt=""
                       />
                     </div>
                   ))}
@@ -108,9 +108,9 @@ export const ReadContribution = () => {
                         <div
                           className="flex items-center justify-between mt-2 p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
                         >
-                          <div>
+                          <div className='flex items-center'>
                             <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                            <Typography>{file.name}</Typography>
+                            <Typography variant='h6'>{file.split('/').pop()}</Typography>
                           </div>
                           <a href={file}>
                             <Button>
