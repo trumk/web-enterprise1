@@ -174,7 +174,6 @@ export const Faculty = () => {
                       </tr>
                     ))
                   ) : (
-                    // Hiển thị thông báo khi không tìm thấy faculty nào khớp với từ khóa
                     <tr>
                       <td colSpan={3} className="p-4">
                         No faculties found
@@ -182,7 +181,6 @@ export const Faculty = () => {
                     </tr>
                   )
                 ) : (
-                  // Hiển thị thông báo khi đang tải dữ liệu
                   <tr>
                     <td colSpan={3} className="p-4">
                       Loading...

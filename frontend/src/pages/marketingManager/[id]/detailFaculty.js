@@ -59,9 +59,6 @@ export const FacultyDetailManager = () => {
                 </Typography>
               </CardHeader>
               <Typography variant="h5" className="ml-3">
-                Enroll Key: {detail?.enrollKey}
-              </Typography>
-              <Typography variant="h5" className="ml-3">
                 Description: {detail?.descActive}
               </Typography>
               <CardFooter>
