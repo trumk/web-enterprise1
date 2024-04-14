@@ -35,6 +35,7 @@ const facultySlice = createSlice({
       isFetching: false,
       error: false,
     },
+    msg:"",
   },
   reducers: {
     getFacultiesStart: (state) => {
@@ -65,37 +66,43 @@ const facultySlice = createSlice({
       state.addFaculty.isFetching = true;
       state.addFaculty.error = false;
     },
-    addFacultySuccess: (state) => {
+    addFacultySuccess: (state, action) => {
       state.addFaculty.isFetching = false;
       state.addFaculty.error = false;
+      state.msg = action.payload;
     },
-    addFacultyFailed: (state) => {
+    addFacultyFailed: (state, action) => {
       state.addFaculty.isFetching = false;
       state.addFaculty.error = true;
+      state.msg = action.payload;
     },
     editFacultyStart: (state) => {
       state.editFaculty.isFetching = true;
       state.editFaculty.error = false;
     },
-    editFacultySuccess: (state) => {
+    editFacultySuccess: (state, action) => {
       state.editFaculty.isFetching = false;
       state.editFaculty.error = false;
+      state.msg = action.payload;
     },
-    editFacultyFailed: (state) => {
+    editFacultyFailed: (state, action) => {
       state.editFaculty.isFetching = false;
       state.editFaculty.error = true;
+      state.msg = action.payload;
     },
-    deleteFacultyStart: (state) => { 
+    deleteFacultyStart: (state, action) => { 
       state.deleteFaculty.isFetching = true;
       state.deleteFaculty.error = false;
+      state.msg = action.payload;
     },
     deleteFacultySuccess: (state) => { 
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = false;
     },
-    deleteFacultyFailed: (state) => { 
+    deleteFacultyFailed: (state, action) => { 
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = true;
+      state.msg = action.payload;
     },
     getEventsByFacultyStart: (state) => {
       state.getEventsByFaculty.isFetching = true;

@@ -1,4 +1,4 @@
-import { Avatar, Button, Textarea, Typography } Erom '@material-tailwind/react'
+import { Avatar, Button, Textarea, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
