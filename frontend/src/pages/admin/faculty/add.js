@@ -30,11 +30,11 @@ const AddFaculty = () => {
       console.log("Error:", error);
     }
     
-
     setFacultyName("");
     setEnrollKey("");
     setDescActive("");
   };
+
 
   return (
     <>
@@ -53,6 +53,7 @@ const AddFaculty = () => {
                 value={facultyName}
                 onChange={(e) => setFacultyName(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -64,6 +65,7 @@ const AddFaculty = () => {
                 value={enrollKey}
                 onChange={(e) => setEnrollKey(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -75,6 +77,7 @@ const AddFaculty = () => {
                 value={descActive}
                 onChange={(e) => setDescActive(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <button
@@ -82,7 +85,6 @@ const AddFaculty = () => {
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               onClick={handleSubmit}
             >
-
               Add Faculty
             </button>
           </form>
