@@ -8,7 +8,7 @@ import {
 } from "@material-tailwind/react";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../components/sidebar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUserPassword } from "../../../redux/apiRequest";
 import { ToastContainer, toast } from 'react-toastify';
@@ -22,6 +22,7 @@ export function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   console.log(user._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ export function ChangePassword() {
     };
     console.log(user._id);
     try {
-      await dispatch(changeUserPassword(user._id, user.accessToken, data, dispatch));
+      await dispatch(changeUserPassword(user._id, user.accessToken, data, dispatch, navigate));
       toast.success('Password changed successfully');
     } catch (error) {
       console.log("Error:", error);

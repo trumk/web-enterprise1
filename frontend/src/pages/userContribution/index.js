@@ -41,12 +41,18 @@ export const MyContributionPage = () => {
     }
   }, [user, dispatch])
 
-  // const handleDelete = (contributionId) => {
-  //   const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
-  //   if(confirmation) {
-  //     dispatch(removeContribution(contributionId, user.accessToken))
-  //   }
-  // }
+  const handleDelete = (contributionId) => {
+    const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
+    if(confirmation) {
+      dispatch(removeContribution(contributionId, user.accessToken))
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
+  }
 
   console.log(userContribution)
   return (
@@ -137,7 +143,7 @@ export const MyContributionPage = () => {
                             <td className="p-4 border-b border-blue-gray-50 w-20">
                               <div className="flex gap-2 items-center">
                                 <IconButton variant="gradient" color="amber"><Link to={`/userContribution/${contribution._id}/edit`}> <Info /> </Link></IconButton>
-                                <IconButton color="red" onClick={()=> {}}> <Trash /> </IconButton>
+                                <IconButton color="red" onClick={()=> handleDelete(contribution._id)}> <Trash /> </IconButton>
                               </div>
                             </td>
                           </tr>

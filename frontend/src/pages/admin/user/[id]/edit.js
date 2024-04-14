@@ -57,11 +57,11 @@ export const EditUser = () => {
                 <Typography
                   variant="h5"
                   color="blue-gray"
-                  className="mb-2 font-medium ml-2.5"
+                  className="mb-2 font-medium ml-5"
                 >
                   Current Role: {selectedUser.role}
                 </Typography>
-                <div className="w-[200px]">
+                <div className="w-[200px] ml-5">
                   <Select
                     name="role"
                     value={updatedRole || selectedUser.role}
