@@ -5,7 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 export const Editor = ({ value, onChange }) => {
   return (
     <ReactQuill
-    className='w-full h-[200px]'
+    className='w-full'
       theme="snow"
       value={value}
       onChange={onChange}

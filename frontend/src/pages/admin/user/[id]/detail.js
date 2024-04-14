@@ -48,14 +48,14 @@ export const UserDetail = () => {
               <Typography
                 variant="h5"
                 color="blue-gray"
-                className="mb-2 font-medium ml-2.5"
+                className="mb-2 font-medium ml-5"
               >
                 Email: {selectedUser.email}
               </Typography>
               <Typography
                 variant="h5"
                 color="blue-gray"
-                className="font-medium ml-2.5"
+                className="font-medium ml-5"
               >
                 Role: {selectedUser.role}
               </Typography>

@@ -33,6 +33,8 @@ import { FacultyDetailManager } from "./pages/marketingManager/[id]/detailFacult
 import { EventDetailManager } from "./pages/marketingManager/[id]/eventDetail";
 import { ContributionDetailManager } from "./pages/marketingManager/[id]/contributionDetail";
 import { MyContributionPage } from "./pages/userContribution";
+import { EditContribution } from "./pages/userContribution/[id]/edit";
+import { ManageContribution } from "./pages/marketingCoordinator/contribution/[id]/action";
 
 function App() {
   return (
@@ -59,6 +61,7 @@ function App() {
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
           <Route path="/userContribution" element={<MyContributionPage/>}/>
+          <Route path="/userContribution/:id/edit" element={<EditContribution/>}/>
           {/* Marketing Manager */}
           <Route path="/marketingManager" element={<MarketingManagerPage/>}/>
           <Route path="/marketingManager/faculty" element={<FacultyManager/>}/>
@@ -67,6 +70,7 @@ function App() {
           <Route path="/marketingManager/contribution/:id" element={<ContributionDetailManager/>}/>
           {/* Marketing Coordinator */}
           <Route path="/marketingCoordinator" element={<MarketingCoordinatorPage/>}/>
+          <Route path="/marketingCoordinator/contribution/:id/action" element={<ManageContribution/>}/>
           {/* Admin Route */}
           <Route path="/admin/faculty" element={<Faculty />} />
           <Route path="/admin/faculty/:id" element={<FacultyDetail />} />

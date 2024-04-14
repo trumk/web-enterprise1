@@ -62,12 +62,12 @@ export const EditContribution = () => {
         }
     };
 
-    const removeImage = (i) => {
-        setImage(image?.filter(x => x.name !== i));
+    const removeImage = (imageName) => {
+        setImage(image.filter(file => file.name !== imageName));
     }
-
-    const removeFile = (i) => {
-        setFile(file?.filter(x => x.name !== i));
+    
+    const removeFile = (fileName) => {
+        setFile(file.filter(file => file.name !== fileName));
     }
 
     const contribution = new FormData()
@@ -85,8 +85,11 @@ export const EditContribution = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(modifyContribution(contribution, user.accessToken, navigate));
+        dispatch(modifyContribution(currentContribution._id, contribution, user.accessToken, navigate));
     }
+    
+
+    console.log(user.accessToken);
     return (
         <>
             <NavbarDefault />

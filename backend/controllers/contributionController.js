@@ -58,8 +58,15 @@ const contributionController = {
         eventID: req.body.eventID
       });
       const contribution = await newContribution.save();
-      const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
-      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',');
+      const event = await Event.findById(req.body.eventID);
+      const profiles = await Profile.find({ facultyID: event.facultyId }).exec();
+
+      const userIds = profiles.map(profile => profile.userID);
+      const marketingCoordinators = await User.find({
+        _id: { $in: userIds },
+        role: 'marketing coordinator'
+      }).exec();
+      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',')
       const Student = await User.findById(req.user.id);
       if (!emailAddresses) {
         return res.status(500).json("Please set role for marketing coordinator");
@@ -229,11 +236,11 @@ const contributionController = {
           }
         }
       ]);
-  
+
       if (contributions.length === 0) {
         return res.status(404).json({ message: "Contribution not found." });
       }
-  
+
       await res.status(200).json(contributions[0]);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -269,7 +276,7 @@ const contributionController = {
         title: req.body.title,
         content: req.body.content,
         image: updatedImages.length > 0 ? updatedImages : contribution.image,
-        file: updatedFiles.length > 0 ? updatedFiles : contribution.file 
+        file: updatedFiles.length > 0 ? updatedFiles : contribution.file
       }, { new: true });
 
       res.status(200).json(updatedContribution);
@@ -410,9 +417,9 @@ const contributionController = {
     try {
       const contributionId = req.params.id;
       const userId = req.user.id;
-      const user = await Profile.findOne({userID : userId})
-      
-      if(!user.firstName || !user.lastName || !user.avatar){
+      const user = await Profile.findOne({ userID: userId })
+
+      if (!user.firstName || !user.lastName || !user.avatar) {
         return res.status(403).json({ message: "You need to set your name and your avatar before comment" })
       }
 
@@ -508,7 +515,7 @@ const contributionController = {
           }
         }
       ]);
-  
+
       res.status(200).json({
         noComments,
         noCommentsAfter14Days
