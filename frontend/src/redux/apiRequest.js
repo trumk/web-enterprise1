@@ -295,6 +295,7 @@ export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   }
   catch (err) {
     dispatch(getFacultyFailed())
+    console.log(err)
   }
 }
 
@@ -314,8 +315,8 @@ export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { 
     dispatch(addFacultySuccess(response.data));
     return response.data;
   } catch (error) {
-    dispatch(addFacultyFailed());
-    console.error(error);
+    dispatch(addFacultyFailed(error.response.data));
+    console.error(error.response.data.error);
     throw error;
   }
 }

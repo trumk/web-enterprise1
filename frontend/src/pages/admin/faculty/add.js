@@ -5,39 +5,49 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
+import { ToastContainer, toast } from "react-toastify";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
+  const msg = useSelector((state) => state.faculty?.msg);
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
   const [enrollKey, setEnrollKey] = useState("");
-
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const faculty = {
       facultyName: facultyName,
       enrollKey: enrollKey,
       descActive: descActive
     };
+    await dispatch(addFaculty(faculty));
     try {
       await dispatch(addFaculty(faculty));
+      if (msg && msg.success) {
+        toast.success(msg.message);
+      } else {
+        toast.error(msg.error);
+      }
       navigate("/admin/faculty");
     } catch (error) {
       console.log("Error:", error);
+      toast.error("An error occurred while adding faculty");
     }
     
     setFacultyName("");
     setEnrollKey("");
     setDescActive("");
   };
-
+  console.log("msg", msg);
 
   return (
     <>
+    <ToastContainer />
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar />

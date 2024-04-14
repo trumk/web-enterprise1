@@ -256,8 +256,8 @@ const contributionController = {
         return res.status(404).json("You do not have permission");
       }
 
-      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const imagesPaths = req.body.firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
 
       const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
       const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];

@@ -14,7 +14,7 @@ import {
 
 export const UserDetail = () => {
   const userId = useParams().userId;
-  const users = useSelector((state) => state.user.users.allUsers);
+  const users = useSelector((state) => state.user.users?.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
 
@@ -26,7 +26,7 @@ export const UserDetail = () => {
   }, [user, dispatch]);
 
   console.log(userId)
-  const selectedUser = users?.find((u) => u._id === userId);
+  const selectedUser = users?.find((u) => u?._id === userId);
 
   return (
     <>
@@ -70,6 +70,7 @@ export const UserDetail = () => {
               </CardFooter>
             </Card>
           )}
+          
         </div>
       </div>
     </>

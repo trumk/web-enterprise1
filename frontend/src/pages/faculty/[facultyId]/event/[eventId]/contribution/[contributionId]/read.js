@@ -17,7 +17,6 @@ export const ReadContribution = () => {
   const relatedContributions = useSelector((state) => state.contribution.getContributionsByEvent.contributions);
   const comments = contribution?.comments;
   const dispatch = useDispatch();
-  const [active, setActive] = useState('');
   const event = useSelector((state) => state.event.event?.currentEvent);
   const [currentPage, setCurrentPage] = useState(1);
   const commentsPerPage = 5;
@@ -51,8 +50,9 @@ export const ReadContribution = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
+  const [active, setActive] = useState(images[0]?.img);
   const filteredRelatedContributions = relatedContributions.filter(
-    relatedContribution => relatedContribution._id !== contribution._id
+    relatedContribution => relatedContribution?._id !== contribution?._id
   );
   console.log(relatedContributions)
   console.log(comments)
@@ -63,9 +63,10 @@ export const ReadContribution = () => {
       <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
-          <article className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+          <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+            
+          <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button variant='outlined'>Back to event</Button></Link>
             <header className="mb-4 lg:mb-6 not-format">
-              <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button variant='outlined'>Back to event</Button></Link>
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
@@ -158,8 +159,8 @@ export const ReadContribution = () => {
                   </div>
                 </article>
               ))}
-              <div className='flex items-center'>
-                {comments !== 0 && (
+              <div className='flex items-center justify-between'>
+                {comments?.length !== 0 && (
                   <DefaultPagination totalPages={Math.ceil(comments?.length / commentsPerPage)} paginate={paginate} />
                 )
 
@@ -176,11 +177,11 @@ export const ReadContribution = () => {
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {filteredRelatedContributions?.slice(0, 4).map((relatedContribution, index) => (
               <article className="max-w-xs">
-                <a href="#">
-                  <img src={relatedContribution?.image[0]} className="mb-5 rounded-lg h-40" alt="Image 2" />
-                </a>
+                <Link to={`/faculty/${facultyId}/event/${eventId}/contribution/${relatedContribution?._id}/read`}>
+                <img src={relatedContribution?.image[0]} className="mb-5 rounded-lg h-40" alt="Image 2" />
+                </Link>
                 <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                  <a href="#">{relatedContribution?.title}</a>
+                  {relatedContribution?.title}
                 </h2>
                 <Typography>Posted at : {relatedContribution?.createdAt ? format(new Date(relatedContribution?.createdAt), 'MMMM dd, yyyy') : 'N/A'}</Typography>
                 <p className="mb-4  text-gray-500 dark:text-gray-400"></p>
