@@ -99,6 +99,9 @@ import {
   publishFailed, 
   publishStart, 
   publishSuccess, 
+  searchContributionFailed, 
+  searchContributionStart, 
+  searchContributionSuccess, 
   submitContributionFailed, 
   submitContributionStart,
   submitContributionSuccess,
@@ -615,3 +618,20 @@ export const publicContribution = (id, accessToken, navigate) => async (dispatch
     console.log(err);
   }
 }
+
+export const searchContribution = (searchTerm, accessToken) => async (dispatch) => {
+  dispatch(searchContributionStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/contribution/searchByTitle`, {
+      keyword:searchTerm,
+    }, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(searchContributionSuccess(response.data));
+  } catch (error) {
+    dispatch(searchContributionFailed(error.message));
+    console.log(error)
+  }
+};
