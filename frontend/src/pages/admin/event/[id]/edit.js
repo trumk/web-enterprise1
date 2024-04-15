@@ -32,11 +32,11 @@ const EditEvent = () => {
 
   useEffect(() => {
     if (eventData) {
-      setTopic(eventData.Event.topic || "");
-      setContent(eventData.Event.content || "");
-      setClosureDate(format(eventData.Event.closureDate, 'MMMM dd,yyyy') || "");
-      setFinalDate(format(eventData.Event.finalDate, 'MMMM dd,yyyy') || "");
-      setFaculty(eventData.Event.facultyId._id || "")
+      setTopic(eventData?.Event.topic || "");
+      setContent(eventData?.Event.content || "");
+      setClosureDate(format(eventData?.Event.closureDate, 'MMMM dd,yyyy') || "");
+      setFinalDate(format(eventData?.Event.finalDate, 'MMMM dd,yyyy') || "");
+      setFaculty(eventData?.Event.facultyId?._id || "")
     }
   }, [eventData]);
 

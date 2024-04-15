@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon, ChevronRightIcon, } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, ImageUp, } from 'lucide-react'
 import { editProfile, getSelf } from '../../../redux/apiRequest'
 
 export const EditProfile = () => {
@@ -26,8 +26,13 @@ export const EditProfile = () => {
   const [birthDay, setBirthDay] = useState(new Date());
   const [description, setDescription] = useState('');
   const [avatar, setAvatar] = useState(profile.avatar);
+  const [isEditing, setIsEditing] = useState(false);
 
- 
+  const handleEditAvatar = () => {
+    setIsEditing(true);
+  };
+
+
   useEffect(() => {
     if (profile) {
       setFirstName(profile.firstName || '');
@@ -39,10 +44,11 @@ export const EditProfile = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     setAvatar(file);
+    setIsEditing(false);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const editedProfile = new FormData();
     editedProfile.append("firstName", firstName);
     editedProfile.append("lastName", lastName);
@@ -51,9 +57,12 @@ export const EditProfile = () => {
       editedProfile.append("avatar", avatar);
     }
     editedProfile.append("description", description);
+    for (const [key, value] of editedProfile.entries()) {
+      console.log(key + ': ' + value);
+    }
+    
 
-  
-    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));  
+    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));
   };
   return (
     <>
@@ -153,18 +162,42 @@ export const EditProfile = () => {
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Avatar
                   </Typography>
-                  <div className="p-4 flex flex-col items-center gap-2 bg-violet-50 text-violet-500 rounded-lg hover:bg-violet-100 cursor-pointer border">
-                    <div className="">
-                      <input type="file" className="" onChange={handleImageUpload} />
-                      <img src={profile.avatar} alt="User avatar" className="h-24 mt-2" />
+                  <div className='w-[800px]'>
+                    <div className="rounded-lg shadow-xl bg-gray-50 md:w-1/2 w-[400px]">
+                      <div className="m-4">
+                        <div className="flex items-center justify-center w-full">
+                          {isEditing ? (
+                            <label className="flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300">
+                              <div className="flex flex-col items-center justify-center pt-7">
+                                <ImageUp />
+                                <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                                  Select an image</p>
+                              </div>
+                              <input type="file" onChange={handleImageUpload} class="opacity-0" />
+                            </label>
+                          ) : (
+                            <>
+                            <div className="flex items-center justify-end w-full">
+                              <Button variant='text'onClick={handleEditAvatar}>Edit Avatar</Button>
+                            </div>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {avatar && (
+                            <div className="overflow-hidden relative">
+                              <img className="h-20 w-20 rounded-md" src={avatar} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-
                   </div>
                   <Typography variant="h6" color="blue-gray" className="-mb-3">
                     Description
                   </Typography>
                   <Textarea
-                  value={description}
+                    value={description}
                     onChange={(e) => setDescription(e.target.value)} />
                   <Button className="mt-6" fullWidth onClick={handleSubmit}>
                     Save

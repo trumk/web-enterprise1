@@ -43,6 +43,11 @@ const contributionSlice = createSlice({
         publish: {
             isFetching: false,
             error: false,
+        },
+        searchContribution: {
+            filterContribution: null,
+            isFetching: false,
+            error: false
         }
     },
     reducers: {
@@ -149,7 +154,20 @@ const contributionSlice = createSlice({
         publishFailed: (state) => {
             state.publish.isFetching = false;
             state.publish.error = true;
-        }
+        },
+        searchContributionStart: (state) => {
+            state.searchContribution.isFetching = true;
+            state.searchContribution.error = false;
+          },
+          searchContributionSuccess: (state, action) => {
+            state.searchContribution.isFetching = false;
+            state.searchContribution.filterContribution = action.payload;
+            state.searchContribution.error = false;
+          },
+          searchContributionFailed: (state) => {
+            state.searchContribution.isFetching = false;
+            state.searchContribution.error = true
+          },
     }
 },
 );

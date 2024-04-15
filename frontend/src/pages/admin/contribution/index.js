@@ -1,17 +1,32 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import NavbarDefault from '../../../components/navbar'
 import DefaultSidebar from '../../../components/sidebar'
 import { useDispatch, useSelector } from "react-redux";
 import { getAllContributions } from '../../../redux/apiRequest';
-import { Badge, Card, Typography } from "@material-tailwind/react";
+import { Badge, Button, Card, CardFooter, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info, Trash } from 'lucide-react';
+
 
 export const Contribution = () => {
   const contributions = useSelector((state) => state.contribution.contributions.allContributions)
   const user = useSelector((state) => state.auth.login?.currentUser)
   const dispatch = useDispatch()
+  const [currentPage, setCurrentPage] = useState(1);
+  const [contributionsPerPage, setContributionsPerPage] = useState(4);
+
+  const totalPages = Math.ceil(contributions?.length / contributionsPerPage);
+
+  const currentItems = contributions?.slice((currentPage - 1) * contributionsPerPage, currentPage * contributionsPerPage);
+
+  const goToNextPage = () => {
+    setCurrentPage((page) => page + 1);
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage((page) => page - 1);
+  };
   useEffect(() => {
     if (user) {
       dispatch(getAllContributions(user.accessToken, dispatch))
@@ -79,7 +94,7 @@ export const Contribution = () => {
               <tbody>
                 {contributions ? (
                   contributions && contributions.length > 0 ? (
-                    contributions.map((contribution, index) => (
+                    currentItems.map((contribution, index) => (
 
                       <tr key={index}>
 
@@ -121,7 +136,6 @@ export const Contribution = () => {
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
                             <IconButton variant="gradient" color="amber"><Link to={`/admin/contribution/${contribution._id}`}> <Info /> </Link></IconButton>
-                            <IconButton color="red"> <Trash /> </IconButton>
                           </div>
                         </td>
                       </tr>
@@ -143,6 +157,29 @@ export const Contribution = () => {
                 )}
               </tbody>
             </table>
+            <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                  Page {currentPage} of {totalPages}
+                </Typography>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={goToPreviousPage}
+                    variant="outlined"
+                    size="sm"
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={goToNextPage}
+                    variant="outlined"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </CardFooter>
           </Card>
         </div>
       </div>

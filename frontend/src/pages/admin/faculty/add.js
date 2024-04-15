@@ -5,28 +5,30 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
+import { toast } from "react-toastify";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
+  const msg = useSelector((state) => state.faculty?.msg);
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
   const [enrollKey, setEnrollKey] = useState("");
-
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const faculty = {
       facultyName: facultyName,
       enrollKey: enrollKey,
       descActive: descActive
     };
-    try {
-      await dispatch(addFaculty(faculty));
-      navigate("/admin/faculty");
-    } catch (error) {
+    try{
+    await dispatch(addFaculty(faculty));
+    navigate("/admin/faculty")
+    } catch(error){
       console.log("Error:", error);
     }
     
@@ -34,7 +36,6 @@ const AddFaculty = () => {
     setEnrollKey("");
     setDescActive("");
   };
-
 
   return (
     <>

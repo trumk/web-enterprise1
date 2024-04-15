@@ -90,14 +90,14 @@ const facultySlice = createSlice({
       state.editFaculty.error = true;
       state.msg = action.payload;
     },
-    deleteFacultyStart: (state, action) => { 
+    deleteFacultyStart: (state) => { 
       state.deleteFaculty.isFetching = true;
       state.deleteFaculty.error = false;
-      state.msg = action.payload;
     },
-    deleteFacultySuccess: (state) => { 
+    deleteFacultySuccess: (state, action) => { 
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = false;
+      state.msg = action.payload;
     },
     deleteFacultyFailed: (state, action) => { 
       state.deleteFaculty.isFetching = false;

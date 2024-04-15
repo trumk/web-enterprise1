@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import { Homepage } from "./pages/Homepage";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
 import { UserProfile } from "./pages/user/[id]/profile";
 import { Term } from "./pages/Term";
 import { ChangePassword } from "./pages/user/[id]/changePassword";
@@ -35,10 +35,12 @@ import { ContributionDetailManager } from "./pages/marketingManager/[id]/contrib
 import { MyContributionPage } from "./pages/userContribution";
 import { EditContribution } from "./pages/userContribution/[id]/edit";
 import { ManageContribution } from "./pages/marketingCoordinator/contribution/[id]/action";
+import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
   return (
     <>
+    <ToastContainer/>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />

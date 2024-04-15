@@ -62,6 +62,7 @@ const AddEvent = () => {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -72,6 +73,7 @@ const AddEvent = () => {
                 value={content}
                 onChange={setContent}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -96,7 +98,7 @@ const AddEvent = () => {
               <label className="block text-md font-medium text-gray-700">
                 Faculty:
               </label>
-              <Select value={faculty} onChange={(value) => setFaculty(value)}>
+              <Select value={faculty} onChange={(value) => setFaculty(value)} required>
                 {selectFaculty.map((faculty) => (
                   <Option key={faculty._id} value={faculty._id}>
                     {faculty.facultyName}

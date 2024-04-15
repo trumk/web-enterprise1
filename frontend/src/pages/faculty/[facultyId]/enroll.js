@@ -38,8 +38,6 @@ export const EnrollFaculty = () => {
     dispatch(joinFaculty(facultyId, user.accessToken, enroll, navigate));
   };
 
-  const studentFaculty = useSelector((state) => state.user.user.user?.facultyID)
-  const isEnrolled = studentFaculty?.some(facultyId => facultyId === facultyId);
   console.log(facultyId)
   return (
     
