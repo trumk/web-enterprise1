@@ -11,18 +11,18 @@ import DefaultSidebar from "../components/sidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUserPassword } from "../../../redux/apiRequest";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { createAxios } from "../../../redux/createInstance";
+import { loginSuccess } from "../../../redux/authSlice";
 
 export function ChangePassword() {
   const userId = useParams();
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const changePasswordStatus = useSelector((state) => state.auth.changePassword);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   console.log(user?._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ export function ChangePassword() {
     };
     console.log(user?._id);
     try {
-      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate));
+      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate, axiosJWT));
     } catch (error) {
       console.log("Error:", error);
     }

@@ -109,6 +109,7 @@ import {
 import { toast } from "react-toastify";
 
 const BACKEND_URL = "http://localhost:5503";
+
 //auth
 export const loginUser = async (user, dispatch) => {
   dispatch(loginStart());
@@ -170,9 +171,11 @@ export const verifyAccount = async (otp, dispatch, navigate) => {
 };
 
 export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
+  console.log(accessToken); 
+  console.log(typeof accessToken);
   dispatch(logoutStart());
   try {
-    await axios.post(`${BACKEND_URL}/logout`, id, {
+    await axiosJWT.post(`${BACKEND_URL}/logout`, id, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -182,15 +185,18 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
     navigate("/login");
   } catch (err) {
     dispatch(logoutFailed());
-    console.error("Logout error:", err);
-    toast.error(err.response.data);
+    if (err.response) {
+      toast.error(err.response.data);
+    } else {
+      console.error(err);
+    }
   }
 };
 
-export const getAllUsers = (accessToken) => async (dispatch) => {
+export const getAllUsers = (accessToken, axiosJWT) => async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await axios.get(`${BACKEND_URL}/user/getAllUsers`, {
+    const res = await axiosJWT.get(`${BACKEND_URL}/user/getAllUsers`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -198,14 +204,18 @@ export const getAllUsers = (accessToken) => async (dispatch) => {
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
     dispatch(getUsersFailed());
-    console.log(err);
+    if (err.response) {
+      toast.error(err.response.data);
+    } else {
+      console.error(err);
+    }
   }
 };
 
-export const getSelf = (id) => async (dispatch) => {
+export const getSelf = (id, axiosJWT) => async (dispatch) => {
   dispatch(getSelfStart());
   try {
-    const res = await axios.get(`${BACKEND_URL}/user/${id}`);
+    const res = await axiosJWT.get(`${BACKEND_URL}/user/${id}`);
     dispatch(getSelfSuccess(res.data));
   } catch (err) {
     dispatch(getSelfFailed());
@@ -213,10 +223,10 @@ export const getSelf = (id) => async (dispatch) => {
   }
 };
 
-export const setRole = (id, role, accessToken, navigate) => async (dispatch) => {
+export const setRole = (id, role, accessToken, navigate, axiosJWT) => async (dispatch) => {
   dispatch(setRoleStart());
   try {
-    const response = await axios.post(
+    const response = await axiosJWT.post(
       `${BACKEND_URL}/user/setRole/${id}`,
       role,
       {
@@ -233,10 +243,10 @@ export const setRole = (id, role, accessToken, navigate) => async (dispatch) => 
   }
 };
 
-export const changeUserPassword = async (id, accessToken, password, dispatch, navigate) => {
+export const changeUserPassword = async (id, accessToken, password, dispatch, navigate, axiosJWT) => {
   dispatch(changePasswordStart());
   try {
-    const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
+    const res = await axiosJWT.post(`${BACKEND_URL}/changePassword/${id}`, password, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -250,10 +260,10 @@ export const changeUserPassword = async (id, accessToken, password, dispatch, na
   }
 }
 
-export const editProfile = (id, userId, accessToken, profile, navigate) => async (dispatch) => {
+export const editProfile = (id, userId, accessToken, profile, navigate, axiosJWT) => async (dispatch) => {
   dispatch(editProfileStart())
   try {
-    const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
+    const res = await axiosJWT.put(`${BACKEND_URL}/user/${id}`, profile, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -561,10 +571,12 @@ export const postContribution = (contribution, accessToken, handleSuccess) => as
       },
     });
     dispatch(submitContributionSuccess(res.data));
+    toast.success("Contribution submitted successfully");
     handleSuccess();
   } catch (error) {
     dispatch(submitContributionFailed());
     console.error(error);
+    toast.error(error.response.data);
   }
 }
 

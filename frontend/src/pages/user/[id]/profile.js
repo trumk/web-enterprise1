@@ -7,16 +7,19 @@ import { getOneFaculty, getSelf } from '../../../redux/apiRequest'
 import { format } from 'date-fns';
 import { Pen, PencilLine } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { createAxios } from '../../../redux/createInstance'
+import { loginSuccess } from '../../../redux/authSlice'
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   //const facultyId = useSelector((state) => state.user.user?.user?.facultyID[0]);
   const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
   const dispatch = useDispatch();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   //console.log(facultyId);
   useEffect(() => {
     if (user && user?._id) {
-      dispatch(getSelf(user?._id));
+      dispatch(getSelf(user?._id, axiosJWT));
     }
   }, [dispatch, user]);
   // useEffect(() => {

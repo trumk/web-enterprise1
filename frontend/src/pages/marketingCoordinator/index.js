@@ -5,7 +5,7 @@ import { useEffect } from "react"
 import { getAllContributions } from "../../redux/apiRequest"
 import { Badge, Card, IconButton, Typography } from "@material-tailwind/react"
 import { Link } from "react-router-dom"
-import { Info, Trash } from "lucide-react"
+import { Info, Settings, Trash } from "lucide-react"
 
 export const MarketingCoordinatorPage = () => {
     const contributions = useSelector((state) => state.contribution.contributions.allContributions)
@@ -119,7 +119,7 @@ export const MarketingCoordinatorPage = () => {
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/marketingCoordinator/contribution/${contribution._id}/action`}> <Info /> </Link></IconButton>
+                            <IconButton variant="gradient" color="amber"><Link to={`/marketingCoordinator/contribution/${contribution._id}/action`}> <Settings/> </Link></IconButton>
                           </div>
                         </td>
                       </tr>
