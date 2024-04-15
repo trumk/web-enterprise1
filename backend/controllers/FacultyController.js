@@ -144,10 +144,10 @@ async function searchFaculty(req, res) {
 function updateFaculty(req, res) {
   const id = req.params.facultyId;
   const updateObject = req.body; //update data from the request body as json, contain field edit
-  if (!updateObject.facultyName || !updateObject.descActive) {
+  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: name or desActive'
+      message: 'Missing required fields'
     });
   }
   // update query using mongo
