@@ -94,9 +94,9 @@ export default function NavbarDefault() {
   )
 
   const handleNavigateByRole = ()=>{
-    if(user.role === 'admin'){
+    if(user?.role === 'admin'){
       navigate('/admin/user')
-    } else if(user.role === 'marketing manager'){
+    } else if(user?.role === 'marketing manager'){
       navigate('/marketingManager')
     } else {
       navigate('/')

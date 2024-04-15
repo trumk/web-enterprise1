@@ -60,24 +60,24 @@ import {
   searchFacultyFailed
 } from "./facultySlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { 
+import {
   editEventStart,
   editEventSuccess,
   editEventFailed,
-  addEventFailed, 
-  addEventStart, 
-  addEventSuccess, 
-  getEventFailed, 
-  getEventStart, 
-  getEventSuccess, 
-  getEventsFailed, 
-  getEventsStart, 
+  addEventFailed,
+  addEventStart,
+  addEventSuccess,
+  getEventFailed,
+  getEventStart,
+  getEventSuccess,
+  getEventsFailed,
+  getEventsStart,
   getEventsSuccess,
   deleteEventStart,
   deleteEventSuccess,
-  deleteEventFailed, 
+  deleteEventFailed,
 } from "./eventSlice";
-import { 
+import {
   commentFailed,
   commentStart,
   commentSuccess,
@@ -93,13 +93,13 @@ import {
   getContributionsByEventFailed,
   getContributionsByEventStart,
   getContributionsByEventSuccess,
-  getContributionsFailed, 
-  getContributionsStart, 
-  getContributionsSuccess, 
-  publishFailed, 
-  publishStart, 
-  publishSuccess, 
-  submitContributionFailed, 
+  getContributionsFailed,
+  getContributionsStart,
+  getContributionsSuccess,
+  publishFailed,
+  publishStart,
+  publishSuccess,
+  submitContributionFailed,
   submitContributionStart,
   submitContributionSuccess,
   userContributionsFailed,
@@ -128,8 +128,32 @@ export const registerUser = async (user, dispatch, handleSuccess) => {
     await axios.post(`${BACKEND_URL}/register`, user);
     dispatch(registerSuccess());
     handleSuccess();
+    toast.success("Register successfully");
   } catch (err) {
     dispatch(registerFailed());
+    console.error(err.response.data);
+    if (err.response) {
+      switch (err.response.status) {
+        case 400:
+          toast.error("Bad request. Please check your input");
+          break;
+        case 401:
+          toast.error("Unauthorized. Please check your credentials");
+          break;
+        case 409:
+          toast.error("Conflict. User already exists");
+          break;
+        case 500:
+          toast.error("Server error. Please try again later");
+          break;
+        default:
+          toast.error("An error occurred. Please try again");
+      }
+    } else if (err.request) {
+      toast.error("No response from server. Please try again");
+    } else {
+      toast.error("Error in setting up the request");
+    }
   }
 };
 export const verifyAccount = async (otp, dispatch, navigate) => {
@@ -137,6 +161,7 @@ export const verifyAccount = async (otp, dispatch, navigate) => {
   try {
     const res = await axios.post(`${BACKEND_URL}/verify`, otp);
     dispatch(verifySuccess(res.data));
+    toast.success("Account verified successfully");
     navigate("/login");
   } catch (err) {
     dispatch(verifyFailed());
@@ -153,10 +178,12 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
       },
     });
     dispatch(logoutSuccess());
+    toast.success("Logout successfully");
     navigate("/login");
   } catch (err) {
     dispatch(logoutFailed());
     console.error("Logout error:", err);
+    toast.error(err.response.data);
   }
 };
 
@@ -191,7 +218,7 @@ export const setRole = (id, role, accessToken, navigate) => async (dispatch) => 
   try {
     const response = await axios.post(
       `${BACKEND_URL}/user/setRole/${id}`,
-     role ,
+      role,
       {
         headers: {
           token: `Bearer ${accessToken}`,
@@ -215,9 +242,11 @@ export const changeUserPassword = async (id, accessToken, password, dispatch, na
       },
     });
     dispatch(changePasswordSuccess(res.data));
-    navigate("/user/${id}/profile")
+    toast.success("Change password successfully");
+    navigate(`/user/${id}/profile`)
   } catch (err) {
-    dispatch(changePasswordFailed())
+    dispatch(changePasswordFailed());
+    toast.error(err.response.data);
   }
 }
 
@@ -230,10 +259,11 @@ export const editProfile = (id, userId, accessToken, profile, navigate) => async
       },
     });
     dispatch(editProfileSuccess(res.data));
+    toast.success("Edit profile successfully");
     navigate(`/user/${userId}/profile`)
   } catch (err) {
-    dispatch(editProfileFailed())
-    console.log(err)
+    dispatch(editProfileFailed());
+    toast.error(err.response.data);
   }
 }
 
@@ -256,18 +286,18 @@ export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) 
 export const getStatistic = (accessToken, time) => async (dispatch) => {
   dispatch(getStatisticStart());
   try {
-      const res = await axios.post(
-          `${BACKEND_URL}/contribution/statistic`, time,
-          {
-              headers: {
-                  token: `Bearer ${accessToken}`,
-              },
-          }
-      );
-      dispatch(getStatisticSuccess(res.data));
+    const res = await axios.post(
+      `${BACKEND_URL}/contribution/statistic`, time,
+      {
+        headers: {
+          token: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(getStatisticSuccess(res.data));
   } catch (err) {
-      dispatch(getStatisticFailed());
-      console.log(err);
+    dispatch(getStatisticFailed());
+    console.log(err);
   }
 };
 
@@ -360,14 +390,14 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
 
 export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getEventsByFacultyStart());
-  try{
+  try {
     const res = await axios.get(`${BACKEND_URL}/event/${id}/events`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
     });
     dispatch(getEventsByFacultySuccess(res.data));
-  } catch(err) {
+  } catch (err) {
     dispatch(getEventsByFacultyFailed());
     console.log(err);
   }
@@ -378,10 +408,10 @@ export const searchFaculty = (searchTerm, accessToken) => async (dispatch) => {
   dispatch(searchFacultyStart());
   try {
     const response = await axios.post(`${BACKEND_URL}/faculty/search`, {
-      keyword:searchTerm,
+      keyword: searchTerm,
     }, {
       headers: {
-        token: `Bearer ${accessToken}`, 
+        token: `Bearer ${accessToken}`,
       },
     });
     dispatch(searchFacultySuccess(response.data));
@@ -565,7 +595,7 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
 
 export const removeContribution = (id, accessToken) => async (dispatch) => {
   dispatch(deleteContributionStart());
-  try{
+  try {
     await axios.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -596,7 +626,7 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
 
 export const publicContribution = (id, accessToken, navigate) => async (dispatch) => {
   dispatch(publishStart());
-  try{
+  try {
     await axios.post(`${BACKEND_URL}/contribution/public/${id}`, {}, {
       headers: {
         token: `Bearer ${accessToken}`,
@@ -604,7 +634,7 @@ export const publicContribution = (id, accessToken, navigate) => async (dispatch
     });
     dispatch(publishSuccess());
     navigate("/marketingCoordinator");
-  } catch(err){
+  } catch (err) {
     dispatch(publishFailed());
     console.log(err);
   }

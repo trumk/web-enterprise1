@@ -23,7 +23,7 @@ export function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(user._id);
+  console.log(user?._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
@@ -31,10 +31,9 @@ export function ChangePassword() {
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     };
-    console.log(user._id);
+    console.log(user?._id);
     try {
-      await dispatch(changeUserPassword(user._id, user.accessToken, data, dispatch, navigate));
-      toast.success('Password changed successfully');
+      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate));
     } catch (error) {
       console.log("Error:", error);
     }
