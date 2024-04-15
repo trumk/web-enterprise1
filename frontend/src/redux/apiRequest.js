@@ -611,10 +611,10 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
   }
 }
 
-export const removeContribution = (id, accessToken) => async (dispatch) => {
+export const removeContribution = (id, accessToken, axiosJWT) => async (dispatch) => {
   dispatch(deleteContributionStart());
   try {
-    await axios.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
+    await axiosJWT.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -627,10 +627,10 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
 }
 
 
-export const commentContribution = (id, comment, accessToken) => async (dispatch) => {
+export const commentContribution = (id, comment, accessToken, axiosJWT) => async (dispatch) => {
   dispatch(commentStart())
   try {
-    await axios.post(`${BACKEND_URL}/contribution/comment/${id}`, comment, {
+    await axiosJWT.post(`${BACKEND_URL}/contribution/comment/${id}`, comment, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -639,6 +639,7 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
   } catch (error) {
     dispatch(commentFailed());
     console.error(error);
+    toast.error(error.response.data);
   }
 }
 

@@ -60,7 +60,7 @@ export const EventDetail = () => {
     <>
       <NavbarDefault />
       <div className='flex'>
-        {/* <DefaultSidebar className='flex' /> */}
+        <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full mt-2.5'>
           <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
           {eventData && (
