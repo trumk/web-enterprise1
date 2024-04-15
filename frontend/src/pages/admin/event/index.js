@@ -82,19 +82,19 @@ export const Event = () => {
               </thead>
               <tbody>
                 {details ? (
-                  details && details.length > 0 ? (
-                    details.map((detail, index) => (
+                  details && details?.length > 0 ? (
+                    details?.map((detail, index) => (
                       
                         <tr key={index}>
                           
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/event/${detail._id}`}>
+                        <Link to={`/admin/event/${detail?._id}`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {detail.topic}
+                            {detail?.topic}
                           </Typography>
                           </Link>
                         </td>
@@ -105,7 +105,7 @@ export const Event = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {format(detail.closureDate, 'MMMM dd,yyyy')}
+                            {format(detail?.closureDate, 'MMMM dd,yyyy')}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
@@ -114,7 +114,7 @@ export const Event = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {format(detail.finalDate, 'MMMM dd,yyyy')}
+                            {format(detail?.finalDate, 'MMMM dd,yyyy')}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
@@ -123,13 +123,13 @@ export const Event = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {detail.facultyId.facultyName}
+                            {detail?.facultyId?.facultyName}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/event/${detail._id}`}> <Info/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/event/${detail._id}/edit`}> <PenLine/> </Link></IconButton>
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/event/${detail?._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/event/${detail?._id}/edit`}> <PenLine/> </Link></IconButton>
                             </div>
                         </td>
                       </tr>
