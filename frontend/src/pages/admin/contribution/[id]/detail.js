@@ -25,7 +25,8 @@ export const ContributionDetail = () => {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    console.log(contribution.file)
+    console.log(contribution?.file)
+
     return (
         <>
             <NavbarDefault />
@@ -80,9 +81,9 @@ export const ContributionDetail = () => {
                                     >
                                         <div>
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                                        <Typography>{file.name}</Typography>
+                                        <Typography>{file.split('/').pop()}</Typography>
                                         </div>
-                                        <a href={file}>
+                                        <a target="_blank" href={file} download>
                                             <Button>
                                             <Download className='h-4 w-4'/>
                                         </Button>
@@ -95,7 +96,6 @@ export const ContributionDetail = () => {
                             <Link to="/admin/contribution">
                                 <Button>Back to List</Button>
                             </Link>
-                            <Button className="ml-3" onClick={() => { }}>Delete</Button>
                         </CardFooter>
                     </Card>
                 </div>

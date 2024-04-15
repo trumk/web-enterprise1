@@ -16,7 +16,6 @@ export const User = () => {
       dispatch(getAllUsers(user.accessToken));
     }
   }, [user, dispatch]);
-  //bỏ user có role là admin
   const filteredUsers = users?.filter((user) => user.role !== "admin");
   return (
     <>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -12,11 +12,11 @@ import {
   IconButton
 } from "@material-tailwind/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight, ArrowLeft  } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Trash  } from 'lucide-react';
 import NavbarDefault from '../../../../components/navbar';
 import DefaultSidebar from '../../../../components/sidebar';
 import { Preview } from '../../../../components/manage/preview';
-import { allContributionsByEventData, getOneEvent } from '../../../../redux/apiRequest';
+import { allContributionsByEventData, deleteThisEvent, getOneEvent } from '../../../../redux/apiRequest';
 
 
 export const EventDetail = () => {
@@ -26,6 +26,7 @@ export const EventDetail = () => {
   const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const contributionData = useSelector((state) => state.contribution.getContributionsByEvent?.contributions);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -49,12 +50,17 @@ export const EventDetail = () => {
     }
   }, [user, id, dispatch]);
   const eventData = event?.Event;
-  console.log(contributionData);
+  const handleDelete = () => {
+    const confirmation = window.confirm("Are you sure you want to delete this event?");
+    if (confirmation) {
+      dispatch(deleteThisEvent(id, user.accessToken, navigate));
+    }
+  };
   return (
     <>
       <NavbarDefault />
       <div className='flex'>
-        <DefaultSidebar className='flex' />
+        {/* <DefaultSidebar className='flex' /> */}
         <div className='ml-5 w-full h-full mt-2.5'>
           <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
           {eventData && (
@@ -82,6 +88,8 @@ export const EventDetail = () => {
                 <Typography variant="h6" className="ml-3">
                   Create Date: {eventData?.createEvent ? format(new Date(eventData?.createEvent), 'MMMM dd,yyyy') : 'N/A'}
                 </Typography>
+                <Link to="/admin/event"><Button>Back to list</Button></Link>
+                <Button color='red' onClick={handleDelete} className='ml-3'><Trash className='h-4'/></Button>
               </CardBody>
               <CardFooter className='mt-[-20px]'>
                 <Typography variant="h4" color='black' className="ml-3 mb-2">
@@ -113,9 +121,6 @@ export const EventDetail = () => {
                               <Typography variant="paragraph">
                                 Author: {detail.userID.userName}
                               </Typography>
-                              {/* <Typography variant="paragraph" className='line-clamp-2'>
-                            {detail.content} 
-                            </Typography> */}
                             </CardBody>
                             <CardFooter className="pt-0">
                               <Link to={`/admin/contribution/${detail._id}`}><Button>Read More</Button></Link>
