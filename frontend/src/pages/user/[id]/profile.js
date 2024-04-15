@@ -10,20 +10,20 @@ import { Link } from 'react-router-dom'
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const facultyId = useSelector((state) => state.user.user?.user.facultyID[0]);
+  //const facultyId = useSelector((state) => state.user.user?.user?.facultyID[0]);
   const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
   const dispatch = useDispatch();
-  console.log(facultyId);
+  //console.log(facultyId);
   useEffect(() => {
     if (user && user?._id) {
       dispatch(getSelf(user?._id));
     }
   }, [dispatch, user]);
-  useEffect(() => {
-    if (user && user?.accessToken) {
-      dispatch(getOneFaculty(facultyId, user.accessToken));
-    }
-  }, [dispatch, facultyId, user]);
+  // useEffect(() => {
+  //   if (user && user?.accessToken) {
+  //     dispatch(getOneFaculty(facultyId, user.accessToken));
+  //   }
+  // }, [dispatch, facultyId, user]);
 
   const profile = useSelector((state) => state.user.user?.user);
   return (

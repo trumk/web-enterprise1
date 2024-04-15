@@ -147,7 +147,7 @@ function updateFaculty(req, res) {
   if (!updateObject.facultyName || !updateObject.descActive) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: topic or finalDate'
+      message: 'Missing required fields: name or desActive'
     });
   }
   // update query using mongo

@@ -316,10 +316,12 @@ export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { 
       }
     );
     dispatch(addFacultySuccess(response.data));
+    toast.success("Add faculty success")
     return response.data;
   } catch (error) {
-    dispatch(addFacultyFailed(error.response.data));
-    console.error(error.response.data.error);
+    dispatch(addFacultyFailed());
+    console.log(error)
+    toast.error(error.response.data.error);
     throw error;
   }
 }
@@ -334,10 +336,12 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
       },
     });
     dispatch(editFacultySuccess(res.data));
+    toast.success("Edit faculty success")
     navigate("/admin/faculty")
   }
   catch (error) {
-    dispatch(editFacultyFailed())
+    dispatch(editFacultyFailed(error.response.data))
+    toast.error(error.response?.data.message)
     console.log(error)
   }
 }
@@ -351,9 +355,11 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
       },
     });
     dispatch(deleteFacultySuccess());
+    toast.success("Delete faculty success")
     navigate("/admin/faculty")
   } catch (error) {
     dispatch(deleteFacultyFailed());
+    toast.error(error.response?.data.message)
     console.log(error);
   }
 };
