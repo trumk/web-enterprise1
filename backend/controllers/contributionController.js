@@ -304,9 +304,9 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
-      let query = { title: new RegExp(keyword, "i"), isPublic: true, eventID: req.cookies.eventId };
+      let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i"), eventID: req.cookies.eventId };
+        query = { title: new RegExp(keyword, "i")};
       }
       const contributions = await Contribution.find(query)
         .populate({

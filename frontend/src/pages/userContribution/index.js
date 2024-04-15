@@ -33,7 +33,7 @@ export const MyContributionPage = () => {
 
   const goToPreviousPage = () => {
     setCurrentPage((page) => page - 1);
-  };
+  }; 
 
   useEffect(() => {
     if (user) {

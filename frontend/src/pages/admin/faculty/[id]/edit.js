@@ -4,14 +4,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
 import { editFaculty, getOneFaculty } from "../../../../redux/apiRequest";
+import { toast } from "react-toastify";
 
 const EditFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const { id } = useParams();
   const facultyData = useSelector((state) => state.faculty.faculty.currentFaculty);
+  const msg = useSelector((state) => state.faculty?.msg);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(id)
+  console.log(msg)
 
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
@@ -34,14 +36,16 @@ const EditFaculty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const faculty = {
-      facultyName: facultyName,
-      enrollKey: enrollKey,
-      descActive: descActive
+        facultyName: facultyName,
+        enrollKey: enrollKey,
+        descActive: descActive,
     };
-    dispatch(editFaculty(id, faculty, user.accessToken, navigate))
-  };
+
+        await dispatch(editFaculty(id, faculty, user.accessToken, navigate))
+};
+
+
 
   return (
     <>

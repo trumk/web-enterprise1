@@ -43,7 +43,7 @@ export const EditProfile = () => {
   }, [profile]);
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    setAvatar(URL.createObjectURL(file));
+    setAvatar(file);
     setIsEditing(false);
   };
   const handleSubmit = async (e) => {
@@ -57,7 +57,10 @@ export const EditProfile = () => {
       editedProfile.append("avatar", avatar);
     }
     editedProfile.append("description", description);
-
+    for (const [key, value] of editedProfile.entries()) {
+      console.log(key + ': ' + value);
+    }
+    
 
     dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));
   };
