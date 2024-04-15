@@ -106,6 +106,7 @@ import {
   userContributionsStart,
   userContributionsSuccess
 } from "./contributionSlice";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = "http://localhost:5503";
 //auth
@@ -114,8 +115,10 @@ export const loginUser = async (user, dispatch) => {
   try {
     const res = await axios.post(`${BACKEND_URL}/login`, user);
     dispatch(loginSuccess(res.data));
+    toast.success("Login successfully");
   } catch (err) {
-    dispatch(loginFailed());
+    dispatch(loginFailed(err.response.data));
+    toast.error(err.response.data);
   }
 };
 
