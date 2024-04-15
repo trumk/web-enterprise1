@@ -13,25 +13,24 @@ const AddFaculty = () => {
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
   const [enrollKey, setEnrollKey] = useState("");
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const faculty = {
       facultyName: facultyName,
       enrollKey: enrollKey,
-      descActive: descActive
+      descActive: descActive,
     };
-    try{
-    await dispatch(addFaculty(faculty));
-    navigate("/admin/faculty")
-    } catch(error){
+    try {
+      await dispatch(addFaculty(faculty));
+      navigate("/admin/faculty");
+    } catch (error) {
       console.log("Error:", error);
     }
-    
+
     setFacultyName("");
     setEnrollKey("");
     setDescActive("");
