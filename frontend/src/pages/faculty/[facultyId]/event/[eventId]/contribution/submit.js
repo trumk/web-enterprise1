@@ -170,6 +170,16 @@ export const SubmitContribution = () => {
                         No attachments yet
                       </p>
                     )}
+                    <div className="flex items-center justify-center w-full">
+                      <label className="flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300">
+                        <div className="flex flex-col items-center justify-center pt-7">
+                          <FileUp />
+                          <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                            Select a file</p>
+                        </div>
+                        <input type="file" onChange={handleFileUpload} className="opacity-0" multiple="multiple" name="file[]" />
+                      </label>
+                    </div>
                     {file.length > 0 && (
                       <div className="space-y-2">
                         {file.map((file, key) => (
@@ -191,16 +201,6 @@ export const SubmitContribution = () => {
                         ))}
                       </div>
                     )}
-                    <div className="flex items-center justify-center w-full">
-                      <label className="flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300">
-                        <div className="flex flex-col items-center justify-center pt-7">
-                          <FileUp />
-                          <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                            Select a file</p>
-                        </div>
-                        <input type="file" onChange={handleFileUpload} className="opacity-0" multiple="multiple" name="file[]" />
-                      </label>
-                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center mr-[90px]">

@@ -16,9 +16,7 @@ import NavbarDefault from "../components/navbar";
 import DefaultSidebar from "../components/sidebar";
 
 export const Homepage = () => {
-  const faculties = useSelector(
-    (state) => state.faculty.faculties?.allFaculties
-  );
+  const faculties = useSelector((state) => state.faculty.faculties?.allFaculties);
 
   const user = useSelector((state) => state.auth.login?.currentUser);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +32,7 @@ export const Homepage = () => {
   const studentFaculty = useSelector((state) => state.user.user.user?.facultyID);
   const handleNavigate = (facultyId) => {  
     if (studentFaculty?.includes(facultyId)) {
+      console.log(facultyId)
       navigate(`/faculty/${facultyId}`);
     } else {
       navigate(`/faculty/${facultyId}/enroll`);

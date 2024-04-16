@@ -14,17 +14,19 @@ import { useDispatch } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ArrowRight } from 'lucide-react';
+import { createAxios } from '../../../redux/createInstance'
+import { loginSuccess } from '../../../redux/authSlice'
 
 export const FacultyMainPage = () => {
     const { facultyId } = useParams()
     const user = useSelector((state) => state.auth.login.currentUser);
-
+    
     const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty?.filterEvent)
     const dispatch = useDispatch();
-
+    const axiosJWT = createAxios(user, dispatch, loginSuccess)
     useEffect(() => {
         if (user) {
-            dispatch(getAllEventsByFaculty(facultyId, user.accessToken))
+            dispatch(getAllEventsByFaculty(facultyId, user.accessToken, axiosJWT))
         }
     }, [user, dispatch])
     const eventData = eventInFaculty?.events
@@ -35,7 +37,9 @@ export const FacultyMainPage = () => {
             <div className="flex">
                 <DefaultSidebar className="flex" />
                 <div className="ml-5 w-full h-full">
+                <Typography variant='h2' className='mt-4'>Event</Typography>
                     <div className='mt-10 flex items-start gap-5 flex-wrap'>
+                        
                         {eventData?.map(event => (
                             <div key={event._id} className="m-2 flex-none relative" style={{ width: '26rem' }}>
                                 <div className="absolute w-full h-full bg-teal-900 rounded-xl" />

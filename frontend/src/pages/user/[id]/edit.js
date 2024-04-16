@@ -8,11 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
 import { ChevronLeftIcon, ChevronRightIcon, ImageUp, } from 'lucide-react'
 import { editProfile, getSelf } from '../../../redux/apiRequest'
+import { createAxios } from '../../../redux/createInstance'
+import { loginSuccess } from '../../../redux/authSlice'
 
 export const EditProfile = () => {
   const user = useSelector((state) => state.auth.login.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate()
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
   useEffect(() => {
     if (user && user._id) {
@@ -42,9 +45,13 @@ export const EditProfile = () => {
     }
   }, [profile]);
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    setAvatar(file);
-    setIsEditing(false);
+    if (e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setAvatar(file);
+      setIsEditing(false);
+    } else {
+      console.log('No file selected');
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +69,7 @@ export const EditProfile = () => {
     }
     
 
-    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));
+    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate, axiosJWT));
   };
   return (
     <>

@@ -60,7 +60,7 @@ const EditEvent = () => {
       <div className="flex">
         <DefaultSidebar />
         <div className="mt-2.5 ml-5 w-full">
-          <h1 className="text-3xl font-bold mb-4">Edit faculty</h1>
+          <h1 className="text-3xl font-bold mb-4">Edit Event</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-md font-medium text-gray-700">

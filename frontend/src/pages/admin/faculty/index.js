@@ -12,6 +12,9 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { loginSuccess } from "../../../redux/authSlice";
+import { jwtDecode } from "jwt-decode";
 
 export const Faculty = () => {
   const faculties = useSelector(
@@ -23,7 +26,6 @@ export const Faculty = () => {
   const filterFaculty = useSelector(
     (state) => state.faculty.searchFaculty.filterFaculty
   );
-
   useEffect(() => {
     if (user) {
       dispatch(getAllFaculties(user.accessToken, dispatch));
