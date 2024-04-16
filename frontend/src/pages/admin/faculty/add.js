@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const msg = useSelector((state) => state.faculty?.msg);
   const [facultyName, setFacultyName] = useState("");
   const [descActive, setDescActive] = useState("");
   const [enrollKey, setEnrollKey] = useState("");
@@ -25,15 +24,10 @@ const AddFaculty = () => {
       descActive: descActive,
     };
     try {
-      await dispatch(addFaculty(faculty));
-      navigate("/admin/faculty");
+      await dispatch(addFaculty(faculty, user.accessToken, navigate));
     } catch (error) {
       console.log("Error:", error);
     }
-
-    setFacultyName("");
-    setEnrollKey("");
-    setDescActive("");
   };
 
   return (

@@ -33,17 +33,10 @@ const AddEvent = () => {
       facultyId: faculty,
     };
     try {
-      await dispatch(addEvent(user.accessToken, event));
-      navigate("/admin/event");
+      await dispatch(addEvent(user.accessToken, event, navigate));
     } catch (error) {
       console.log("Error:", error);
     }
-
-    setTopic("");
-    setContent("");
-    setClosureDate("");
-    setFinalDate("");
-    setFaculty("");
   };
   return (
     <>

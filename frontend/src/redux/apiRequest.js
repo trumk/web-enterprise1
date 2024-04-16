@@ -305,30 +305,48 @@ export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   }
 }
 
-export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { getState, dispatch }) => {
+// export const addFaculty = createAsyncThunk("faculty/add", async (facultyData, { getState, dispatch, navigate }) => {
+//   dispatch(addFacultyStart());
+//   try {
+//     const { accessToken } = getState().auth.login.currentUser;
+//     const response = await axios.post(
+//       `${BACKEND_URL}/faculty/add`,
+//       facultyData,
+//       {
+//         headers: {
+//           token: `Bearer ${accessToken}`,
+//         },
+//       }
+//     );
+//     dispatch(addFacultySuccess(response.data));
+//     toast.success("Add faculty success")
+//     navigate("/admin/faculty")
+//     return response.data;
+//   } catch (error) {
+//     dispatch(addFacultyFailed());
+//     console.log(error)
+//     toast.error(error.response.data.error);
+//     throw error;
+//   }
+// }
+// );
+export const addFaculty = (facultyData, accessToken, navigate) => async (dispatch)=>{
   dispatch(addFacultyStart());
-  try {
-    const { accessToken } = getState().auth.login.currentUser;
-    const response = await axios.post(
-      `${BACKEND_URL}/faculty/add`,
-      facultyData,
-      {
-        headers: {
-          token: `Bearer ${accessToken}`,
-        },
+  try{
+    await axios.post(`${BACKEND_URL}/faculty/add`, facultyData, {
+      headers: {
+        token: `Bearer ${accessToken}`
       }
-    );
-    dispatch(addFacultySuccess(response.data));
+    })
+    dispatch(addFacultySuccess());
     toast.success("Add faculty success")
-    return response.data;
-  } catch (error) {
+    navigate("/admin/faculty")
+  }catch(error){
     dispatch(addFacultyFailed());
-    console.log(error)
     toast.error(error.response.data.error);
-    throw error;
+    console.log(error)
   }
 }
-);
 
 export const editFaculty = (id, faculty, accessToken, navigate) => async (dispatch) => {
   dispatch(editFacultyStart());
@@ -414,19 +432,23 @@ export const getAllEvents = (accessToken) => async (dispatch) => {
     dispatch(getEventsFailed());
   }
 };
-export const addEvent = (accessToken, event) => async (dispatch) => {
+
+
+export const addEvent = (accessToken, event, navigate) => async (dispatch) => {
   dispatch(addEventStart());
   try {
-    await axios.post(`${BACKEND_URL}/event/create`, event, {
+    const res = await axios.post(`${BACKEND_URL}/event/create`, event, {
       headers: {
         token: `Bearer ${accessToken}`
       }
     });
-    dispatch(addEventSuccess());
+    dispatch(addEventSuccess(res.data));
+    toast.success("Add event success")
+    navigate("/admin/event")
   } catch (error) {
-    dispatch(addEventFailed());
+    dispatch(addEventFailed(error.response.data));
+    toast.error(error.response?.data.message)
     console.error(error);
-    throw error;
   }
 }
 
@@ -455,10 +477,12 @@ export const editEvent = (id, event, accessToken, navigate) => async (dispatch) 
       },
     });
     dispatch(editEventSuccess(res.data));
+    toast.success("Edit event success")
     navigate("/admin/event")
   }
   catch (error) {
-    dispatch(editEventFailed())
+    dispatch(editEventFailed(error.response.data))
+    toast.error(error.response?.data.message)
     console.log(error)
   }
 }
@@ -472,9 +496,11 @@ export const deleteThisEvent = (id, accessToken, navigate) => async (dispatch) =
       },
     });
     dispatch(deleteEventSuccess());
+    toast.success("Delete faculty success")
     navigate("/admin/event")
   } catch (error) {
     dispatch(deleteEventFailed());
+    toast.error(error.response?.data.message)
     console.log(error);
   }
 }
