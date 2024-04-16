@@ -183,7 +183,7 @@ function getOneEvent(req, res) {
 function updateEvent(req, res) {
   const id = req.params.eventId;
   const updateObject = req.body; //update data from the request body as json, contain field edit 
-  if (!updateObject.topic || !updateObject.finalDate || !updateObject.facultyId || !updateObject.closureDate) {
+  if (!updateObject.topic || !updateObject.finalDate || !updateObject.facultyId || !updateObject.closureDate ||!updateObject.content) {
     return res.status(400).json({
       success: false,
       message: 'missing required fields'
