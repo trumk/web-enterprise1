@@ -19,9 +19,9 @@ export default function DefaultSidebar() {
       label: "Faculty",
     },
     {
-      href: "/event",
+      href: "/contributions",
       icon: PartyPopper,
-      label: "Event",
+      label: "All Contributions",
     },
     {
       href: "/userContribution",

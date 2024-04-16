@@ -1,7 +1,7 @@
+
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
-import { useEffect, useState } from "react";
 import { getAllContributions, searchContribution } from "../../redux/apiRequest";
 import {
   Badge,
@@ -13,7 +13,10 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { Info, Trash } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
+import { Info, Settings, Trash } from "lucide-react"
+
 
 export const MarketingCoordinatorPage = () => {
   const contributions = useSelector(
@@ -178,14 +181,9 @@ export const MarketingCoordinatorPage = () => {
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber">
-                              <Link
-                                to={`/marketingCoordinator/contribution/${contribution._id}/action`}
-                              >
-                                {" "}
-                                <Info />{" "}
-                              </Link>
-                            </IconButton>
+
+                            <IconButton variant="gradient" color="amber"><Link to={`/marketingCoordinator/contribution/${contribution._id}/action`}> <Settings/> </Link></IconButton>
+
                           </div>
                         </td>
                       </tr>

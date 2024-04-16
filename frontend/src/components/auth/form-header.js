@@ -1,5 +1,4 @@
 import {Link} from 'react-router-dom';
-import logo from '../assets/logo.jpg';
 
 export default function Header({
     heading,
@@ -12,8 +11,8 @@ export default function Header({
             <div className="flex justify-center">
                 <img 
                     alt=""
-                    className="h-28 w-28"
-                    src={logo}/>
+                    className="h-28"
+                    src="https://cms.greenwich.edu.vn/pluginfile.php/1/theme_adaptable/logo/1698976651/2022-Greenwich-Eng.jpg"/>
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 {heading}

@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 
 const refreshToken = async () => {
     try {
-        const res = await axios.post("localhost:5503/refresh", {
+        const res = await axios.post("http://localhost:5503/refresh", {}, {
             withCredentials: true,
         });
         return res.data;
@@ -14,11 +14,12 @@ const refreshToken = async () => {
     }
 }
 
-export const createAxios = (user, dispatch, stateSuccess    ) => {
+export const createAxios = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create();
     newInstance.interceptors.request.use(async (config) => {
         let date = new Date();
         const decodedToken = jwtDecode(user?.accessToken);
+        console.log(decodedToken);
         if (decodedToken.exp < date.getTime() / 1000) {
             const data = await refreshToken();
             const refreshUser = {
