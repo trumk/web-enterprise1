@@ -12,6 +12,9 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { format } from "date-fns";
+import axios from "axios";
+import { loginSuccess } from "../../../../redux/authSlice";
+import { jwtDecode } from "jwt-decode";
 
 
 export const FacultyDetail = () => {
@@ -21,14 +24,45 @@ export const FacultyDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const axiosJWT = axios.create();
+  const refreshToken = async () => {
+    try {
+      const response = await axios.post("http://localhost:5503/refresh", {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      let date = new Date();
+      const decodedToken = jwtDecode(user?.accessToken);
+      if (decodedToken.exp < date.getTime() / 1000) {
+        const data = await refreshToken();
+        const refreshUser = {
+          ...user,
+          accessToken: data.accessToken,
+        };
+        dispatch(loginSuccess(refreshUser));
+        config.headers["token"] = "Bearer " + data.accessToken;
+        return config;
+      }
+      return config;
+    }, 
+    (err) => {
+      return Promise.reject(err);
+    }
+  );
   useEffect(() => {
     if (user && user.accessToken) {
-      dispatch(getOneFaculty(id, user.accessToken));
+      dispatch(getOneFaculty(id, user.accessToken, axiosJWT));
     }
   }, [dispatch, id, user]);
-  useEffect(()=>{
-    if(user) {
-      dispatch(getAllEventsByFaculty(id, user.accessToken))
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllEventsByFaculty(id, user.accessToken, axiosJWT))
     }
   }, [user, dispatch])
   const detail = faculty?.Faculty
@@ -37,7 +71,7 @@ export const FacultyDetail = () => {
   const handleDelete = () => {
     const confirmation = window.confirm("Are you sure you want to delete this faculty?");
     if (confirmation) {
-      dispatch(deleteFaculty(id, user.accessToken, navigate)); 
+      dispatch(deleteFaculty(id, user.accessToken, navigate, axiosJWT));
     }
   };
   console.log(faculty)
@@ -68,8 +102,8 @@ export const FacultyDetail = () => {
                 <Link to="/admin/faculty">
                   <Button>Back to List</Button>
                 </Link>
-                <Link to={`/admin/faculty/${id}/edit`}> 
-                <Button className="ml-3">Edit</Button> 
+                <Link to={`/admin/faculty/${id}/edit`}>
+                  <Button className="ml-3">Edit</Button>
                 </Link>
                 <Button className="ml-3" onClick={handleDelete}>Delete</Button>
               </CardFooter>
@@ -112,21 +146,21 @@ export const FacultyDetail = () => {
                 {eventData ? (
                   eventData && eventData.length > 0 ? (
                     eventData.map((detail, index) => (
-                      
-                        <tr key={index}>
-                          
+
+                      <tr key={index}>
+
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/event/${detail._id}`}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {detail.topic}
-                          </Typography>
+                          <Link to={`/admin/event/${detail._id}`}>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {detail.topic}
+                            </Typography>
                           </Link>
                         </td>
-                        
+
                         <td className="p-4 border-b border-blue-gray-50">
                           <Typography
                             variant="small"
@@ -146,7 +180,7 @@ export const FacultyDetail = () => {
                           </Typography>
                         </td>
                       </tr>
-                      
+
                     ))
                   ) : (
                     <tr>

@@ -15,6 +15,8 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import { createAxios } from "../../../../redux/createInstance";
+import { loginSuccess } from "../../../../redux/authSlice";
 
 export const EditUser = () => {
   const { userId } = useParams();
@@ -23,6 +25,7 @@ export const EditUser = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
   const selectedUser = users.find((u) => u._id === userId);
 
@@ -33,7 +36,7 @@ export const EditUser = () => {
     const roleUser = {
       role: updatedRole,
     };
-    dispatch(setRole(userId, roleUser, user.accessToken, navigate));
+    dispatch(setRole(userId, roleUser, user.accessToken, navigate, axiosJWT));
   };
 
   return (
@@ -57,11 +60,11 @@ export const EditUser = () => {
                 <Typography
                   variant="h5"
                   color="blue-gray"
-                  className="mb-2 font-medium ml-2.5"
+                  className="mb-2 font-medium ml-5"
                 >
                   Current Role: {selectedUser.role}
                 </Typography>
-                <div className="w-[200px]">
+                <div className="w-[200px] ml-5">
                   <Select
                     name="role"
                     value={updatedRole || selectedUser.role}
@@ -73,7 +76,7 @@ export const EditUser = () => {
                     <Option value="marketing coordinator">
                       Marketing Coordinator
                     </Option>
-                    <Option value="student">User</Option>
+                    <Option value="user">User</Option>
                     <Option value="guest">Guest</Option>
                   </Select>
                 </div>

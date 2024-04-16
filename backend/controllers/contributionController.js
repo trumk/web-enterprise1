@@ -256,8 +256,8 @@ const contributionController = {
         return res.status(404).json("You do not have permission");
       }
 
-      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const imagesPaths = req.body.firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
 
       const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
       const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
@@ -304,9 +304,9 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
-      let query = { title: new RegExp(keyword, "i"), isPublic: true, eventID: req.cookies.eventId };
+      let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i"), eventID: req.cookies.eventId };
+        query = { title: new RegExp(keyword, "i")};
       }
       const contributions = await Contribution.find(query)
         .populate({

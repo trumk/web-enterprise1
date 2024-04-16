@@ -13,7 +13,7 @@ import NavbarDefault from '../../components/navbar';
 import DefaultSidebar from '../../components/sidebar';
 import { getContributionsByUser, removeContribution } from '../../redux/apiRequest';
 import { Link } from 'react-router-dom';
-import { Info, Trash } from 'lucide-react';
+import { Info, Settings, Trash } from 'lucide-react';
 
 export const MyContributionPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -33,7 +33,7 @@ export const MyContributionPage = () => {
 
   const goToPreviousPage = () => {
     setCurrentPage((page) => page - 1);
-  };
+  }; 
 
   useEffect(() => {
     if (user) {
@@ -41,12 +41,18 @@ export const MyContributionPage = () => {
     }
   }, [user, dispatch])
 
-  // const handleDelete = (contributionId) => {
-  //   const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
-  //   if(confirmation) {
-  //     dispatch(removeContribution(contributionId, user.accessToken))
-  //   }
-  // }
+  const handleDelete = (contributionId) => {
+    const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
+    if(confirmation) {
+      dispatch(removeContribution(contributionId, user.accessToken))
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
+  }
 
   console.log(userContribution)
   return (
@@ -136,8 +142,8 @@ export const MyContributionPage = () => {
                             </td>
                             <td className="p-4 border-b border-blue-gray-50 w-20">
                               <div className="flex gap-2 items-center">
-                                <IconButton variant="gradient" color="amber"><Link to={`/userContribution/${contribution._id}/edit`}> <Info /> </Link></IconButton>
-                                <IconButton color="red" onClick={()=> {}}> <Trash /> </IconButton>
+                                <IconButton variant="gradient" color="amber"><Link to={`/userContribution/${contribution._id}/edit`}> <Settings/> </Link></IconButton>
+                                <IconButton color="red" onClick={()=> handleDelete(contribution._id)}> <Trash /> </IconButton>
                               </div>
                             </td>
                           </tr>

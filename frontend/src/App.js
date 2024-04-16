@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import { Homepage } from "./pages/Homepage";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
 import { UserProfile } from "./pages/user/[id]/profile";
 import { Term } from "./pages/Term";
 import { ChangePassword } from "./pages/user/[id]/changePassword";
@@ -33,10 +33,14 @@ import { FacultyDetailManager } from "./pages/marketingManager/[id]/detailFacult
 import { EventDetailManager } from "./pages/marketingManager/[id]/eventDetail";
 import { ContributionDetailManager } from "./pages/marketingManager/[id]/contributionDetail";
 import { MyContributionPage } from "./pages/userContribution";
+import { EditContribution } from "./pages/userContribution/[id]/edit";
+import { ManageContribution } from "./pages/marketingCoordinator/contribution/[id]/action";
+import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
   return (
     <>
+    <ToastContainer/>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
@@ -59,6 +63,7 @@ function App() {
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
           <Route path="/userContribution" element={<MyContributionPage/>}/>
+          <Route path="/userContribution/:id/edit" element={<EditContribution/>}/>
           {/* Marketing Manager */}
           <Route path="/marketingManager" element={<MarketingManagerPage/>}/>
           <Route path="/marketingManager/faculty" element={<FacultyManager/>}/>
@@ -67,6 +72,7 @@ function App() {
           <Route path="/marketingManager/contribution/:id" element={<ContributionDetailManager/>}/>
           {/* Marketing Coordinator */}
           <Route path="/marketingCoordinator" element={<MarketingCoordinatorPage/>}/>
+          <Route path="/marketingCoordinator/contribution/:id/action" element={<ManageContribution/>}/>
           {/* Admin Route */}
           <Route path="/admin/faculty" element={<Faculty />} />
           <Route path="/admin/faculty/:id" element={<FacultyDetail />} />

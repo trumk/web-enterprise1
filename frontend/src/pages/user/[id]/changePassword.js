@@ -8,21 +8,22 @@ import {
 } from "@material-tailwind/react";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../components/sidebar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUserPassword } from "../../../redux/apiRequest";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { createAxios } from "../../../redux/createInstance";
+import { loginSuccess } from "../../../redux/authSlice";
 
 export function ChangePassword() {
   const userId = useParams();
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const changePasswordStatus = useSelector((state) => state.auth.changePassword);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
-  console.log(user._id);
+  const navigate = useNavigate();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
+  console.log(user?._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
@@ -30,10 +31,9 @@ export function ChangePassword() {
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     };
-    console.log(user._id);
+    console.log(user?._id);
     try {
-      await dispatch(changeUserPassword(user._id, user.accessToken, data, dispatch));
-      toast.success('Password changed successfully');
+      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate, axiosJWT));
     } catch (error) {
       console.log("Error:", error);
     }

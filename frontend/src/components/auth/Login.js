@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Input from "./form-input";
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/apiRequest';
+import { ToastContainer, toast } from "react-toastify";
 
 const fields=loginFields;
 let fieldsState = {};
@@ -12,9 +13,11 @@ fields.forEach(field=>fieldsState[field.id]='');
 
 export default function Login(){
     const [loginState,setLoginState]=useState(fieldsState);
+    const msg = useSelector((state) => state.auth?.msg);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const currentUser = useSelector((state) => state.auth.login?.currentUser)
+    
     
     const handleChange=(e)=>{
         setLoginState({...loginState,[e.target.id]:e.target.value})
@@ -27,7 +30,6 @@ export default function Login(){
             password: loginState.password,
         };
         loginUser(authenticateUser, dispatch)
-        
     }
     useEffect(() => {
         if (currentUser) {
@@ -44,6 +46,7 @@ export default function Login(){
     }, [currentUser, navigate]);
     
     return(
+        <>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="-space-y-px">
             {
@@ -67,5 +70,6 @@ export default function Login(){
         <FormAction handleSubmit={handleSubmit} text="Login"/>
 
       </form>
+      </>
     )
 }

@@ -17,6 +17,7 @@ import {
 import { format } from "date-fns";
 import { Preview } from '../../../../../components/manage/preview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import axios from 'axios';
 
 
 export const EventInfo = () => {
@@ -32,13 +33,14 @@ export const EventInfo = () => {
   const handlePrev = () => {
     setCurrentIndex((oldIndex) => Math.max(oldIndex - 1, 0));
   };
-
+  const axiosJWT = axios.create();
   const handleNext = () => {
     setCurrentIndex((oldIndex) => Math.min(oldIndex + 1, contributionData.length - 3));
   };
 
   const currentUrl = window.location.pathname;
   const submitUrl = `${currentUrl}/contribution/submit`
+
   useEffect(() => {
     if (user) {
       dispatch(getOneEvent(eventId, user.accessToken));
@@ -96,9 +98,9 @@ export const EventInfo = () => {
                     )
                   }
                   <div className='flex gap-6 item-center justify-between'>
-                  {contributionData ? (
-                    contributionData && contributionData.length > 0 ? (
-                      contributionData.slice(currentIndex, currentIndex + 3).map((detail, index) => (
+                    {contributionData ? (
+                      contributionData && contributionData.length > 0 ? (
+                        contributionData.slice(currentIndex, currentIndex + 3).map((detail, index) => (
                           <Card className="mt-6 w-96 transform transition-transform duration-200 hover:translate-x-3 hover:-translate-y-3 z-10">
                             <CardHeader color="blue-gray" className="relative h-60">
                               {Array.isArray(detail.image) && detail.image.length > 0 && (
@@ -123,21 +125,21 @@ export const EventInfo = () => {
                               <Link to={`${currentUrl}/contribution/${detail._id}/read`}><Button>Read More</Button></Link>
                             </CardFooter>
                           </Card>
-                      ))
+                        ))
+                      ) : (
+                        <>
+                          <Typography variant="h6" color="gray" className="ml-3">
+                            No contribution found
+                          </Typography>
+                        </>
+                      )
                     ) : (
                       <>
                         <Typography variant="h6" color="gray" className="ml-3">
-                          No contribution found
+                          Loading faculty, this may need a few seconds
                         </Typography>
                       </>
-                    )
-                  ) : (
-                    <>
-                      <Typography variant="h6" color="gray" className="ml-3">
-                        Loading faculty, this may need a few seconds
-                      </Typography>
-                    </>
-                  )}
+                    )}
                   </div>
                   {
                     contributionData && contributionData.length > 3 && (

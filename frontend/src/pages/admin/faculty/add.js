@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
+import { toast } from "react-toastify";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -17,23 +18,16 @@ const AddFaculty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const faculty = {
       facultyName: facultyName,
       enrollKey: enrollKey,
-      descActive: descActive
+      descActive: descActive,
     };
     try {
-      await dispatch(addFaculty(faculty));
-      navigate("/admin/faculty");
+      await dispatch(addFaculty(faculty, user.accessToken, navigate));
     } catch (error) {
       console.log("Error:", error);
     }
-    
-
-    setFacultyName("");
-    setEnrollKey("");
-    setDescActive("");
   };
 
   return (
@@ -53,6 +47,7 @@ const AddFaculty = () => {
                 value={facultyName}
                 onChange={(e) => setFacultyName(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -64,6 +59,7 @@ const AddFaculty = () => {
                 value={enrollKey}
                 onChange={(e) => setEnrollKey(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <div className="mb-4">
@@ -75,6 +71,7 @@ const AddFaculty = () => {
                 value={descActive}
                 onChange={(e) => setDescActive(e.target.value)}
                 className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                required
               />
             </div>
             <button
@@ -82,7 +79,6 @@ const AddFaculty = () => {
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               onClick={handleSubmit}
             >
-
               Add Faculty
             </button>
           </form>

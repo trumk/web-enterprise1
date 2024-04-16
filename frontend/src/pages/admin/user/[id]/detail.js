@@ -11,22 +11,24 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
+import { createAxios } from "../../../../redux/createInstance";
+import { loginSuccess } from "../../../../redux/authSlice";
 
 export const UserDetail = () => {
   const userId = useParams().userId;
-  const users = useSelector((state) => state.user.users.allUsers);
+  const users = useSelector((state) => state.user.users?.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
-
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
   useEffect(() => {
     if (user) {
-      dispatch(getAllUsers(user.accessToken));
+      dispatch(getAllUsers(user.accessToken, axiosJWT));
     }
   }, [user, dispatch]);
 
   console.log(userId)
-  const selectedUser = users?.find((u) => u._id === userId);
+  const selectedUser = users?.find((u) => u?._id === userId);
 
   return (
     <>
@@ -48,14 +50,14 @@ export const UserDetail = () => {
               <Typography
                 variant="h5"
                 color="blue-gray"
-                className="mb-2 font-medium ml-2.5"
+                className="mb-2 font-medium ml-5"
               >
                 Email: {selectedUser.email}
               </Typography>
               <Typography
                 variant="h5"
                 color="blue-gray"
-                className="font-medium ml-2.5"
+                className="font-medium ml-5"
               >
                 Role: {selectedUser.role}
               </Typography>
@@ -70,6 +72,7 @@ export const UserDetail = () => {
               </CardFooter>
             </Card>
           )}
+          
         </div>
       </div>
     </>

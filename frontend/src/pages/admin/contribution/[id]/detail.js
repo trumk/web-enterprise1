@@ -12,7 +12,7 @@ import {
     Typography,
 } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
-import { File } from "lucide-react";
+import { Download, File } from "lucide-react";
 import { format } from 'date-fns';
 import { Preview } from '../../../../components/manage/preview';
 export const ContributionDetail = () => {
@@ -25,7 +25,8 @@ export const ContributionDetail = () => {
             dispatch(getOneContribution(id, user.accessToken));
         }
     }, [dispatch, id, user]);
-    
+    console.log(contribution?.file)
+
     return (
         <>
             <NavbarDefault />
@@ -54,35 +55,39 @@ export const ContributionDetail = () => {
                         </Typography>
                         <Typography variant="h5" className="ml-3">
                             Published: {contribution?.isPublic ? 'Yes' : 'No'}
-                            </Typography>
+                        </Typography>
                         <Typography variant="h5" className="ml-3">
                             Image:
                             <div className='flex items-center gap-2'>
                                 {contribution?.image.map((imgSrc, index) => (
-                                <img
-                                    key={index}
-                                    src={imgSrc}
-                                    alt={`contribution ${index}`}
-                                    className='mt-2 mb-2 h-[300px] rounded-md border border-gray-900'
-                                />
-                            ))}
+                                    <img
+                                        key={index}
+                                        src={imgSrc}
+                                        alt={`contribution ${index}`}
+                                        className='mt-2 mb-2 h-[300px] rounded-md border border-gray-900'
+                                    />
+                                ))}
                             </div>
-                            
+
                         </Typography>
                         <Typography variant="h5" className="ml-3">
                             Files:
                         </Typography>
                         {contribution?.file.length > 0 && (
                             <div className="space-y-2">
-                                {contribution.file.map((file, index) => (
+                                {contribution?.file.map((file, index) => (
                                     <div
-                                        className="flex items-center p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
+                                        className="flex items-center justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
                                     >
-                                        
+                                        <div>
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                                        <p className="text-xs line-clamp-1">
-                                            Contribution Attachment {index + 1}
-                                        </p>
+                                        <Typography>{file.split('/').pop()}</Typography>
+                                        </div>
+                                        <a target="_blank" href={file} download>
+                                            <Button>
+                                            <Download className='h-4 w-4'/>
+                                        </Button>
+                                        </a>
                                     </div>
                                 ))}
                             </div>
@@ -91,7 +96,6 @@ export const ContributionDetail = () => {
                             <Link to="/admin/contribution">
                                 <Button>Back to List</Button>
                             </Link>
-                            <Button className="ml-3" onClick={() => { }}>Delete</Button>
                         </CardFooter>
                     </Card>
                 </div>

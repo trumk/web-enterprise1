@@ -6,12 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Card,
+  IconButton,
   Input,
   Option,
   Select,
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import { Info, Settings } from "lucide-react";
+import axios from "axios";
+import { loginSuccess } from "../../../redux/authSlice";
+import { jwtDecode } from "jwt-decode";
 
 export const Faculty = () => {
   const faculties = useSelector(
@@ -23,7 +28,6 @@ export const Faculty = () => {
   const filterFaculty = useSelector(
     (state) => state.faculty.searchFaculty.filterFaculty
   );
-
   useEffect(() => {
     if (user) {
       dispatch(getAllFaculties(user.accessToken, dispatch));
@@ -157,7 +161,7 @@ export const Faculty = () => {
                             {faculty.descActive}
                           </Typography>
                         </td>
-                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                        {/* <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
                             <Option>
                               <Link to={`/admin/faculty/${faculty._id}`}>
@@ -170,11 +174,16 @@ export const Faculty = () => {
                               </Link>
                             </Option>
                           </Select>
+                        </td> */}
+                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                          <div className="flex gap-2 items-center">
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/faculty/${faculty._id}/edit`}> <Settings/> </Link></IconButton>
+                            </div>
                         </td>
                       </tr>
                     ))
                   ) : (
-                    // Hiển thị thông báo khi không tìm thấy faculty nào khớp với từ khóa
                     <tr>
                       <td colSpan={3} className="p-4">
                         No faculties found
@@ -182,7 +191,6 @@ export const Faculty = () => {
                     </tr>
                   )
                 ) : (
-                  // Hiển thị thông báo khi đang tải dữ liệu
                   <tr>
                     <td colSpan={3} className="p-4">
                       Loading...

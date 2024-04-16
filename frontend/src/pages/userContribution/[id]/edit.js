@@ -36,12 +36,16 @@ export const EditContribution = () => {
     }, [currentContribution])
     const handleImageUpload = (e) => {
         setMessage("");
-        let file = e.target.files;
-        for (let i = 0; i < file.length; i++) {
-            const fileType = file[i]['type'];
+        let selectedFiles = e.target.files;
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const fileType = selectedFiles[i]['type'];
             const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
             if (validImageTypes.includes(fileType)) {
-                setImage([...image, file[i]]);
+                let reader = new FileReader();
+                reader.onloadend = () => {
+                    setImage([...image, reader.result]);
+                }
+                reader.readAsDataURL(selectedFiles[i]);
             } else {
                 setMessage("Only image accepted");
             }
@@ -53,23 +57,38 @@ export const EditContribution = () => {
         let selectedFiles = e.target.files;
         for (let i = 0; i < selectedFiles.length; i++) {
             const fileType = selectedFiles[i]['type'];
-            const validFileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const validFileTypes = [
+                'application/pdf', 
+                'application/msword', 
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ];
             if (validFileTypes.includes(fileType)) {
                 setFile([...file, selectedFiles[i]]);
             } else {
-                setMessage("only .docx and .pdf accepted");
+                setMessage("only .docx, .pdf, .xls, .xlsx are accepted");
             }
         }
     };
-
-    const removeImage = (i) => {
-        setImage(image?.filter(x => x.name !== i));
+    console.log(currentContribution)
+    function removeImage(index) {
+        let newImages = [...image];
+        newImages.splice(index, 1);
+        setImage(newImages);
     }
 
-    const removeFile = (i) => {
-        setFile(file?.filter(x => x.name !== i));
+    function removeFile(index) {
+        let newFiles = [...file];
+        newFiles.splice(index, 1);
+        setFile(newFiles);
     }
-
+    function getFileNameFromUrl (url) {
+        let parts = url.split('/');
+        let encodedFileName = parts[parts.length - 1];
+        let fileName = decodeURIComponent(encodedFileName);
+        return fileName;
+    }
     const contribution = new FormData()
     contribution.append('title', title);
     contribution.append('content', content);
@@ -85,30 +104,33 @@ export const EditContribution = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(modifyContribution(contribution, user.accessToken, navigate));
+        dispatch(modifyContribution(currentContribution._id, contribution, user.accessToken, navigate));
     }
+
+
+    console.log();
     return (
         <>
             <NavbarDefault />
-            <div className='flex'>
+            <div className="flex">
                 <DefaultSidebar className="flex" />
                 <div className="ml-5 w-full h-full">
-                    <div className='mt-10 flex flex-col items-center'>
-                        <Typography variant='h4'>
-                            Post New Contribution
-                        </Typography>
-                        <Card color="transparent" shadow={false}>
-                            <Typography color="gray" className="mt-1 font-normal">
-                                Share your contribution to others
-                            </Typography>
-                            <form className="mt-8 mb-2 max-w-screen sm:w-96" onSubmit={handleSubmit}>
+                    <Typography variant='h4' className='text-center'>
+                        Post New Contribution
+                    </Typography>
+                    <Typography color="gray" className="mt-1 font-normal text-center">
+                        Share your contribution to others
+                    </Typography>
+                    <div className="flex justify-center items-center">
+                        <Card className='w-[900px] h-[700px] flex justify-center items-center'>
+                            <form className="mt-8 mb-2 w-[800px] flex justify-between gap-10" onSubmit={handleSubmit}>
                                 <div className="mb-1 flex flex-col gap-6">
                                     <Typography variant="h6" color="blue-gray" className="-mb-3">
                                         Title
                                     </Typography>
                                     <Input
                                         size="lg"
-                                        className="w-full !border-t-blue-gray-200 focus:!border-t-gray-900"
+                                        className="w-[350px] !border-t-blue-gray-200 focus:!border-t-gray-900"
                                         labelProps={{
                                             className: "before:content-none after:content-none",
                                         }}
@@ -121,11 +143,14 @@ export const EditContribution = () => {
                                     <Editor
                                         value={content}
                                         onChange={setContent}
+                                        className="h-[300px] w-[350px]"
                                     />
-                                    <Typography variant="h6" color="blue-gray" className="-mb-3">
+                                </div>
+                                <div className="mb-1 flex flex-col gap-6">
+                                    <Typography variant="h6" color="blue-gray" className="-mb-5">
                                         Image
                                     </Typography>
-                                    <div className='w-[800px] mt-2'>
+                                    <div className='w-[800px]'>
                                         {message && <span>{message}</span>}
                                         <div className="rounded-lg shadow-xl bg-gray-50 md:w-1/2 w-[400px]">
                                             <div className="m-4">
@@ -141,11 +166,11 @@ export const EditContribution = () => {
                                                     </label>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 mt-2">
-                                                    {image.map((file, key) => {
+                                                    {image.map((url, key) => {
                                                         return (
                                                             <div key={key} className="overflow-hidden relative">
-                                                                <X onClick={() => { removeImage(file.name) }} className="mdi mdi-close absolute right-1 hover:opacity-0.7 cursor-pointer" />
-                                                                <img className="h-20 w-20 rounded-md" src={file} />
+                                                                <X onClick={() => { removeImage(key) }} className="mdi mdi-close absolute right-1 hover:opacity-0.7 cursor-pointer" />
+                                                                <img className="h-20 w-20 rounded-md" src={url} />
                                                             </div>
                                                         )
                                                     })}
@@ -162,29 +187,8 @@ export const EditContribution = () => {
                                             <div>
                                                 {file?.length === 0 && (
                                                     <p className="text-sm mt-2 text-slate-500 italic">
-                                                        No attachments yet
+                                                        You deleted all attachments. You can add more files by clicking the button below.
                                                     </p>
-                                                )}
-                                                {file.length > 0 && (
-                                                    <div className="space-y-2">
-                                                        {file.map((file, key) => (
-                                                            <div
-                                                                key={key}
-                                                                className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
-                                                            >
-                                                                <File className='h-4 w-4 mr-2 flex-shrink-0' />
-                                                                <p className="text-xs line-clamp-1">
-                                                                    {file.name}
-                                                                </p>
-                                                                <button
-                                                                    onClick={() => removeFile(file.name)}
-                                                                    className="ml-auto hover:opacity-75 transition"
-                                                                >
-                                                                    <X className="h-4 w-4" />
-                                                                </button>
-                                                            </div>
-                                                        ))}
-                                                    </div>
                                                 )}
                                                 <div className="flex items-center justify-center w-full">
                                                     <label className="flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300">
@@ -196,14 +200,45 @@ export const EditContribution = () => {
                                                         <input type="file" onChange={handleFileUpload} className="opacity-0" multiple="multiple" name="file[]" />
                                                     </label>
                                                 </div>
+                                                {file?.length > 0 && (
+                                                    <div className="space-y-2">
+                                                        {file?.map((file, key) => {
+                                                        let fileName;
+                                                        if (typeof file === 'object' && 'name' in file) {
+                                                            fileName = file.name;
+                                                        } else {
+                                                            fileName = getFileNameFromUrl(file);
+                                                        }
+                                                        return (
+                                                            <div
+                                                                key={key}
+                                                                className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
+                                                            >
+                                                                <File className='h-4 w-4 mr-2 flex-shrink-0' />
+                                                                <p className="text-xs line-clamp-1">
+                                                                    {fileName}
+                                                                </p>
+                                                                <button
+                                                                    onClick={() => removeFile(file.name)}
+                                                                    className="ml-auto hover:opacity-75 transition"
+                                                                >
+                                                                    <X className="h-4 w-4" />
+                                                                </button>
+                                                            </div>
+                                                        )})}
+                                                    </div>
+                                                )}
                                             </div>
+                                        </div>
+                                        <div className="flex justify-center mr-[90px]">
+                                            <Button className="mt-8" onClick={handleSubmit}>
+                                                Submit
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
-                                <Button className="mt-6" fullWidth onClick={handleSubmit}>
-                                    Submit
-                                </Button>
                             </form>
+
                         </Card>
                     </div>
                 </div>
