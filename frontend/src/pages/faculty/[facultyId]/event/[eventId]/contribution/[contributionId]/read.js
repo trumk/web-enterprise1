@@ -53,7 +53,7 @@ export const ReadContribution = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
-  const [active, setActive] = useState(images[0]?.img);
+  const [active, setActive] = useState(images?.img);
   const filteredRelatedContributions = relatedContributions.filter(
     relatedContribution => relatedContribution?._id !== contribution?._id
   );

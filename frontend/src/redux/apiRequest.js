@@ -326,10 +326,10 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
   }
 };
 
-export const getOneFaculty = (id, accessToken) => async (dispatch) => {
+export const getOneFaculty = (id, accessToken, axiosJWT) => async (dispatch) => {
   dispatch(getFacultyStart());
   try {
-    const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
+    const res = await axiosJWT.get(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -386,10 +386,10 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
   }
 }
 
-export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => {
+export const deleteFaculty = (id, accessToken, navigate, axiosJWT) => async (dispatch) => {
   dispatch(deleteFacultyStart());
   try {
-    await axios.delete(`${BACKEND_URL}/faculty/${id}`, {
+    await axiosJWT.delete(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -404,10 +404,10 @@ export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => 
   }
 };
 
-export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
+export const getAllEventsByFaculty = (id, accessToken, axiosJWT) => async (dispatch) => {
   dispatch(getEventsByFacultyStart());
   try {
-    const res = await axios.get(`${BACKEND_URL}/event/${id}/events`, {
+    const res = await axiosJWT.get(`${BACKEND_URL}/event/${id}/events`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },

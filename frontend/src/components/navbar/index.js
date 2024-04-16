@@ -59,36 +59,6 @@ export default function NavbarDefault() {
       dispatch(getSelf(user._id, axiosJWT));
     }
   }, [dispatch, user]);
-  // const refreshToken = async () => {
-  //   try{
-  //     const res = await axios.post("http://localhost:5503/refresh", 
-  //     {
-  //       withCredentials: true,
-  //     });
-  //     return res.data;
-  //   } catch (error) {
-  //     console.log("Error:", error);
-  //   }
-  // }
-  // axiosJWT.interceptors.request.use(
-  //   async (config) => {
-  //     const decodedToken = jwtDecode(user.accessToken);
-  //     let date = new Date();
-  //     if(decodedToken.exp < date.getTime() / 1000) {
-  //       const data = refreshToken();
-  //       const refreshUser = {
-  //         ...user,
-  //         accessToken: data.accessToken,
-  //       };
-  //       dispatch(loginSuccess(refreshUser));
-  //       config.headers["token"] = `Bearer ${data.accessToken}`;
-  //     }
-  //     return config;
-  //   }, (err) => {
-  //     return Promise.reject(err);
-  //   }
-
-  // )
 
   const handleNavigateByRole = ()=>{
     if(user?.role === 'admin'){
