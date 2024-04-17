@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import logo from '../assets/logo.jpg'
 import {
   Navbar,
   Typography,
@@ -74,7 +75,7 @@ export default function NavbarDefault() {
           <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
   
             <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-            <img src="https://cms.greenwich.edu.vn/pluginfile.php/1/theme_adaptable/logo/1698976651/2022-Greenwich-Eng.jpg" alt="logo" size="sm" className="mr-2 h-10" />
+            <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
             </Typography>
 
             
