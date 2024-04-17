@@ -11,19 +11,16 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
-import { createAxios } from "../../../../redux/createInstance";
-import { loginSuccess } from "../../../../redux/authSlice";
 
 export const UserDetail = () => {
   const userId = useParams().userId;
   const users = useSelector((state) => state.user.users?.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
   useEffect(() => {
     if (user) {
-      dispatch(getAllUsers(user.accessToken, axiosJWT));
+      dispatch(getAllUsers(user.accessToken));
     }
   }, [user, dispatch]);
 

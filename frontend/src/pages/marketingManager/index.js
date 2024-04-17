@@ -231,7 +231,7 @@ export const MarketingManagerPage = () => {
               <section className="mt-4">
                 <div className="flex flex-col items-center gap-2 border border-gray-900">
                   <Typography variant="h4">Percentage of Total</Typography>
-                  <Chart{...percentageContribution} />
+                  <Chart {...percentageContribution} />
                 </div>
               </section>
             </>

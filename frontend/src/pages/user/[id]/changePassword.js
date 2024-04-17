@@ -11,8 +11,6 @@ import DefaultSidebar from "../components/sidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUserPassword } from "../../../redux/apiRequest";
-import { createAxios } from "../../../redux/createInstance";
-import { loginSuccess } from "../../../redux/authSlice";
 
 export function ChangePassword() {
   const userId = useParams();
@@ -22,7 +20,6 @@ export function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   console.log(user?._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +30,7 @@ export function ChangePassword() {
     };
     console.log(user?._id);
     try {
-      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate, axiosJWT));
+      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate));
     } catch (error) {
       console.log("Error:", error);
     }

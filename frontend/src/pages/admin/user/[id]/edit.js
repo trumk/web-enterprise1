@@ -15,8 +15,6 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { createAxios } from "../../../../redux/createInstance";
-import { loginSuccess } from "../../../../redux/authSlice";
 
 export const EditUser = () => {
   const { userId } = useParams();
@@ -25,7 +23,6 @@ export const EditUser = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
   const selectedUser = users.find((u) => u._id === userId);
 
@@ -36,7 +33,7 @@ export const EditUser = () => {
     const roleUser = {
       role: updatedRole,
     };
-    dispatch(setRole(userId, roleUser, user.accessToken, navigate, axiosJWT));
+    dispatch(setRole(userId, roleUser, user.accessToken, navigate));
   };
 
   return (

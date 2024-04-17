@@ -13,13 +13,10 @@ import {
 } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Download, File } from "lucide-react";
-import { format } from 'date-fns';
 import NavbarDefault from '../../../../components/navbar';
 import { commentContribution, getOneContribution, publicContribution } from '../../../../redux/apiRequest';
 import DefaultSidebar from '../../../../components/sidebar';
 import { Preview } from '../../../../components/manage/preview';
-import { createAxios } from '../../../../redux/createInstance';
-import { loginSuccess } from '../../../../redux/authSlice';
 export const ManageContribution = () => {
     const [comment, setComment] = useState();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -29,7 +26,6 @@ export const ManageContribution = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const getRole = user?.role;
-    const axiosJWT = createAxios(user, dispatch, loginSuccess);
     useEffect(() => {
         if (user && user?.accessToken) {
             dispatch(getOneContribution(id, user.accessToken));
@@ -45,7 +41,7 @@ export const ManageContribution = () => {
         const marketingCoordinatorComment = {
             comment: comment,
         }
-        dispatch(commentContribution(id, marketingCoordinatorComment, user.accessToken, axiosJWT))
+        dispatch(commentContribution(id, marketingCoordinatorComment, user.accessToken))
             .then(() => {
                 window.location.reload();
             });

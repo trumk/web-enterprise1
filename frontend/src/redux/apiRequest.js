@@ -174,12 +174,12 @@ export const verifyAccount = async (otp, dispatch, navigate) => {
   }
 };
 
-export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
+export const logout = async (dispatch, id, navigate, accessToken) => {
   console.log(accessToken); 
   console.log(typeof accessToken);
   dispatch(logoutStart());
   try {
-    await axiosJWT.post(`${BACKEND_URL}/logout`, id, {
+    await axios.post(`${BACKEND_URL}/logout`, id, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -197,10 +197,10 @@ export const logout = async (dispatch, id, navigate, accessToken, axiosJWT) => {
   }
 };
 
-export const getAllUsers = (accessToken, axiosJWT) => async (dispatch) => {
+export const getAllUsers = (accessToken) => async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/user/getAllUsers`, {
+    const res = await axios.get(`${BACKEND_URL}/user/getAllUsers`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -216,10 +216,10 @@ export const getAllUsers = (accessToken, axiosJWT) => async (dispatch) => {
   }
 };
 
-export const getSelf = (id, axiosJWT) => async (dispatch) => {
+export const getSelf = (id) => async (dispatch) => {
   dispatch(getSelfStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/user/${id}`);
+    const res = await axios.get(`${BACKEND_URL}/user/${id}`);
     dispatch(getSelfSuccess(res.data));
   } catch (err) {
     dispatch(getSelfFailed());
@@ -227,10 +227,10 @@ export const getSelf = (id, axiosJWT) => async (dispatch) => {
   }
 };
 
-export const setRole = (id, role, accessToken, navigate, axiosJWT) => async (dispatch) => {
+export const setRole = (id, role, accessToken, navigate) => async (dispatch) => {
   dispatch(setRoleStart());
   try {
-    const response = await axiosJWT.post(
+    const response = await axios.post(
       `${BACKEND_URL}/user/setRole/${id}`,
       role,
       {
@@ -247,10 +247,10 @@ export const setRole = (id, role, accessToken, navigate, axiosJWT) => async (dis
   }
 };
 
-export const changeUserPassword = async (id, accessToken, password, dispatch, navigate, axiosJWT) => {
+export const changeUserPassword = async (id, accessToken, password, dispatch, navigate) => {
   dispatch(changePasswordStart());
   try {
-    const res = await axiosJWT.post(`${BACKEND_URL}/changePassword/${id}`, password, {
+    const res = await axios.post(`${BACKEND_URL}/changePassword/${id}`, password, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -264,19 +264,21 @@ export const changeUserPassword = async (id, accessToken, password, dispatch, na
   }
 }
 
-export const editProfile = (id, userId, accessToken, profile, navigate, axiosJWT) => async (dispatch) => {
+export const editProfile = (id, userId, accessToken, profile, navigate) => async (dispatch) => {
   dispatch(editProfileStart())
   try {
-    const res = await axiosJWT.put(`${BACKEND_URL}/user/${id}`, profile, {
+    const res = await axios.put(`${BACKEND_URL}/user/${id}`, profile, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
     });
+    
     dispatch(editProfileSuccess(res.data));
     toast.success("Edit profile successfully");
     navigate(`/user/${userId}/profile`)
   } catch (err) {
     dispatch(editProfileFailed());
+    console.log(err)
     toast.error(err.response.data);
   }
 }
@@ -330,10 +332,10 @@ export const getAllFaculties = (accessToken) => async (dispatch) => {
   }
 };
 
-export const getOneFaculty = (id, accessToken, axiosJWT) => async (dispatch) => {
+export const getOneFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getFacultyStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/faculty/${id}`, {
+    const res = await axios.get(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -390,10 +392,10 @@ export const editFaculty = (id, faculty, accessToken, navigate) => async (dispat
   }
 }
 
-export const deleteFaculty = (id, accessToken, navigate, axiosJWT) => async (dispatch) => {
+export const deleteFaculty = (id, accessToken, navigate) => async (dispatch) => {
   dispatch(deleteFacultyStart());
   try {
-    await axiosJWT.delete(`${BACKEND_URL}/faculty/${id}`, {
+    await axios.delete(`${BACKEND_URL}/faculty/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -408,10 +410,10 @@ export const deleteFaculty = (id, accessToken, navigate, axiosJWT) => async (dis
   }
 };
 
-export const getAllEventsByFaculty = (id, accessToken, axiosJWT) => async (dispatch) => {
+export const getAllEventsByFaculty = (id, accessToken) => async (dispatch) => {
   dispatch(getEventsByFacultyStart());
   try {
-    const res = await axiosJWT.get(`${BACKEND_URL}/event/${id}/events`, {
+    const res = await axios.get(`${BACKEND_URL}/event/${id}/events`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -615,10 +617,10 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
   }
 }
 
-export const removeContribution = (id, accessToken, axiosJWT) => async (dispatch) => {
+export const removeContribution = (id, accessToken) => async (dispatch) => {
   dispatch(deleteContributionStart());
   try {
-    await axiosJWT.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
+    await axios.delete(`${BACKEND_URL}/contribution/delete/${id}`, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
@@ -631,10 +633,10 @@ export const removeContribution = (id, accessToken, axiosJWT) => async (dispatch
 }
 
 
-export const commentContribution = (id, comment, accessToken, axiosJWT) => async (dispatch) => {
+export const commentContribution = (id, comment, accessToken) => async (dispatch) => {
   dispatch(commentStart())
   try {
-    await axiosJWT.post(`${BACKEND_URL}/contribution/comment/${id}`, comment, {
+    await axios.post(`${BACKEND_URL}/contribution/comment/${id}`, comment, {
       headers: {
         token: `Bearer ${accessToken}`,
       },
