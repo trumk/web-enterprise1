@@ -8,8 +8,7 @@ import { Typography } from "@material-tailwind/react";
 
 export const MarketingManagerPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const statistic = useSelector((state) => state.user.statistic?.data);
-  const isFetching = useSelector((state) => state.user.statistic?.isFetching);
+  const statistic = useSelector((state) => state.user?.statistic?.data);
   const dispatch = useDispatch();
   const time = {
     startDate: "2023",
@@ -19,7 +18,7 @@ export const MarketingManagerPage = () => {
       dispatch(getStatistic(user.accessToken, time));
     }
   }, [user, dispatch]);
-  const analytics = statistic?.statistics;
+  const analytics = statistic?.statistics || [];
   console.log(statistic?.statistics);
   const numberOfContribution = {
     type: "bar",
@@ -212,9 +211,6 @@ export const MarketingManagerPage = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
-          {isFetching ? (
-            <div>Loading...</div>
-          ) : (
             <>
               <section className="mt-4">
                 <div className="border border-gray-900">
@@ -231,11 +227,10 @@ export const MarketingManagerPage = () => {
               <section className="mt-4">
                 <div className="flex flex-col items-center gap-2 border border-gray-900">
                   <Typography variant="h4">Percentage of Total</Typography>
-                  <Chart{...percentageContribution} />
+                  <Chart {...percentageContribution} />
                 </div>
               </section>
             </>
-          )}
         </div>
       </div>
     </>
