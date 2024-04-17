@@ -84,7 +84,7 @@ export const Faculty = () => {
                       Description
                     </Typography>
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center">
                     <Typography
                       variant="small"
                       color="blue-gray"
