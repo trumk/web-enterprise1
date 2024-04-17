@@ -33,7 +33,6 @@ export const EventInfo = () => {
   const handlePrev = () => {
     setCurrentIndex((oldIndex) => Math.max(oldIndex - 1, 0));
   };
-  const axiosJWT = axios.create();
   const handleNext = () => {
     setCurrentIndex((oldIndex) => Math.min(oldIndex + 1, contributionData.length - 3));
   };
