@@ -47,7 +47,7 @@ export const FacultyDetail = () => {
   const handleDelete = () => {
     const confirmation = window.confirm("Are you sure you want to delete this faculty?");
     if (confirmation) {
-      dispatch(deleteFaculty(id, user.accessToken, navigate));
+      dispatch(deleteFaculty(id, user?.accessToken, navigate));
     }
   };
   console.log(faculty)
