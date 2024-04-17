@@ -12,7 +12,7 @@ import { loginSuccess } from '../../../redux/authSlice'
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const facultyId = useSelector((state) => state.user.user?.user?.facultyID[0]);
+  // const facultyId = useSelector((state) => state.user.user?.user?.facultyID[0]);
   const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
   const dispatch = useDispatch();
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
@@ -22,11 +22,11 @@ export const UserProfile = () => {
       dispatch(getSelf(user?._id, axiosJWT));
     }
   }, [dispatch, user]);
-  useEffect(() => {
-    if (user && user?.accessToken) {
-      dispatch(getOneFaculty(facultyId, user.accessToken, axiosJWT));
-    }
-  }, [dispatch, facultyId, user]);
+  // useEffect(() => {
+  //   if (user && user?.accessToken) {
+  //     dispatch(getOneFaculty(facultyId, user.accessToken, axiosJWT));
+  //   }
+  // }, [dispatch, facultyId, user]);
 
   const profile = useSelector((state) => state.user.user?.user);
   return (
