@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import {
   Navbar,
-  MobileNav,
   Typography,
   Button,
   IconButton,
@@ -12,25 +11,21 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon } from "lucide-react";
-import logo from '../assets/logo.jpg';
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { createAxios } from "../../redux/createInstance";
-import {jwtDecode} from "jwt-decode";
 import { loginSuccess } from "../../redux/authSlice";
 import { getSelf, logout } from "../../redux/apiRequest";
 
 export default function NavbarDefault() {
   const [openNav, setOpenNav] = React.useState(false);
-  const user = useSelector((state) => state.auth.login.currentUser);
+  const user = useSelector((state) => state.auth.login?.currentUser);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let axiosJWT = createAxios(user, dispatch, loginSuccess);
   const id = user?._id;
   const accessToken = user?.accessToken;
-
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   const handleLogout = () => {
     logout(dispatch, id, navigate, accessToken, axiosJWT);
   };
@@ -38,6 +33,10 @@ export default function NavbarDefault() {
   const closeMenu = () => setIsMenuOpen(false);
 
   const profileMenuItems = [
+    {
+      label: `${user?.email}`,
+      icon: Mail
+    },
     {
       label: "My Profile",
       icon: UserCircleIcon,
@@ -49,8 +48,6 @@ export default function NavbarDefault() {
       action: handleLogout,
     },
   ];
-  const isAdmin = user && user.role == "admin";
-  const isUser = user && user.role == "user";
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -59,28 +56,32 @@ export default function NavbarDefault() {
   }, []);
   useEffect(() => {
     if(user && user._id) {
-      dispatch(getSelf(user._id));
+      dispatch(getSelf(user._id, axiosJWT));
     }
   }, [dispatch, user]);
 
+  const handleNavigateByRole = ()=>{
+    if(user?.role === 'admin'){
+      navigate('/admin/user')
+    } else if(user?.role === 'marketing manager'){
+      navigate('/marketingManager')
+    } else {
+      navigate('/')
+    }
+  }
   const profile = useSelector((state) => state.user.user?.user);
   return (
     <div className="max-h-[768px] w-full">
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <div className="flex items-center">
-            <Typography as="a" href="/" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-            <Avatar src={logo} alt="logo" size="sm" className="mr-2" />
+          <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
+  
+            <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
+            <img src="https://cms.greenwich.edu.vn/pluginfile.php/1/theme_adaptable/logo/1698976651/2022-Greenwich-Eng.jpg" alt="logo" size="sm" className="mr-2 h-10" />
             </Typography>
-            <Typography
-              as="a"
-              href="/"
-              variant="h6"
-              className="mr-4 cursor-pointer py-1.5 lg:ml-2"
-            >
-              Web Enterprise
-            </Typography>
-          </div>
+
+            
+          </Button>
           <div className="flex items-center gap-4">
             {!user ? (
               <div className="flex items-center gap-x-1">
@@ -103,76 +104,7 @@ export default function NavbarDefault() {
                   </Button>
                 </Link>
               </div>
-            ) : isAdmin ? (
-              <>
-                <Link to="/admin/faculty">
-                  <Button
-                    variant="text"
-                    size="sm"
-                    className="hidden lg:inline-block"
-                  >
-                    <span>Exit</span>
-                  </Button>
-                </Link>
-                <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
-                  <MenuHandler>
-                    <Button
-                      variant="text"
-                      color="blue-gray"
-                      className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
-                    >
-                      {/* TODO: User avatar */}
-                      <Avatar
-                        variant="circular"
-                        size="sm"
-                        alt="tania andrew"
-                        className="border border-gray-900 p-0.5"
-                        src={logo}
-                      />
-                      <ChevronDownIcon
-                        strokeWidth={2.5}
-                        className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
-                          }`}
-                      />
-                    </Button>
-                  </MenuHandler>
-                  <MenuList className="p-1">
-                    {profileMenuItems.map(({ label, icon, href, action }, key) => {
-                      const isLastItem = key === profileMenuItems.length - 1;
-                      return (
-                        <MenuItem
-                          key={label}
-                          onClick={()=> {
-                            closeMenu();
-                            if(action) action()
-                          }}
-                          className={`flex items-center gap-2 rounded ${isLastItem
-                            ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                            : ""
-                            }`}
-                        >
-                          {React.createElement(icon, {
-                            className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                            strokeWidth: 2,
-                          })}
-                          <Link to href>
-                            <Typography
-                              as="span"
-                              variant="small"
-                              className="font-normal"
-                              color={isLastItem ? "red" : "inherit"}
-                            >
-                              {label}
-                            </Typography>
-                          </Link>
-                        </MenuItem>
-                      );
-                    })}
-                  </MenuList>
-                </Menu>
-                <Button onClick={handleLogout}>Log Out</Button>
-                </>
-            ) : isUser && (
+            )  : (
               <>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
                   <MenuHandler>

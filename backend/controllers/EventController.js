@@ -7,10 +7,10 @@ async function createEvent(req, res) {
   const { topic, content, createEvent, closureDate, finalDate, facultyId } = req.body;
 
   // validate required fields
-  if (!topic || !finalDate || !facultyId || !closureDate) {
+  if (!topic || !content || !finalDate || !facultyId || !closureDate) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: topic, closureDate, finalDate, or facultyId'
+      message: 'Missing required fields'
     });
   }
 
@@ -150,12 +150,13 @@ async function getAllEvent(req, res) {
 function getOneEvent(req, res) {
   const id = req.params.eventId;
   res.cookie("eventId", id, {
-    httpOnly: true,
+    httpOnly: false,
     secure: false,
     path: "/",
-    sameSite: "strict",
+    sameSite: "strict"
   });
   Event.findById(id)
+  .populate('facultyId', 'facultyName')
     .then(event => {
       if (!event) {
         return res.status(404).json({
@@ -177,6 +178,7 @@ function getOneEvent(req, res) {
       });
     });
 };
+
 
 function updateEvent(req, res) {
   const id = req.params.eventId;

@@ -105,7 +105,7 @@ const authController = {
     },
     verifyUser: async (req, res) => {
         try {
-            const email = req.cookies.email;
+            const email = req.body.email;
             const user = await User.findOne({ email: email });
             if (!user) {
                 return res.status(404).json("User not found");
@@ -153,10 +153,12 @@ const authController = {
 
     loginUser: async (req, res) => {
         try {
-            //find username of user
-            const user = await User.findOne({ email: req.body.email });
+            let user = await User.findOne({ userName: req.body.email });
             if (!user) {
-                return res.status(404).json("User is not found");
+                user = await User.findOne({ email: req.body.email });
+                if (!user) {
+                    return res.status(404).json("User is not found");
+                }
             }
             await res.cookie('email', user.email, {
                 httpOnly: true,
@@ -175,7 +177,7 @@ const authController = {
             if (!validPassword) {
                 return res.status(404).json("Wrong password");
             }
-            const isVerified = await user.isVerified;
+            const isVerified = user.isVerified;
             if (!isVerified) {
                 return res.status(403).json("Your account is not verified");
             }

@@ -1,70 +1,99 @@
+import React, { useState } from "react";
 import {
-    Card,
-    Input,
-    Checkbox,
-    Button,
-    Typography,
-  } from "@material-tailwind/react";
+  Card,
+  CardHeader,
+  Input,
+  Button,
+  Typography,
+} from "@material-tailwind/react";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../components/sidebar";
-import { useParams } from "react-router-dom";
-   
-  export function ChangePassword() {
-    const userId = useParams();
-    console.log(userId);
-    return (
-        <>
-        <NavbarDefault/>
-        <div className="flex gap-6">
-            <DefaultSidebar/>
-            <div className="w-full flex justify-center">
-            <Card color="transparent" shadow={false}>
-        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
-          <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
-              Curent password
-            </Typography>
-            <Input
-            type="password"
-              size="lg"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
-              New Password
-            </Typography>
-            <Input
-            type="password"
-              size="lg"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
-              Confirm Password
-            </Typography>
-            <Input
-              type="password"
-              size="lg"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-          </div>
-          
-          <Button className="mt-6" fullWidth>
-            Save
-          </Button>
-        </form>
-      </Card>
-            </div>
-       
-        </div>
-        
-      </>
-    );
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { changeUserPassword } from "../../../redux/apiRequest";
+
+export function ChangePassword() {
+  const userId = useParams();
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log(user?._id);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    };
+    console.log(user?._id);
+    try {
+      await dispatch(changeUserPassword(user?._id, user?.accessToken, data, dispatch, navigate));
+    } catch (error) {
+      console.log("Error:", error);
+    }
   }
+  return (
+    <>
+      <NavbarDefault />
+      <div className="flex">
+        <DefaultSidebar />
+        <div className="mt-5 ml-5 w-full">
+          <Card color="transparent" shadow={false}>
+              <Typography color="blue-gray" variant="h4">
+                Change Password
+              </Typography>
+            <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
+              <div className="mb-1 flex flex-col gap-6">
+                <Typography variant="h6" color="blue-gray" className="-mb-3">
+                  Curent password
+                </Typography>
+                <Input
+                  type="password"
+                  size="lg"
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                  labelProps={{
+                    className: "before:content-none after:content-none",
+                  }}
+                />
+                <Typography variant="h6" color="blue-gray" className="-mb-3">
+                  New Password
+                </Typography>
+                <Input
+                  type="password"
+                  size="lg"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                  labelProps={{
+                    className: "before:content-none after:content-none",
+                  }}
+                />
+                <Typography variant="h6" color="blue-gray" className="-mb-3">
+                  Confirm Password
+                </Typography>
+                <Input
+                  type="password"
+                  size="lg"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                  labelProps={{
+                    className: "before:content-none after:content-none",
+                  }}
+                />
+              </div>
+
+              <Button className="mt-6" fullWidth onClick={handleSubmit}>
+                Save
+              </Button>
+            </form>
+          </Card>
+        </div>
+
+      </div>
+
+    </>
+  );
+}

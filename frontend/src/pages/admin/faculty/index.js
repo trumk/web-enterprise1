@@ -1,23 +1,51 @@
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
-import { useEffect } from "react";
-import { getAllFaculties } from "../../../redux/apiRequest";
+import { useState, useEffect } from "react";
+import { getAllFaculties, searchFaculty } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Card, Option, Select, Typography } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  IconButton,
+  Input,
+  Option,
+  Select,
+  Typography,
+} from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import { Info, Settings } from "lucide-react";
+import axios from "axios";
+import { loginSuccess } from "../../../redux/authSlice";
+import { jwtDecode } from "jwt-decode";
 
 export const Faculty = () => {
-  const faculties = useSelector((state)=>state.faculty.faculties.allFaculties)
-  const user = useSelector((state)=>state.auth.login?.currentUser) 
+  const faculties = useSelector(
+    (state) => state.faculty.faculties?.allFaculties
+  );
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
-
+  const filterFaculty = useSelector(
+    (state) => state.faculty.searchFaculty.filterFaculty
+  );
   useEffect(() => {
     if (user) {
       dispatch(getAllFaculties(user.accessToken, dispatch));
     }
   }, [user, dispatch]);
 
-
+  useEffect(() => {
+    if (user && searchTerm !== "") {
+      dispatch(searchFaculty(searchTerm, user.accessToken));
+    } else {
+      dispatch({
+        type: "SET_FILTER_FACULTY",
+        payload: { filterFaculty: { faculties: [], message: "" } }
+      });
+    }
+  }, [searchTerm, user, dispatch]);
+  
+  console.log(filterFaculty)
   return (
     <>
       <NavbarDefault />
@@ -27,7 +55,16 @@ export const Faculty = () => {
           <Button className="mt-2.5 mb-2.5">
             <Link to="/admin/faculty/add">Create new</Link>
           </Button>
-          <Card className="h-full w-full">
+          <div className="flex items-center gap-2">
+            <Input
+              type="text"
+              placeholder="Search faculty..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-1/3 mb-4"
+            />
+          </div>
+          <Card className="h-full w-full mt-2">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -49,7 +86,7 @@ export const Faculty = () => {
                       Description
                     </Typography>
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center">
                     <Typography
                       variant="small"
                       color="blue-gray"
@@ -61,13 +98,10 @@ export const Faculty = () => {
                 </tr>
               </thead>
               <tbody>
-                {faculties ? (
-                  faculties.Faculty && faculties.Faculty.length > 0 ? (
-                    faculties.Faculty.map((faculty, index) => (
-                      
-                        <tr key={index}>
-                          
-                        <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                {searchTerm && filterFaculty?.faculties && filterFaculty?.faculties.length > 0 ? (
+                  filterFaculty.faculties.map((faculty, index) => (
+                    <tr key={index}>
+                      <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
                         <Link to={`/admin/faculty/${faculty._id}`}>
                           <Typography
                             variant="small"
@@ -76,9 +110,48 @@ export const Faculty = () => {
                           >
                             {faculty.facultyName}
                           </Typography>
+                        </Link>
+                      </td>
+                      <td className="p-4 border-b border-blue-gray-50">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {faculty.descActive}
+                        </Typography>
+                      </td>
+                      <td className="p-4 border-b border-blue-gray-50 w-20">
+                        <Select label="Select action below">
+                          <Option>
+                            <Link to={`/admin/faculty/${faculty._id}`}>
+                              Detail
+                            </Link>
+                          </Option>
+                          <Option>
+                            <Link to={`/admin/faculty/${faculty._id}/edit`}>
+                              Edit
+                            </Link>
+                          </Option>
+                        </Select>
+                      </td>
+                    </tr>
+                  ))
+                ):faculties ? (
+                  faculties?.Faculty && faculties?.Faculty.length > 0 ? (
+                    faculties.Faculty.map((faculty, index) => (
+                      <tr key={index}>
+                        <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
+                          <Link to={`/admin/faculty/${faculty._id}`}>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {faculty.facultyName}
+                            </Typography>
                           </Link>
                         </td>
-                        
                         <td className="p-4 border-b border-blue-gray-50">
                           <Typography
                             variant="small"
@@ -88,25 +161,38 @@ export const Faculty = () => {
                             {faculty.descActive}
                           </Typography>
                         </td>
-                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                        {/* <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
-                            <Option> <Link to={`/admin/faculty/${faculty._id}`}> Detail </Link></Option>
-                            <Option><Link to={`/admin/faculty/${faculty._id}/edit`}> Edit </Link></Option>
-                            </Select>
+                            <Option>
+                              <Link to={`/admin/faculty/${faculty._id}`}>
+                                Detail
+                              </Link>
+                            </Option>
+                            <Option>
+                              <Link to={`/admin/faculty/${faculty._id}/edit`}>
+                                Edit
+                              </Link>
+                            </Option>
+                          </Select>
+                        </td> */}
+                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                          <div className="flex gap-2 items-center">
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/faculty/${faculty._id}/edit`}> <Settings/> </Link></IconButton>
+                            </div>
                         </td>
                       </tr>
-                      
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="p-4">
+                      <td colSpan={3} className="p-4">
                         No faculties found
                       </td>
                     </tr>
                   )
                 ) : (
                   <tr>
-                    <td colSpan={4} className="p-4">
+                    <td colSpan={3} className="p-4">
                       Loading...
                     </td>
                   </tr>
@@ -118,5 +204,5 @@ export const Faculty = () => {
       </div>
     </>
   );
+  
 };
-
