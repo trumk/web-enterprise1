@@ -14,8 +14,6 @@ import { useDispatch } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ArrowRight } from 'lucide-react';
-import { createAxios } from '../../../redux/createInstance'
-import { loginSuccess } from '../../../redux/authSlice'
 
 export const FacultyMainPage = () => {
     const { facultyId } = useParams()
@@ -23,10 +21,9 @@ export const FacultyMainPage = () => {
     
     const eventInFaculty = useSelector((state) => state.faculty.getEventsByFaculty?.filterEvent)
     const dispatch = useDispatch();
-    const axiosJWT = createAxios(user, dispatch, loginSuccess)
     useEffect(() => {
         if (user) {
-            dispatch(getAllEventsByFaculty(facultyId, user.accessToken, axiosJWT))
+            dispatch(getAllEventsByFaculty(facultyId, user.accessToken))
         }
     }, [user, dispatch])
     const eventData = eventInFaculty?.events

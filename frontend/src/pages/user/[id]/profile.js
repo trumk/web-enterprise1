@@ -7,16 +7,13 @@ import { getSelf } from '../../../redux/apiRequest'
 import { format } from 'date-fns';
 import { Pen, } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { createAxios } from '../../../redux/createInstance'
-import { loginSuccess } from '../../../redux/authSlice'
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   useEffect(() => {
     if (user && user?._id) {
-      dispatch(getSelf(user?._id, axiosJWT));
+      dispatch(getSelf(user?._id));
     }
   }, [dispatch, user]);
 
