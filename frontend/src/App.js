@@ -19,8 +19,6 @@ import EditEvent from "./pages/admin/event/[id]/edit";
 import { Contribution } from "./pages/admin/contribution";
 import { ContributionDetail } from "./pages/admin/contribution/[id]/detail";
 import { User } from "./pages/admin/user";
-import { UserDetail } from "./pages/admin/user/[id]/detail";
-import { EditUser } from "./pages/admin/user/[id]/edit";
 import { EnrollFaculty } from "./pages/faculty/[facultyId]/enroll";
 import { FacultyMainPage } from "./pages/faculty/[facultyId]";
 import { EventInfo } from "./pages/faculty/[facultyId]/event/[eventId]";
@@ -88,8 +86,6 @@ function App() {
             element={<ContributionDetail />}
           />
           <Route path="/admin/user/" element={<User />} />
-          <Route path="/admin/user/:userId" element={<UserDetail />} />
-          <Route path="/admin/user/:userId/edit" element={<EditUser />} />
         </Routes>
       </BrowserRouter>
     </>
