@@ -7,6 +7,10 @@ const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 dotenv.config();
 const sanitizeHtml = require('sanitize-html');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+const Profile = require("../models/Profile");
+
 
 
 const transporter = nodemailer.createTransport({
@@ -20,8 +24,8 @@ const transporter = nodemailer.createTransport({
 const contributionController = {
   submitContribution: async (req, res) => {
     try {
-      const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
-      const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
+      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
       console.log(imagesPaths)
       console.log(filesPaths)
       if (imagesPaths.length === 0) {
@@ -51,11 +55,18 @@ const contributionController = {
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
-        eventID: req.cookies.eventId
+        eventID: req.body.eventID
       });
       const contribution = await newContribution.save();
-      const marketingCoordinators = await User.find({ role: 'marketing coordinator' });
-      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',');
+      const event = await Event.findById(req.body.eventID);
+      const profiles = await Profile.find({ facultyID: event.facultyId }).exec();
+
+      const userIds = profiles.map(profile => profile.userID);
+      const marketingCoordinators = await User.find({
+        _id: { $in: userIds },
+        role: 'marketing coordinator'
+      }).exec();
+      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',')
       const Student = await User.findById(req.user.id);
       if (!emailAddresses) {
         return res.status(500).json("Please set role for marketing coordinator");
@@ -81,12 +92,33 @@ const contributionController = {
       res.status(500).json({ message: error.message, ...error });
     }
   },
-  getContribution: async (req, res) => {
+  getContributionByEvent: async (req, res) => {
     try {
-      let query = { isPublic: true, eventID: req.cookies.eventId };
+      let query = { isPublic: true, eventID: req.params.id };
       const role = req.user.role;
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+        query = { eventID: req.params.id };
+      }
+      const contributions = await Contribution.find(query)
+        .populate({
+          path: 'userID',
+          select: 'userName -_id'
+        })
+        .populate({
+          path: 'comments.userID',
+          select: 'userName -_id'
+        });
+      res.status(200).json(contributions);
+    } catch (error) {
+      res.status(500).json({ message: error.message, ...error });
+    }
+  },
+  getContributionByDashBoard: async (req, res) => {
+    try {
+      let query = { isPublic: true };
+      const role = req.user.role;
+      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+        query = {};
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -126,21 +158,92 @@ const contributionController = {
 
   getOneContribution: async (req, res) => {
     try {
-      const contribution = await Contribution.findById(req.params.id)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
-      if (!contribution) {
+      const contributions = await Contribution.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(req.params.id)
+          }
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            let: { user_ids: "$comments.userID" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$userID", "$$user_ids"]
+                  }
+                }
+              }
+            ],
+            as: "commentProfiles"
+          }
+        },
+        {
+          $addFields: {
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      userProfile: {
+                        $first: {
+                          $filter: {
+                            input: "$commentProfiles",
+                            as: "profile",
+                            cond: { $eq: ["$$profile.userID", "$$comment.userID"] }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            comments: 1
+          }
+        }
+      ]);
+
+      if (contributions.length === 0) {
         return res.status(404).json({ message: "Contribution not found." });
       }
-      res.status(200).json(contribution);
+
+      await res.status(200).json(contributions[0]);
     } catch (error) {
-      res.status(500).json({ message: error.message, ...error });
+      res.status(500).json({ message: error.message });
     }
   },
   editContribution: async (req, res) => {
@@ -149,60 +252,34 @@ const contributionController = {
       if (!contribution) {
         return res.status(404).send('Contribution not found');
       }
-      const imagesPaths = req.files['image'] ? req.files['image'].map(file => file.path) : [];
-      const filesPaths = req.files['file'] ? req.files['file'].map(file => file.path) : [];
-      if (imagesPaths.length === 0) {
-        return res.status(403).json("Image is required");
+      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
+        return res.status(404).json("You do not have permission");
       }
-      if (filesPaths.length === 0) {
-        return res.status(403).json("File is required");
-      }
+
+      const imagesPaths = req.body.firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = req.body.firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+
+      const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
+      const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
+
       if (req.body.title === "") {
         return res.status(403).json("Title is not null");
       }
       if (req.body.content === "") {
         return res.status(403).json("Content is not null");
       }
-      if (imagesPaths && !filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            image: imagesPaths,
-          },
-          { new: true });
-        res.status(201).json(newContribution);
-      }
-      if (!imagesPaths && filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            file: filesPaths
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
-      if (imagesPaths && filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-            image: imagesPaths,
-            file: filesPaths
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
-      if (!imagesPaths && !filesPaths) {
-        const newContribution = await Contribution.findByIdAndUpdate(req.params.id,
-          {
-            title: req.body.title,
-            content: req.body.content,
-          },
-          { new: true });
-        return res.status(201).json(newContribution);
-      }
+
+      const updatedImages = [...imagesPaths, ...existingImages];
+      const updatedFiles = [...filesPaths, ...existingFiles];
+
+      const updatedContribution = await Contribution.findByIdAndUpdate(req.params.id, {
+        title: req.body.title,
+        content: req.body.content,
+        image: updatedImages.length > 0 ? updatedImages : contribution.image,
+        file: updatedFiles.length > 0 ? updatedFiles : contribution.file
+      }, { new: true });
+
+      res.status(200).json(updatedContribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message, ...error });
@@ -210,9 +287,12 @@ const contributionController = {
   },
   deleteContribution: async (req, res) => {
     try {
-      const conntribution = await Contribution.findById(req.params.id)
-      if (!conntribution) {
-        return res.status(404).json("conntribution not found");
+      const contribution = await Contribution.findById(req.params.id)
+      if (!contribution) {
+        return res.status(404).json("contribution not found");
+      }
+      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
+        return res.status(404).json("You do not have permission");
       }
       await Contribution.findByIdAndDelete(req.params.id)
       res.status(200).json("Delete Successfully")
@@ -224,9 +304,9 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
-      let query = { title: new RegExp(keyword, "i"), isPublic: true, eventID: req.cookies.eventId };
+      let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i"), eventID: req.cookies.eventId };
+        query = { title: new RegExp(keyword, "i")};
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -297,7 +377,7 @@ const contributionController = {
         query = { eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.find(query)
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .populate({
           path: 'userID',
           select: 'userName -_id'
@@ -337,6 +417,12 @@ const contributionController = {
     try {
       const contributionId = req.params.id;
       const userId = req.user.id;
+      const user = await Profile.findOne({ userID: userId })
+
+      if (!user.firstName || !user.lastName || !user.avatar) {
+        return res.status(403).json({ message: "You need to set your name and your avatar before comment" })
+      }
+
       const commentContent = req.body.comment;
 
       var contribution1 = await Contribution.findById(contributionId);
@@ -348,7 +434,7 @@ const contributionController = {
       var targetDate = new Date(contributionDate);
       targetDate.setDate(targetDate.getDate() + 14);
       if (currentDate.getTime() > targetDate.getTime()) {
-        return res.status(404).json({ message: "You cannot comment because the contribution is expired" });
+        return res.status(403).json({ message: "You cannot comment because the contribution is expired" });
       }
       const newComment = {
         comment: commentContent,
@@ -366,6 +452,48 @@ const contributionController = {
   },
   getStatistic: async (req, res) => {
     try {
+      let startDate = new Date(req.body.startDate);
+      startDate.setDate(startDate.getDate() + 151);
+      let endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 365);
+      const allFaculties = await Faculty.find();
+
+      let totalContributions = 0;
+      const facultyStats = await Promise.all(allFaculties.map(async (faculty) => {
+        const events = await Event.find({ facultyId: faculty._id });
+        let numberOfContributions = 0;
+        let numberOfContributors = new Set();
+
+        for (let event of events) {
+          const contributions = await Contribution.find({
+            eventID: event._id,
+            createdAt: { $gte: startDate, $lte: endDate }
+          });
+          contributions.forEach(contribution => {
+            numberOfContributions++;
+            numberOfContributors.add(contribution.userID.toString());
+          });
+        }
+
+        totalContributions += numberOfContributions;
+        return {
+          facultyName: faculty.facultyName,
+          numberOfContributions,
+          numberOfContributors: numberOfContributors.size
+        };
+      }));
+
+      const statistics = facultyStats.map(faculty => {
+        const percentage = (totalContributions > 0)
+          ? (faculty.numberOfContributions / totalContributions * 100)
+          : 0;     
+        return {
+          ...faculty,
+          contributionPercentage: isNaN(percentage) ? 0 : percentage
+        };
+      });
+
+      res.status(200).json({ statistics, totalContributions });
       //check validate date
         var startDate = new Date(req.body.startDate);
         var endDate = new Date(req.body.endDate);
@@ -470,10 +598,10 @@ const contributionController = {
        
         res.status(200).json(facultyStatistics);
     } catch (error) {
-        console.error("Error fetching faculty statistics:", error);
-        res.status(500).json({ message: error.message });
+      console.error("Error in getStatistic:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-},
+  },
   getExceptionReports: async (req, res) => {
     try {
       const noComments = await Contribution.aggregate([
@@ -495,7 +623,7 @@ const contributionController = {
           }
         }
       ]);
-  
+
       res.status(200).json({
         noComments,
         noCommentsAfter14Days

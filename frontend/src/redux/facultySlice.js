@@ -25,6 +25,17 @@ const facultySlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getEventsByFaculty: {
+      filterEvent: null,
+      isFetching: false,
+      error: false
+    },
+    searchFaculty: { 
+      filterFaculty: null,
+      isFetching: false,
+      error: false,
+    },
+    msg:"",
   },
   reducers: {
     getFacultiesStart: (state) => {
@@ -55,37 +66,68 @@ const facultySlice = createSlice({
       state.addFaculty.isFetching = true;
       state.addFaculty.error = false;
     },
-    addFacultySuccess: (state) => {
+    addFacultySuccess: (state, action) => {
       state.addFaculty.isFetching = false;
       state.addFaculty.error = false;
+      state.msg = action.payload;
     },
-    addFacultyFailed: (state) => {
+    addFacultyFailed: (state, action) => {
       state.addFaculty.isFetching = false;
       state.addFaculty.error = true;
+      state.msg = action.payload;
     },
     editFacultyStart: (state) => {
       state.editFaculty.isFetching = true;
       state.editFaculty.error = false;
     },
-    editFacultySuccess: (state) => {
+    editFacultySuccess: (state, action) => {
       state.editFaculty.isFetching = false;
       state.editFaculty.error = false;
+      state.msg = action.payload;
     },
-    editFacultyFailed: (state) => {
+    editFacultyFailed: (state, action) => {
       state.editFaculty.isFetching = false;
       state.editFaculty.error = true;
+      state.msg = action.payload;
     },
     deleteFacultyStart: (state) => { 
       state.deleteFaculty.isFetching = true;
       state.deleteFaculty.error = false;
     },
-    deleteFacultySuccess: (state) => { 
+    deleteFacultySuccess: (state, action) => { 
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = false;
+      state.msg = action.payload;
     },
-    deleteFacultyFailed: (state) => { 
+    deleteFacultyFailed: (state, action) => { 
       state.deleteFaculty.isFetching = false;
       state.deleteFaculty.error = true;
+      state.msg = action.payload;
+    },
+    getEventsByFacultyStart: (state) => {
+      state.getEventsByFaculty.isFetching = true;
+    },
+    getEventsByFacultySuccess: (state, action) => {
+      state.getEventsByFaculty.filterEvent = action.payload
+      state.getEventsByFaculty.isFetching = false;
+      state.getEventsByFaculty.error = false;
+    },
+    getEventsByFacultyFailed: (state) => {
+      state.getEventsByFaculty.isFetching = false;
+      state.getEventsByFaculty.error = true;
+    },
+    searchFacultyStart: (state) => {
+      state.searchFaculty.isFetching = true;
+      state.searchFaculty.error = false;
+    },
+    searchFacultySuccess: (state, action) => {
+      state.searchFaculty.isFetching = false;
+      state.searchFaculty.filterFaculty = action.payload;
+      state.searchFaculty.error = false;
+    },
+    searchFacultyFailed: (state) => {
+      state.searchFaculty.isFetching = false;
+      state.searchFaculty.error = true
     },
   },
 });
@@ -104,6 +146,12 @@ export const {
   editFacultyFailed,
   deleteFacultyStart,
   deleteFacultySuccess,
-  deleteFacultyFailed
+  deleteFacultyFailed,
+  getEventsByFacultyStart,
+  getEventsByFacultySuccess,
+  getEventsByFacultyFailed,
+  searchFacultyStart,
+  searchFacultySuccess,
+  searchFacultyFailed
 } = facultySlice.actions;
 export default facultySlice.reducer;

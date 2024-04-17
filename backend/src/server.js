@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
 
+const session = require('express-session');
+
 dotenv.config();
 
 const app = express();
@@ -27,11 +29,19 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("Could not connect to MongoDB", err));
 
+
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
-
+app.use(session({
+  secret: "123456cat",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 
 //routes
