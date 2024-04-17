@@ -7,6 +7,7 @@ import { Badge, Button, Card, CardFooter, Input, Typography } from "@material-ta
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
+import { TablePagination } from '../../../components/manage/edit-pagination';
 
 export const Contribution = () => {
     const contributions = useSelector((state) => state.contribution.contributions.allContributions);
@@ -17,16 +18,8 @@ export const Contribution = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const contributionsPerPage = 4
     const displayList = searchTerm !== "" ? filterContribution : contributions;
-    const totalPages = Math.ceil(displayList?.length / contributionsPerPage);
     const currentItems = displayList?.slice((currentPage - 1) * contributionsPerPage, currentPage * contributionsPerPage);
 
-    const goToNextPage = () => {
-        setCurrentPage((page) => page + 1);
-    };
-
-    const goToPreviousPage = () => {
-        setCurrentPage((page) => page - 1);
-    };
 
     useEffect(() => {
         if (user) {
@@ -145,7 +138,7 @@ export const Contribution = () => {
                                                         color="blue-gray"
                                                         className="font-normal"
                                                     >
-                                                        {contribution.userID.userName}
+                                                        {contribution?.author.firstName} {contribution?.author.lastName}
                                                     </Typography>
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50 w-20">
@@ -172,27 +165,12 @@ export const Contribution = () => {
                             </tbody>
                         </table>
                         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                Page {currentPage} of {totalPages}
-                            </Typography>
-                            <div className="flex gap-2">
-                                <Button
-                                    onClick={goToPreviousPage}
-                                    variant="outlined"
-                                    size="sm"
-                                    disabled={currentPage === 1}
-                                >
-                                    Previous
-                                </Button>
-                                <Button
-                                    onClick={goToNextPage}
-                                    variant="outlined"
-                                    size="sm"
-                                    disabled={currentPage === totalPages}
-                                >
-                                    Next
-                                </Button>
-                            </div>
+                            <TablePagination
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                itemsPerPage={contributionsPerPage}
+                                totalItems={displayList}
+                            />
                         </CardFooter>
                     </Card>
                 </div>

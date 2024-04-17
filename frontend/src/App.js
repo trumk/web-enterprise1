@@ -37,6 +37,7 @@ import { ToastContainer } from 'react-toastify';
 import { ExceptionContribution } from "./pages/marketingCoordinator/exception";
 import { PrivateRoute } from "./components/authorization/private-routes";
 import { useSelector } from "react-redux";
+import { ContributionsDashboard } from "./pages/contributions";
 
 function App() {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -45,6 +46,7 @@ function App() {
     <ToastContainer/>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -52,19 +54,14 @@ function App() {
           <Route path="/faculty/:facultyId/enroll" element={<EnrollFaculty />} />
           <Route path="/faculty/:facultyId" element={<FacultyMainPage />} />
           <Route path="/faculty/:facultyId/event/:eventId" element={<EventInfo />} />
-          <Route
-            path="/faculty/:facultyId/event/:eventId/contribution/submit"
-            element={<SubmitContribution />}
-          />
-          <Route
-            path="/faculty/:facultyId/event/:eventId/contribution/:contributionId/read"
-            element={<ReadContribution />}
-          />
+          <Route path="/faculty/:facultyId/event/:eventId/contribution/submit" element={<SubmitContribution />} />
+          <Route path="/faculty/:facultyId/event/:eventId/contribution/:contributionId/read" element={<ReadContribution />} />
           <Route path="/user/:id/profile" element={<UserProfile />} />
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
           <Route path="/userContribution" element={<MyContributionPage/>}/>
           <Route path="/userContribution/:id/edit" element={<EditContribution/>}/>
+          <Route path="/contributions" element={<ContributionsDashboard/>}/>
           {/* Marketing Manager */}
           <Route path="/marketingManager" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<MarketingManagerPage />} />}/>
           <Route path="/marketingManager/faculty" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<FacultyManager />} />}/>
@@ -85,10 +82,7 @@ function App() {
           <Route path="/admin/event/add" element={<PrivateRoute userRole={user?.role} path="/admin" element={<AddEvent />} />} />
           <Route path="/admin/event/:id/edit" element={<PrivateRoute userRole={user?.role} path="/admin" element={<EditEvent />} />} />
           <Route path="/admin/contribution" element={<PrivateRoute userRole={user?.role} path="/admin" element={<Contribution />} />} />
-          <Route
-            path="/admin/contribution/:id"
-            element={<ContributionDetail />}
-          />
+          <Route path="/admin/contribution/:id" element={<ContributionDetail />} />
           <Route path="/admin/user/" element={<User />} />
         </Routes>
       </BrowserRouter>

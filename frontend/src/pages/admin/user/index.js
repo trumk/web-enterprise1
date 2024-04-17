@@ -1,36 +1,40 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
-import { getAllUsers, setRole } from "../../../redux/apiRequest";
+import { getAllUsers, getSelf, setRole } from "../../../redux/apiRequest";
 import { useEffect, useState } from "react";
-import { Card, Option, Select, Typography } from "@material-tailwind/react";
+import { Button, Card, CardFooter, Option, Select, Typography } from "@material-tailwind/react";
+import { TablePagination } from "../../../components/manage/edit-pagination";
 
 export const User = () => {
   const users = useSelector((state) => state.user.users.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const [updatedRole] = useState("");
+  const [isEditingId, setIsEditingId] = useState(false);
+  const [newRole, setNewRole] = useState(null);
   const dispatch = useDispatch();
-
-    useEffect(() => {
-      if (user) {
-        dispatch(getAllUsers(user?.accessToken));
-      }
-    }, [user, dispatch]);
-
-
-  const handleRoleChange = (newRole, userId) => {
-    if (userId) {
-        const roleUser = {
-            role: newRole,
-        };
-        dispatch(setRole(userId, roleUser, user?.accessToken));
-        window.location.reload();
-    } else {
-        console.warn("No user selected. Cannot change role.");
-    }
-};
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
   const filteredUsers = users?.filter((user) => user.role !== "admin");
+  const currentItems = filteredUsers?.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+  const handleEditClick = (id) => {
+    setIsEditingId(id);
+  };
+  const handleSaveClick = (newRole, id) => {
+    if (id) {
+      const roleUser = {
+        role: newRole,
+      };
+      dispatch(setRole(id, roleUser, user?.accessToken));
+    }
+    setIsEditingId(null);
+    window.location.reload();
+  };
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllUsers(user?.accessToken));
+    }
+  }, [user, dispatch]);
+
   return (
     <>
       <NavbarDefault />
@@ -71,58 +75,75 @@ export const User = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers ? (
-                  filteredUsers.map((user, index) => (
-                    <tr onClick={() => {}} key={user._id}>
-                      <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {user.userName}
-                        </Typography>
-                      </td>
-                      <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {user.email}
-                        </Typography>
-                      </td>
-                      <td className="p-4 border-b border-blue-gray-50 w-32">
-                        <Select
-                          name="role"
-                          value={updatedRole || user.role}
-                          onChange={(value) =>
-                            handleRoleChange(value, user._id)
-                          }
-                          className="border-b border-blue-gray-400 px-4 py-2"
-                        >
-                          <Option value="">Select Role</Option>
-                          <Option value="marketing manager">
-                            Marketing Manager
-                          </Option>
-                          <Option value="marketing coordinator">
-                            Marketing Coordinator
-                          </Option>
-                          <Option value="user">User</Option>
-                          <Option value="guest">Guest</Option>
-                        </Select>
+                {currentItems ? (
+                  currentItems && currentItems?.length > 0 ? (
+                    currentItems?.map((user, index) => (
+                      <tr onClick={() => { }} key={user._id}>
+                        <td className="p-4 border-b border-blue-gray-50">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {user.userName}
+                          </Typography>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {user.email}
+                          </Typography>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50 w-80">
+                          {isEditingId == user._id ? (
+                            <div className="flex items-center gap-2">
+                              <Select
+                                name="role"
+                                value={newRole || user.role}
+                                onChange={(value) => setNewRole(value)}
+                                className="border-b border-blue-gray-400 px-4 py-2"
+                              >
+                                <Option value="">Select Role</Option>
+                                <Option value="marketing manager">Marketing Manager</Option>
+                                <Option value="marketing coordinator">Marketing Coordinator</Option>
+                                <Option value="user">User</Option>
+                                <Option value="guest">Guest</Option>
+                              </Select>
+                              <Button color="amber" onClick={() => handleSaveClick(newRole, user._id)}>Save</Button>
+                            </div>
+                          ) : (
+                            <Typography className="cursor-pointer" onClick={() => handleEditClick(user._id)}>{user.role}</Typography>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="p-4">
+                        No events found
                       </td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   <tr>
-                    <td colSpan={3} className="p-4">
+                    <td colSpan={4} className="p-4">
                       Loading...
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+            <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+              <TablePagination
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                itemsPerPage={usersPerPage}
+                totalItems={filteredUsers}
+                />
+            </CardFooter>
           </Card>
         </div>
       </div>

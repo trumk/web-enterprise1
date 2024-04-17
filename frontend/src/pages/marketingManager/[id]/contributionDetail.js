@@ -87,7 +87,7 @@ export const ContributionDetailManager = () => {
                       </p>
                     </div>
                     <div>
-                        <a target="_blank" href={file} ><Button><Download/></Button></a>
+                        <a target="_blank" rel="noreferrer" href={file} ><Button><Download/></Button></a>
                     </div>
                   </div>
                 ))}

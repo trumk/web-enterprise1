@@ -293,9 +293,11 @@ export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) 
       },
     });
     dispatch(enrollFacultySuccess(res.data));
+    toast.success("Join faculty successfully");
     navigate(`/faculty/${id}`)
   } catch (err) {
     dispatch(enrollFacultyFailed());
+    toast.error(err.response.data);
     console.log(err)
   }
 }
@@ -655,8 +657,10 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
       },
     });
     dispatch(deleteContributionSuccess());
+    toast.success("Delete contribution successfully");
   } catch (err) {
     dispatch(deleteContributionFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }
@@ -671,6 +675,7 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
       },
     });
     dispatch(commentSuccess());
+    toast.success("Comment successfully");
   } catch (error) {
     dispatch(commentFailed());
     console.error(error);
@@ -687,9 +692,11 @@ export const publicContribution = (id, accessToken, navigate) => async (dispatch
       },
     });
     dispatch(publishSuccess());
+    toast.success("Publish contribution successfully");
     navigate("/marketingCoordinator");
   } catch (err) {
     dispatch(publishFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }

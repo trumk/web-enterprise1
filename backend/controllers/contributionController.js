@@ -120,15 +120,57 @@ const contributionController = {
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
         query = {};
       }
-      const contributions = await Contribution.find(query)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event"
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            createdAt: 1
+          }
+        }
+      ])
+      // .populate({
+      //   path: 'userID',
+      //   select: 'userName -_id'
+      // })
+      // .populate({
+      //   path: 'comments.userID',
+      //   select: 'userName -_id'
+      // });
       res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json({ message: error.message, ...error });
@@ -274,10 +316,10 @@ const contributionController = {
       const updatedImages = [...imagesPaths, ...existingImages];
       const updatedFiles = [...filesPaths, ...existingFiles];
 
-      if(updatedImages.length === 0) {
+      if (updatedImages.length === 0) {
         return res.status(403).json("Image is required");
       }
-      if(updatedFiles.length === 0) {
+      if (updatedFiles.length === 0) {
         return res.status(403).json("File is required");
       }
 
