@@ -404,6 +404,7 @@ const contributionController = {
                                         } 
                                     },
                                     { $count: 'totalContributions' },
+                                    { $project: { _id: 0, userId: 1 } },
                                 ],
                                 as: 'contributions',
                             },
@@ -420,7 +421,7 @@ const contributionController = {
                             $group: {
                                 _id: '$_id',
                                 totalContributions: { $sum: '$contributions.totalContributions' },
-                                uniqueContributors: { $addToSet: '$contributions.userID' } 
+
                             },
                         },
                     ],
@@ -430,8 +431,8 @@ const contributionController = {
             {
               //calculate total all contributions 
                 $addFields: {
-                    totalContributions: { $sum: '$eventsWithStatistics.totalContributions' },
-                    uniqueContributors: { $setUnion: ['$eventsWithStatistics.uniqueContributors'] }
+                    totalContributions: { $sum: '$eventsWithStatistics.totalContributions' }
+                    
                 },
             },
             {//faculty
@@ -449,7 +450,7 @@ const contributionController = {
                 _id: 0,
                 facultyName: '$faculties.facultyName',
                 totalContributions: '$faculties.totalContributions',
-                numberOfUniqueContributors: { $size: '$faculties.uniqueContributors' },
+                
                 percentageOfTotal: {
                     $cond: {
                         if: { $eq: ['$overallTotal', 0] },
@@ -461,10 +462,12 @@ const contributionController = {
                             ]
                         }
                     }
-                }
+                },
+                
             }
             }
         ]);
+       
         res.status(200).json(facultyStatistics);
     } catch (error) {
         console.error("Error fetching faculty statistics:", error);
@@ -500,7 +503,63 @@ const contributionController = {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
-};
-
+  },
+  getContributionByYear: async (req, res) => {
+        try {
+          const contributionsByYearAndFaculty = await Contribution.aggregate([
+            // Bước 1: Nhóm các contribution theo năm, facultyID và userID
+            {
+              $lookup: {
+                from: 'users', // collection name của User
+                localField: 'userID',
+                foreignField: '_id',
+                as: 'user'
+              }
+            },
+            {
+              $lookup: {
+                from: 'faculties', // collection name của Faculty
+                localField: 'user.facultyID', // supposing the faculty ID is stored in user's document
+                foreignField: '_id',
+                as: 'faculty'
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  year: { $year: '$createdAt' },
+                  faculty: '$faculty.facultyName', // supposing the name of the faculty is stored in faculty's document
+                  userID: '$userID'
+                },
+                count: { $sum: 1 }
+              }
+            },
+            // Bước 2: Nhóm lại theo năm và faculty để tính tổng số lượng contribution của mỗi faculty trong mỗi năm
+            {
+              $group: {
+                _id: {
+                  year: '$_id.year',
+                  faculty: '$_id.faculty'
+                },
+                totalContributions: { $sum: '$count' }
+              }
+            },
+            // Bước 3: Kết quả cuối cùng
+            {
+              $project: {
+                _id: 0,
+                year: '$_id.year',
+                faculty: '$_id.faculty',
+                totalContributions: 1
+              }
+            }
+          ]);
+    
+          res.status(200).json(contributionsByYearAndFaculty);
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: error.message });
+        }
+      }
+    };
 module.exports = contributionController;

@@ -5,21 +5,22 @@ const {uploadImage, uploadFile, upload, multerErrorHandler} = require("../middle
 
 const router = require("express").Router();
 
-router.use(authorization.verifyToken);
+//router.use(authorization.verifyToken);
 
 router.post("/submit", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.submitContribution)
 router.post("/edit/:id", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'file', maxCount: 5 }]), multerErrorHandler,contributionController.editContribution)
 router.get("/getAllContributions", contributionController.getContribution);
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.get("/statistic", contributionController.getStatistic);
-
+//contributor 
+router.get("/report", contributionController.getContributionByYear);
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
 router.post("/searchByTitle", contributionController.searchByTitleContribution);
 router.post("/searchByName", contributionController.searchByNameContribution);
 router.get("/sort/asc", contributionController.filterContributionAsc);
 router.get("/sort/desc", contributionController.filterContributionDesc);
-router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
+//router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
 router.post("/comment/:id", contributionController.commentContribution);
 router.get("/exception", contributionController.getExceptionReports);
 router.get("/:id", contributionController.getOneContribution);

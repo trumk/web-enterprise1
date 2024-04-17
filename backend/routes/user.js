@@ -11,8 +11,10 @@ router.get("/profile", authorization.verifyToken, profileController.readProfile)
 router.delete("/delete/:id", authorization.verifyUserOrAdmin, userController.deleteUser)
 
 router.get("/:userID", profileController.readProfile);
+router.put("/:id", profileController.updateProfile);
 
 router.put("/:id", authorization.verifyUserOrAdmin, uploadImage.single('avatar'), multerErrorHandler, profileController.updateProfile);
+
 
 module.exports = router;
 
