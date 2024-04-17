@@ -8,8 +8,6 @@ import { Preview } from '../../../../../../../components/manage/preview'
 import { DefaultPagination } from '../../../../../../../components/manage/pagination'
 import { format } from 'date-fns'
 import { Download, File } from 'lucide-react'
-import { createAxios } from '../../../../../../../redux/createInstance'
-import { loginSuccess } from '../../../../../../../redux/authSlice'
 
 export const ReadContribution = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -19,7 +17,6 @@ export const ReadContribution = () => {
   const relatedContributions = useSelector((state) => state.contribution.getContributionsByEvent.contributions);
   const comments = contribution?.comments;
   const dispatch = useDispatch();
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   const event = useSelector((state) => state.event.event?.currentEvent);
   const [currentPage, setCurrentPage] = useState(1);
   const commentsPerPage = 5;
@@ -47,7 +44,7 @@ export const ReadContribution = () => {
     const userComment = {
       comment: comment,
     }
-    dispatch(commentContribution(contribution._id, userComment, user.accessToken, axiosJWT))
+    dispatch(commentContribution(contribution._id, userComment, user.accessToken))
       .then(() => {
         window.location.reload();
       });

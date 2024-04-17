@@ -256,6 +256,7 @@ export const MarketingManagerPage = () => {
                 </section>
               </>
             
+
             </>
         </div>
       </div>

@@ -77,7 +77,9 @@ const profileController = {
       if(req.user.id != profile.userID && req.user.role != "admin"){
         return res.status(403).json("You do not have permission");
       }
-      req.body.avatar = req.file.path;
+      if (req.file) {
+        req.body.avatar = req.file.path;
+      }
       const updateObject = req.body;
       if (!updateObject.firstName || !updateObject.lastName || !updateObject.birthDay) {
         return res.status(400).json({
