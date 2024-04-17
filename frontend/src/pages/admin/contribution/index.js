@@ -6,7 +6,7 @@ import { getAllContributions, searchContribution } from '../../../redux/apiReque
 import { Badge, Button, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
-import { Info, Trash } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 export const Contribution = () => {
     const contributions = useSelector((state) => state.contribution.contributions.allContributions);
@@ -15,8 +15,7 @@ export const Contribution = () => {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [contributionsPerPage, setContributionsPerPage] = useState(4);
-
+    const contributionsPerPage = 4
     const displayList = searchTerm !== "" ? filterContribution : contributions;
     const totalPages = Math.ceil(displayList?.length / contributionsPerPage);
     const currentItems = displayList?.slice((currentPage - 1) * contributionsPerPage, currentPage * contributionsPerPage);

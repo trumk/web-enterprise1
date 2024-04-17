@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFaculty } from "../../../redux/apiRequest";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
-import { toast } from "react-toastify";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);

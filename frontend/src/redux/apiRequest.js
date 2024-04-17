@@ -96,6 +96,9 @@ import {
   getContributionsFailed, 
   getContributionsStart, 
   getContributionsSuccess, 
+  getExceptionFailed, 
+  getExceptionStart, 
+  getExceptionSuccess, 
   publishFailed, 
   publishStart, 
   publishSuccess, 
@@ -634,9 +637,11 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
       },
     });
     dispatch(editContributionSuccess(res.data));
+    toast.success("Edit contribution successfully");
     navigate(`/userContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
+    toast.error(error.response.data);
     console.error(error);
   }
 }
@@ -705,3 +710,18 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
     console.log(error)
   }
 };
+
+export const getExceptionContributions = (accessToken) => async (dispatch) => {
+  dispatch(getExceptionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/exception`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getExceptionSuccess(res.data));
+  } catch (err) {
+    dispatch(getExceptionFailed());
+    console.log(err);
+  }
+}

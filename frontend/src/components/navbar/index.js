@@ -13,8 +13,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { createAxios } from "../../redux/createInstance";
-import { loginSuccess } from "../../redux/authSlice";
 import { getSelf, logout } from "../../redux/apiRequest";
 
 export default function NavbarDefault() {
@@ -25,9 +23,8 @@ export default function NavbarDefault() {
   const navigate = useNavigate();
   const id = user?._id;
   const accessToken = user?.accessToken;
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   const handleLogout = () => {
-    logout(dispatch, id, navigate, accessToken, axiosJWT);
+    logout(dispatch, id, navigate, accessToken);
   };
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -56,7 +53,7 @@ export default function NavbarDefault() {
   }, []);
   useEffect(() => {
     if(user && user._id) {
-      dispatch(getSelf(user._id, axiosJWT));
+      dispatch(getSelf(user._id));
     }
   }, [dispatch, user]);
 

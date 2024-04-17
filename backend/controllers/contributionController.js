@@ -256,8 +256,10 @@ const contributionController = {
         return res.status(404).json("You do not have permission");
       }
 
-      const imagesPaths = req.body.firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = req.body.firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const firebaseUrls = Array.isArray(req.body.firebaseUrls) ? req.body.firebaseUrls : [];
+
+      const imagesPaths = firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
 
       const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
       const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
@@ -272,11 +274,18 @@ const contributionController = {
       const updatedImages = [...imagesPaths, ...existingImages];
       const updatedFiles = [...filesPaths, ...existingFiles];
 
+      if(updatedImages.length === 0) {
+        return res.status(403).json("Image is required");
+      }
+      if(updatedFiles.length === 0) {
+        return res.status(403).json("File is required");
+      }
+
       const updatedContribution = await Contribution.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
         content: req.body.content,
-        image: updatedImages.length > 0 ? updatedImages : contribution.image,
-        file: updatedFiles.length > 0 ? updatedFiles : contribution.file
+        image: updatedImages.length > 0 ? updatedImages : [],
+        file: updatedFiles.length > 0 ? updatedFiles : []
       }, { new: true });
 
       res.status(200).json(updatedContribution);
@@ -306,7 +315,7 @@ const contributionController = {
       const role = req.user.role;
       let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i")};
+        query = { title: new RegExp(keyword, "i") };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -486,7 +495,7 @@ const contributionController = {
       const statistics = facultyStats.map(faculty => {
         const percentage = (totalContributions > 0)
           ? (faculty.numberOfContributions / totalContributions * 100)
-          : 0;     
+          : 0;
         return {
           ...faculty,
           contributionPercentage: isNaN(percentage) ? 0 : percentage

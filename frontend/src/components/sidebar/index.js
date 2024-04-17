@@ -5,10 +5,10 @@ import {
   Users,
   CalendarDays,
   School,
-  BarChart3
+  BarChart3,
+  ShieldAlert
 } from "lucide-react";
 import { NavItem } from "./nav-item";
-import { useLocation } from "react-router-dom";
 
 export default function DefaultSidebar() {
   
@@ -53,10 +53,15 @@ export default function DefaultSidebar() {
   ];
   const marketingCoordinatorRoutes = [
     {
-      href: "/marketingCoordinator/contribution",
+      href: "/marketingCoordinator",
       icon: FileSliders,
       label: "Manage Contribution",
     },
+    {
+      href: "/marketingCoordinator/exception",
+      icon: ShieldAlert,
+      label: "Exception Contribution",
+    }
   ];
 
   const marketingManagerRoutes = [
