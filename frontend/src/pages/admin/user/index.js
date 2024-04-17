@@ -1,28 +1,37 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
-import { getAllUsers } from "../../../redux/apiRequest";
-import { useEffect } from "react";
-import { Card, Typography } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { getAllUsers, setRole } from "../../../redux/apiRequest";
+import { useEffect, useState } from "react";
+import { Card, Option, Select, Typography } from "@material-tailwind/react";
 import { createAxios } from "../../../redux/createInstance";
 import { loginSuccess } from "../../../redux/authSlice";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 
 export const User = () => {
   const users = useSelector((state) => state.user.users.allUsers);
   const user = useSelector((state) => state.auth.login?.currentUser);
+  const [updatedRole] = useState("");
   const dispatch = useDispatch();
-  const axiosJWT = axios.create();
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
 
-  
-  
-    useEffect(() => {
-      if (user) {
-        dispatch(getAllUsers(user?.accessToken, axiosJWT));
-      }
-    }, [user, dispatch]);
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllUsers(user?.accessToken, axiosJWT));
+    }
+  }, [user, dispatch]);
+
+  const handleRoleChange = (newRole, userId) => {
+    if (userId) {
+        const roleUser = {
+            role: newRole,
+        };
+        dispatch(setRole(userId, roleUser, user?.accessToken, axiosJWT));
+        window.location.reload();
+    } else {
+        console.warn("No user selected. Cannot change role.");
+    }
+};
+
   const filteredUsers = users?.filter((user) => user.role !== "admin");
   return (
     <>
@@ -66,17 +75,15 @@ export const User = () => {
               <tbody>
                 {filteredUsers ? (
                   filteredUsers.map((user, index) => (
-                    <tr key={index}>
-                      <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/user/${user._id}`}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {user.userName}
-                          </Typography>
-                        </Link>
+                    <tr onClick={() => {}} key={user._id}>
+                      <td className="p-4 border-b border-blue-gray-50">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {user.userName}
+                        </Typography>
                       </td>
                       <td className="p-4 border-b border-blue-gray-50">
                         <Typography
@@ -87,14 +94,25 @@ export const User = () => {
                           {user.email}
                         </Typography>
                       </td>
-                      <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
+                      <td className="p-4 border-b border-blue-gray-50 w-32">
+                        <Select
+                          name="role"
+                          value={updatedRole || user.role}
+                          onChange={(value) =>
+                            handleRoleChange(value, user._id)
+                          }
+                          className="border-b border-blue-gray-400 px-4 py-2"
                         >
-                          {user.role}
-                        </Typography>
+                          <Option value="">Select Role</Option>
+                          <Option value="marketing manager">
+                            Marketing Manager
+                          </Option>
+                          <Option value="marketing coordinator">
+                            Marketing Coordinator
+                          </Option>
+                          <Option value="user">User</Option>
+                          <Option value="guest">Guest</Option>
+                        </Select>
                       </td>
                     </tr>
                   ))

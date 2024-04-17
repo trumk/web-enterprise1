@@ -52,7 +52,7 @@ export const Contribution = () => {
             <div className="flex">
                 <DefaultSidebar />
                 <div className='ml-5 w-full'>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                         <Input
                             type="text"
                             placeholder="Search contributions..."
