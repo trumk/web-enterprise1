@@ -21,16 +21,6 @@ export const FacultyDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const refreshToken = async () => {
-    try {
-      const response = await axios.post("http://localhost:5503/refresh", {
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (err) {
-      console.log(err);
-    }
-  }
   useEffect(() => {
     if (user && user.accessToken) {
       dispatch(getOneFaculty(id, user.accessToken));
