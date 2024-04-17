@@ -31,6 +31,7 @@ const eventSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    msg:"",
   },
   reducers: {
     getEventsStart: (state) => {
@@ -60,13 +61,15 @@ const eventSlice = createSlice({
     addEventStart: (state) => {
       state.addEvent.isFetching = true;
     },
-    addEventSuccess: (state) => {
+    addEventSuccess: (state, action) => {
       state.addEvent.isFetching = false;
       state.addEvent.error = false;
+      state.msg = action.payload;
     },
-    addEventFailed: (state) => {
+    addEventFailed: (state, action) => {
       state.addEvent.isFetching = false;
       state.addEvent.error = true;
+      state.msg = action.payload;
     },
     editEventStart: (state) => {
       state.editEvent.isFetching = true;
@@ -76,22 +79,26 @@ const eventSlice = createSlice({
       state.editEvent.currentEvent = action.payload;
       state.editEvent.isFetching = false;
       state.editEvent.error = false;
+      state.msg = action.payload;
     },
-    editEventFailed: (state) => {
+    editEventFailed: (state, action) => {
       state.editEvent.isFetching = false;
       state.editEvent.error = true;
+      state.msg = action.payload;
     },
     deleteEventStart: (state) => {
       state.deleteEvent.isFetching = true;
       state.deleteEvent.error = false;
     },
-    deleteEventSuccess: (state) => {
+    deleteEventSuccess: (state, action) => {
       state.deleteEvent.isFetching = false;
       state.deleteEvent.error = false;
+      state.msg = action.payload;
     },
-    deleteEventFailed: (state) => {
+    deleteEventFailed: (state, action) => {
       state.deleteEvent.isFetching = false;
       state.deleteEvent.error = true;
+      state.msg = action.payload;
     },
     searchEventStart: (state) => {
       state.searchEvent.isFetching = true;

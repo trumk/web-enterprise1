@@ -4,30 +4,37 @@ import DefaultSidebar from "../../components/sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { getStatistic } from "../../redux/apiRequest";
 import Chart from "react-apexcharts";
-import { Typography } from "@material-tailwind/react";
+import { Button, Option, Select, Typography } from "@material-tailwind/react";
 
 export const MarketingManagerPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const statistic = useSelector((state) => state.user.statistic?.data);
-  const isFetching = useSelector((state) => state.user.statistic?.isFetching);
+  const statistic = useSelector((state) => state.user.statistic ? state.user.statistic.data : null);
   const dispatch = useDispatch();
-  const time = {
-    startDate: "2023",
-  };
-  useEffect(() => {
-    if (user && user.accessToken) {
-      dispatch(getStatistic(user.accessToken, time));
-    }
-  }, [user, dispatch]);
-  const analytics = statistic?.statistics;
+  const [time, setTime] = useState();
+  // useEffect(() => {
+  //   if (user && user.accessToken) {
+  //     dispatch(getStatistic(user.accessToken, time));
+  //   }
+  // }, [user, dispatch]);
+  let numberOfContribution = null;
+  let percentageContribution = null;
+  let numberOfContributors = null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const timeValue = { startDate: time };
+    dispatch(getStatistic(user.accessToken, timeValue));
+};
+
+  const analytics = statistic?.statistics || [];
   console.log(statistic?.statistics);
-  const numberOfContribution = {
+  numberOfContribution = {
+    fill_raw: "last",
     type: "bar",
     height: 300,
     series: [
       {
         name: "Total",
-        data: analytics?.map((item) => item.numberOfContributions),
+        data: analytics && analytics?.length > 0 ? analytics?.map((item) => item.numberOfContributions) : [],
       },
     ],
     options: {
@@ -99,11 +106,12 @@ export const MarketingManagerPage = () => {
     },
   };
 
-  const percentageContribution = {
+  percentageContribution = {
+    fill_raw: "last",
     type: "pie",
     width: 500,
     height: 500,
-    series: analytics?.map((item) => item.contributionPercentage),
+    series: analytics && analytics?.length > 0 ? analytics?.map((item) => item.contributionPercentage) : [],
     options: {
       chart: {
         toolbar: {
@@ -128,13 +136,14 @@ export const MarketingManagerPage = () => {
       },
     },
   };
-  const numberOfContributors = {
+  numberOfContributors = {
+    fill_raw: "last",
     type: "bar",
     height: 300,
     series: [
       {
         name: "Total",
-        data: analytics?.map((item) => item.numberOfContributors),
+        data: analytics && analytics?.length > 0 ? analytics?.map((item) => item.numberOfContributors) : [],
       },
     ],
     options: {
@@ -212,30 +221,43 @@ export const MarketingManagerPage = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
-          {isFetching ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <section className="mt-4">
-                <div className="border border-gray-900">
-                  <Typography variant="h4">Total Contribution</Typography>
-                  <Chart {...numberOfContribution} />
-                </div>
-              </section>
-              <section className="mt-4">
-                <div className="border border-gray-900">
-                  <Typography variant="h4">Number of Contributor</Typography>
-                  <Chart {...numberOfContributors} />
-                </div>
-              </section>
-              <section className="mt-4">
-                <div className="flex flex-col items-center gap-2 border border-gray-900">
-                  <Typography variant="h4">Percentage of Total</Typography>
-                  <Chart {...percentageContribution} />
-                </div>
-              </section>
+          <>
+            <form className="mt-3"onSubmit={handleSubmit}>
+            <Select value={time} onChange={(value) => setTime(value)} label="Select year" className="mt-2.5">
+              <Option value="2023">2023</Option>
+              <Option value="2024">2024</Option>
+              <Option value="2025">2025</Option>
+              <Option value="2026">2026</Option>
+              <Option value="2027">2027</Option>
+              <Option value="2028">2028</Option>
+              <Option value="2029">2029</Option>
+              <Option value="2030">2030</Option>
+            </Select>
+            <Button onClick={handleSubmit} className="mt-4">Save</Button>
+            </form>
+              <>
+                <section className="mt-4">
+                  <div className="border border-gray-900">
+                    <Typography variant="h4">Total Contribution</Typography>
+                    {numberOfContribution && numberOfContribution.type && <Chart {...numberOfContribution} />}
+                  </div>
+                </section>
+                <section className="mt-4">
+                  <div className="border border-gray-900">
+                    <Typography variant="h4">Number of Contributors</Typography>
+                    {numberOfContributors && numberOfContributors.type && <Chart {...numberOfContributors} />}
+                  </div>
+                </section>
+                <section className="mt-4">
+                  <div className="flex flex-col items-center gap-2 border border-gray-900">
+                    <Typography variant="h4">Percentage of Total</Typography>
+                    {percentageContribution && percentageContribution.type && <Chart {...percentageContribution} />}
+                  </div>
+                </section>
+              </>
+            
+
             </>
-          )}
         </div>
       </div>
     </>

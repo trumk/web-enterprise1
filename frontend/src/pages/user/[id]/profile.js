@@ -10,9 +10,7 @@ import { Link } from 'react-router-dom'
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const faculty = useSelector((state) => state.faculty.faculty?.currentFaculty);
   const dispatch = useDispatch();
-  
   useEffect(() => {
     if (user && user?._id) {
       dispatch(getSelf(user?._id));
@@ -37,7 +35,7 @@ export const UserProfile = () => {
                 >
                   <Link to={`../user/${user?._id}/edit`}>
                     <button class="absolute -bottom-3 hover:bg-white right-0 flex items-center justify-center border-none bg-transparent font-bold py-2 px-2 rounded-full">
-                      <Pen className='w-3' />
+                      <Pen className='w-5' />
                     </button>
                   </Link>
                 </Tooltip>
@@ -51,10 +49,6 @@ export const UserProfile = () => {
               <div class="flex flex-col items-center justify-center">
                 <h3 class="text-bluePrimary text-2xl font-bold">Role</h3>
                 <p class="text-lightSecondary text-sm font-normal">{user?.role}</p>
-              </div>
-              <div class="flex flex-col items-center justify-center">
-                <h3 class="text-bluePrimary text-2xl font-bold">Faculty</h3>
-                <p class="text-lightSecondary text-sm font-normal">{faculty?.Faculty.facultyName}</p>
               </div>
               <div class="flex flex-col items-center justify-center">
                 <h3 class="text-bluePrimary text-2xl font-bold">Birthday</h3>

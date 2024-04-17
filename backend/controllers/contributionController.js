@@ -483,10 +483,15 @@ const contributionController = {
         };
       }));
 
-      const statistics = facultyStats.map(faculty => ({
-        ...faculty,
-        contributionPercentage: (faculty.numberOfContributions / totalContributions * 100)
-      }));
+      const statistics = facultyStats.map(faculty => {
+        const percentage = (totalContributions > 0)
+          ? (faculty.numberOfContributions / totalContributions * 100)
+          : 0;     
+        return {
+          ...faculty,
+          contributionPercentage: isNaN(percentage) ? 0 : percentage
+        };
+      });
 
       res.status(200).json({ statistics, totalContributions });
     } catch (error) {
