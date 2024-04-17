@@ -59,7 +59,6 @@ import {
   searchFacultySuccess,
   searchFacultyFailed
 } from "./facultySlice";
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   editEventStart,
   editEventSuccess,
@@ -227,7 +226,7 @@ export const getSelf = (id, axiosJWT) => async (dispatch) => {
   }
 };
 
-export const setRole = (id, role, accessToken, navigate, axiosJWT) => async (dispatch) => {
+export const setRole = (id, role, accessToken, axiosJWT) => async (dispatch) => {
   dispatch(setRoleStart());
   try {
     const response = await axiosJWT.post(
@@ -240,7 +239,6 @@ export const setRole = (id, role, accessToken, navigate, axiosJWT) => async (dis
       }
     );
     dispatch(setRoleSuccess(response.data));
-    navigate("/admin/user")
   } catch (error) {
     dispatch(setRoleFailed());
     console.log(error)

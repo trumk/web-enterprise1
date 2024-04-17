@@ -7,10 +7,10 @@ async function createEvent(req, res) {
   const { topic, content, createEvent, closureDate, finalDate, facultyId } = req.body;
 
   // validate required fields
-  if (!topic || !finalDate || !facultyId || !closureDate) {
+  if (!topic || !content || !finalDate || !facultyId || !closureDate) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: topic, closureDate, finalDate, or facultyId'
+      message: 'Missing required fields'
     });
   }
 
