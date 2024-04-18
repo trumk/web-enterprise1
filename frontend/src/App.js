@@ -82,8 +82,8 @@ function App() {
           <Route path="/admin/event/add" element={<PrivateRoute userRole={user?.role} path="/admin" element={<AddEvent />} />} />
           <Route path="/admin/event/:id/edit" element={<PrivateRoute userRole={user?.role} path="/admin" element={<EditEvent />} />} />
           <Route path="/admin/contribution" element={<PrivateRoute userRole={user?.role} path="/admin" element={<Contribution />} />} />
-          <Route path="/admin/contribution/:id" element={<ContributionDetail />} />
-          <Route path="/admin/user/" element={<User />} />
+          <Route path="/admin/contribution/:id" element={<PrivateRoute userRole={user?.role} path="/admin" element={<ContributionDetail />} />} />
+          <Route path="/admin/user/" element={<PrivateRoute userRole={user?.role} path="/admin" element={<User />} />} />
         </Routes>
       </BrowserRouter>
     </>
