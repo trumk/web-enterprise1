@@ -56,7 +56,7 @@ export const ExceptionContribution = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                            {noComments.length === 0 ? (
+                            {noComments?.length === 0 ? (
                                     <tr>
                                         
                                             <Typography
@@ -69,8 +69,8 @@ export const ExceptionContribution = () => {
                                         
                                     </tr>
                                 ) : (
-                                noComments.map((comment, index) => {
-                                    const event = detailEvent.find(event => event._id === comment.eventID);
+                                noComments?.map((comment, index) => {
+                                    const event = detailEvent?.find(event => event._id === comment.eventID);
                                     return (
                                         <tr key={comment._id}>
                                             <td className="p-4">
@@ -137,7 +137,7 @@ export const ExceptionContribution = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {noCommentsAfter14Days.length === 0 ? (
+                                {noCommentsAfter14Days?.length === 0 ? (
                                     <tr>
                                         
                                             <Typography
@@ -151,7 +151,7 @@ export const ExceptionContribution = () => {
                                     </tr>
                                 ) : (
                                     noCommentsAfter14Days?.map((comment, index) => {
-                                        const event = detailEvent.find(event => event._id === comment.eventID);
+                                        const event = detailEvent?.find(event => event._id === comment.eventID);
                                         return (
                                             <tr key={comment._id}>
                                                 <td className="p-4">

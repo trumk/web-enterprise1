@@ -718,6 +718,23 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
   }
 };
 
+export const searchContributionByName = (searchTerm, accessToken) => async (dispatch) => {
+  dispatch(searchContributionStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/contribution/searchByName`, {
+      keyword:searchTerm,
+    }, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(searchContributionSuccess(response.data));
+  } catch (error) {
+    dispatch(searchContributionFailed(error.message));
+    console.log(error)
+  }
+};
+
 export const getExceptionContributions = (accessToken) => async (dispatch) => {
   dispatch(getExceptionStart());
   try {

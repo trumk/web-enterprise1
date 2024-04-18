@@ -49,6 +49,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    searchByName: {
+      filterContribution: null,
+      isFetching: false,
+      error: false,
+    },
     exception: {
       exceptionContributions: null,
       isFetching: false,
@@ -173,6 +178,19 @@ const contributionSlice = createSlice({
       state.searchContribution.isFetching = false;
       state.searchContribution.error = true;
     },
+    searchByNameStart: (state) => {
+      state.searchByName.isFetching = true;
+      state.searchByName.error = false;
+    },
+    searchByNameSuccess: (state, action) => {
+      state.searchByName.isFetching = false;
+      state.searchByName.filterContribution = action.payload;
+      state.searchByName.error = false;
+    },
+    searchByNameFailed: (state) => {
+      state.searchByName.isFetching = false;
+      state.searchByName.error = true;
+    },
     getExceptionStart: (state) => {
       state.exception.isFetching = true;
     },
@@ -218,6 +236,9 @@ export const {
   searchContributionStart,
   searchContributionSuccess,
   searchContributionFailed,
+  searchByNameStart,
+  searchByNameSuccess,
+  searchByNameFailed,
   getExceptionStart,
   getExceptionSuccess,
   getExceptionFailed,
