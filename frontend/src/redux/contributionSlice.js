@@ -49,16 +49,21 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
-    searchByName: {
-      filterContribution: null,
-      isFetching: false,
-      error: false,
-    },
     exception: {
       exceptionContributions: null,
       isFetching: false,
       error: false,
-    }
+    },
+    ascSort: {
+      sortedContribution: null,
+      isFetching: false,
+      error: false,
+    },
+    descSort: {
+      sortedContribution: null,
+      isFetching: false,
+      error: false,
+    },
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -178,19 +183,6 @@ const contributionSlice = createSlice({
       state.searchContribution.isFetching = false;
       state.searchContribution.error = true;
     },
-    searchByNameStart: (state) => {
-      state.searchByName.isFetching = true;
-      state.searchByName.error = false;
-    },
-    searchByNameSuccess: (state, action) => {
-      state.searchByName.isFetching = false;
-      state.searchByName.filterContribution = action.payload;
-      state.searchByName.error = false;
-    },
-    searchByNameFailed: (state) => {
-      state.searchByName.isFetching = false;
-      state.searchByName.error = true;
-    },
     getExceptionStart: (state) => {
       state.exception.isFetching = true;
     },
@@ -202,6 +194,33 @@ const contributionSlice = createSlice({
     getExceptionFailed: (state) => {
       state.exception.isFetching = false;
       state.exception.error = true;
+    },
+    ascSortStart: (state) => {
+      state.ascSort.isFetching = true;
+      state.ascSort.error = false;
+    },
+    ascSortSuccess: (state, action) => {
+      state.ascSort.isFetching = false;
+      state.ascSort.sortedContribution = action.payload;
+      state.ascSort.error = false;
+    },
+    ascSortFailed: (state, action) => {
+      state.ascSort.isFetching = false;
+      state.ascSort.error = action.payload;
+    },
+
+    descSortStart: (state) => {
+      state.descSort.isFetching = true;
+      state.descSort.error = false;
+    },
+    descSortSuccess: (state, action) => {
+      state.descSort.isFetching = false;
+      state.descSort.sortedContribution = action.payload;
+      state.descSort.error = false;
+    },
+    descSortFailed: (state, action) => {
+      state.descSort.isFetching = false;
+      state.descSort.error = action.payload;
     },
   },
 });
@@ -242,5 +261,11 @@ export const {
   getExceptionStart,
   getExceptionSuccess,
   getExceptionFailed,
+  ascSortStart,
+  ascSortSuccess,
+  ascSortFailed,
+  descSortStart,
+  descSortSuccess,
+  descSortFailed
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
