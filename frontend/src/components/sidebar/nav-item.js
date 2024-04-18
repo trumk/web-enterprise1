@@ -11,7 +11,7 @@ export const NavItem = ({
     
     return (
         <Link to={href}>
-        <ListItem className={isActive ? 'bg-gray-500' : ''}>
+        <ListItem className={isActive ? "bg-purple-200 hover:bg-purple-300" : ''}>
             <ListItemPrefix>
                 <Icon className="h-5 w-5" />
             </ListItemPrefix>

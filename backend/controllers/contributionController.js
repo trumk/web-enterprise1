@@ -120,15 +120,57 @@ const contributionController = {
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
         query = {};
       }
-      const contributions = await Contribution.find(query)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event"
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            createdAt: 1
+          }
+        }
+      ])
+      // .populate({
+      //   path: 'userID',
+      //   select: 'userName -_id'
+      // })
+      // .populate({
+      //   path: 'comments.userID',
+      //   select: 'userName -_id'
+      // });
       res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json({ message: error.message, ...error });
@@ -256,8 +298,10 @@ const contributionController = {
         return res.status(404).json("You do not have permission");
       }
 
-      const imagesPaths = req.body.firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = req.body.firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const firebaseUrls = Array.isArray(req.body.firebaseUrls) ? req.body.firebaseUrls : [];
+
+      const imagesPaths = firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const filesPaths = firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
 
       const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
       const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
@@ -272,11 +316,18 @@ const contributionController = {
       const updatedImages = [...imagesPaths, ...existingImages];
       const updatedFiles = [...filesPaths, ...existingFiles];
 
+      if (updatedImages.length === 0) {
+        return res.status(403).json("Image is required");
+      }
+      if (updatedFiles.length === 0) {
+        return res.status(403).json("File is required");
+      }
+
       const updatedContribution = await Contribution.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
         content: req.body.content,
-        image: updatedImages.length > 0 ? updatedImages : contribution.image,
-        file: updatedFiles.length > 0 ? updatedFiles : contribution.file
+        image: updatedImages.length > 0 ? updatedImages : [],
+        file: updatedFiles.length > 0 ? updatedFiles : []
       }, { new: true });
 
       res.status(200).json(updatedContribution);
@@ -306,7 +357,7 @@ const contributionController = {
       const role = req.user.role;
       let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { title: new RegExp(keyword, "i")};
+        query = { title: new RegExp(keyword, "i") };
       }
       const contributions = await Contribution.find(query)
         .populate({
@@ -486,7 +537,7 @@ const contributionController = {
       const statistics = facultyStats.map(faculty => {
         const percentage = (totalContributions > 0)
           ? (faculty.numberOfContributions / totalContributions * 100)
-          : 0;     
+          : 0;
         return {
           ...faculty,
           contributionPercentage: isNaN(percentage) ? 0 : percentage

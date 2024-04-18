@@ -26,7 +26,7 @@ export const UserProfile = () => {
         <div className='w-full'>
           <div class="border h-100 border-gray-900 rounded-md mt-5 dark:!bg-navy-800 shadow-shadow-500 shadow-3xl rounded-primary relative mx-auto flex w-full max-w-[550px] flex-col items-center bg-white bg-cover bg-clip-border p-[16px] dark:text-white dark:shadow-none">
             <div class="relative mt-1 flex h-32 w-full justify-center rounded-xl bg-cover">
-              <img class="h-full w-full rounded-xl" src="https://i.ibb.co/FWggPq1/banner.png" />
+              <img class="h-full w-full rounded-xl" src="https://i.ibb.co/FWggPq1/banner.png" alt=""/>
               <div class="absolute -bottom-12 flex h-[88px] w-[88px] items-center justify-center rounded-full border-[4px] border-white bg-pink-400">
                 <img class="h-full w-full rounded-full" src={profile?.avatar} alt="" />
                 <Tooltip
