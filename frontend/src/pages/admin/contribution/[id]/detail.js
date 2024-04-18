@@ -79,9 +79,9 @@ export const ContributionDetail = () => {
                                     <div
                                         className="flex items-center justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
                                     >
-                                        <div>
+                                        <div className='flex items-center'>
                                         <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                                        <Typography>{file.split('/').pop()}</Typography>
+                                        <Typography className='text-sm'>{file.split('/').pop()}</Typography>
                                         </div>
                                         <a target="_blank" href={file} download>
                                             <Button>

@@ -99,7 +99,7 @@ export default function DefaultSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   return (
-    <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-gray-300">
+    <Card className="hidden md:block sticky top-0 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-gray-300">
       <List>
         {routes.map((route) => (
           <NavItem
