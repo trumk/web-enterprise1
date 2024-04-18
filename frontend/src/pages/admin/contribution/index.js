@@ -47,7 +47,7 @@ export const Contribution = () => {
                     <div className="flex items-center gap-2 mt-2">
                         <Input
                             type="text"
-                            placeholder="Search contributions..."
+                            label="Search contributions..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-1/3 mb-4"
