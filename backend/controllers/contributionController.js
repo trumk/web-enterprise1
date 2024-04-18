@@ -359,15 +359,57 @@ const contributionController = {
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
         query = { title: new RegExp(keyword, "i") };
       }
-      const contributions = await Contribution.find(query)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event"
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            createdAt: 1
+          }
+        }
+      ])
+        // .populate({
+        //   path: 'userID',
+        //   select: 'userName -_id'
+        // })
+        // .populate({
+        //   path: 'comments.userID',
+        //   select: 'userName -_id'
+        // });
       return res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json(error);
@@ -383,15 +425,49 @@ const contributionController = {
       if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
         query = { userID: { $in: userIds }, eventID: req.cookies.eventId };
       }
-      const contributions = await Contribution.find(query)
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile"
+          }
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event"
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar"
+            },
+            createdAt: 1
+          }
+        }
+      ]);
 
       return res.status(200).json(contributions);
     } catch (error) {

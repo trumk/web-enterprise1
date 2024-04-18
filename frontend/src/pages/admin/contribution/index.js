@@ -138,7 +138,7 @@ export const Contribution = () => {
                                                         color="blue-gray"
                                                         className="font-normal"
                                                     >
-                                                        {contribution?.author.firstName} {contribution?.author.lastName}
+                                                        {contribution?.author?.firstName} {contribution?.author?.lastName}
                                                     </Typography>
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50 w-20">
