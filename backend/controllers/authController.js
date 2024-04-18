@@ -54,7 +54,12 @@ const authController = {
             //hash password
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(req.body.password, salt);
-
+            const existedUsername = await User.findOne({userName : req.body.userName })
+            if (existedUsername)
+                return res.status(400).send("The username has been registed");
+            const existedEmail = await User.findOne({email : req.body.email })
+            if (existedEmail)
+                return res.status(400).send("The email has been registed");
             //create new user in database
             const newUser = new User({
                 userName: req.body.userName,

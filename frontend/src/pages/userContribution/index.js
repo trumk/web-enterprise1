@@ -44,7 +44,7 @@ export const MyContributionPage = () => {
   const handleDelete = (contributionId) => {
     const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
     if(confirmation) {
-      dispatch(removeContribution(contributionId, user.accessToken))
+      dispatch(removeContribution(contributionId, user?.accessToken))
       .then(() => {
         window.location.reload();
       })

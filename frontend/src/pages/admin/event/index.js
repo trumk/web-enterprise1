@@ -2,23 +2,28 @@ import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
 import { getAllEvents } from "../../../redux/apiRequest";
-import { useEffect } from "react";
-import { Button, Card, Typography } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import { Button, Card, CardFooter, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { IconButton } from "@material-tailwind/react";
 import { PenLine, Settings } from 'lucide-react';
+import { TablePagination } from "../../../components/manage/edit-pagination";
 
 export const Event = () => {
   const events = useSelector((state)=>state.event.events.allEvents)
   const user = useSelector((state)=>state.auth.login?.currentUser) 
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 5;
+  const details = events?.events;
+  const currentItems = details?.slice((currentPage - 1) * eventsPerPage, currentPage * eventsPerPage);
   const dispatch = useDispatch();
   useEffect(() => {
     if (user) {
       dispatch(getAllEvents(user.accessToken, dispatch));
     }
   }, [user, dispatch]);
-  const details = events?.events;
+  
   console.log(details)
   return (
     <>
@@ -81,9 +86,9 @@ export const Event = () => {
                 </tr>
               </thead>
               <tbody>
-                {details ? (
-                  details && details?.length > 0 ? (
-                    details?.map((detail, index) => (
+                {currentItems ? (
+                  currentItems && currentItems?.length > 0 ? (
+                    currentItems?.map((detail, index) => (
                       
                         <tr key={index}>
                           
@@ -151,6 +156,14 @@ export const Event = () => {
                 )}
               </tbody>
             </table>
+            <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+                <TablePagination
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    itemsPerPage={eventsPerPage}
+                    totalItems={details}
+                />
+            </CardFooter>
           </Card>
         </div>
           </div>

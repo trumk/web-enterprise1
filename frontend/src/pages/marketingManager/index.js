@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
 import { useDispatch, useSelector } from "react-redux";

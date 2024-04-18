@@ -34,10 +34,10 @@ export const ReadContribution = () => {
   }, [dispatch, contributionId, user]);
 
   useEffect(() => {
-    if (user && user.accessToken) {
-      dispatch(allContributionsByEventData(event.Event?._id, user.accessToken));
+    if (user && user.accessToken && event.Event?._id) {
+      dispatch(allContributionsByEventData(event.Event._id, user.accessToken));
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, event.Event?._id]);
 
   const handleComment = (e) => {
     e.preventDefault();
@@ -59,7 +59,6 @@ export const ReadContribution = () => {
   return (
     <>
       <NavbarDefault />
-
       <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
@@ -71,7 +70,7 @@ export const ReadContribution = () => {
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
                   <div>
-                    <a href="#" rel="author" className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</a>
+                    <Typography className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</Typography>
                   </div>
                 </div>
               </address>
@@ -125,6 +124,7 @@ export const ReadContribution = () => {
                 </div>
               </div>
             </section>
+            
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
@@ -178,7 +178,7 @@ export const ReadContribution = () => {
             {filteredRelatedContributions?.slice(0, 4).map((relatedContribution, index) => (
               <article className="max-w-xs">
                 <Link to={`/faculty/${facultyId}/event/${eventId}/contribution/${relatedContribution?._id}/read`}>
-                <img src={relatedContribution?.image[0]} className="mb-5 rounded-lg h-40" alt="Image 2" />
+                <img src={relatedContribution?.image[0]} className="mb-5 rounded-lg h-40" alt="related contribution" />
                 </Link>
                 <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
                   {relatedContribution?.title}

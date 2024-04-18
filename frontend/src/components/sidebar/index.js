@@ -5,23 +5,24 @@ import {
   Users,
   CalendarDays,
   School,
-  BarChart3
+  BarChart3,
+  ShieldAlert
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
 
 export default function DefaultSidebar() {
-  
+
   const guestRoutes = [
-    {
-      href: "/",
-      icon: Users,
-      label: "Faculty",
-    },
     {
       href: "/contributions",
       icon: PartyPopper,
       label: "All Contributions",
+    },
+    {
+      href: "/",
+      icon: Users,
+      label: "Faculty",
     },
     {
       href: "/userContribution",
@@ -53,10 +54,15 @@ export default function DefaultSidebar() {
   ];
   const marketingCoordinatorRoutes = [
     {
-      href: "/marketingCoordinator/contribution",
+      href: "/marketingCoordinator",
       icon: FileSliders,
       label: "Manage Contribution",
     },
+    {
+      href: "/marketingCoordinator/exception",
+      icon: ShieldAlert,
+      label: "Exception Contribution",
+    }
   ];
 
   const marketingManagerRoutes = [
@@ -85,13 +91,15 @@ export default function DefaultSidebar() {
     routes = adminRoutes;
   } else if (isMarketingCoordinatorPage) {
     routes = marketingCoordinatorRoutes;
-  } else if (isMarketingManagerPage){
+  } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
-  } else{
+  } else {
     routes = guestRoutes;
   }
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
-    <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl">
+    <Card className="hidden md:block sticky top-0 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-gray-300">
       <List>
         {routes.map((route) => (
           <NavItem
@@ -99,6 +107,7 @@ export default function DefaultSidebar() {
             href={route.href}
             icon={route.icon}
             label={route.label}
+            isActive={currentPath === route.href}
           />
         ))}
       </List>

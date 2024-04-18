@@ -34,18 +34,15 @@ export const EditContribution = () => {
             setFile(currentContribution.file);
         }
     }, [currentContribution])
+    
     const handleImageUpload = (e) => {
         setMessage("");
         let selectedFiles = e.target.files;
         for (let i = 0; i < selectedFiles.length; i++) {
             const fileType = selectedFiles[i]['type'];
-            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-            if (validImageTypes.includes(fileType)) {
-                let reader = new FileReader();
-                reader.onloadend = () => {
-                    setImage([...image, reader.result]);
-                }
-                reader.readAsDataURL(selectedFiles[i]);
+            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'video/mp4'];
+            if (validImageTypes.includes(fileType)) {              
+                    setImage([...image, selectedFiles[i]]);
             } else {
                 setMessage("Only image accepted");
             }
@@ -95,11 +92,13 @@ export const EditContribution = () => {
     if (image.length > 0) {
         image.map((image, key) => {
             contribution.append('image', image)
+            return null;
         })
     };
     if (file.length > 0) {
         file.map((file, key) => {
             contribution.append('file', file)
+            return null;
         })
     };
     const handleSubmit = async (e) => {
@@ -150,6 +149,7 @@ export const EditContribution = () => {
                                     <Typography variant="h6" color="blue-gray" className="-mb-5">
                                         Image
                                     </Typography>
+                                   
                                     <div className='w-[800px]'>
                                         {message && <span>{message}</span>}
                                         <div className="rounded-lg shadow-xl bg-gray-50 md:w-1/2 w-[400px]">
@@ -170,7 +170,7 @@ export const EditContribution = () => {
                                                         return (
                                                             <div key={key} className="overflow-hidden relative">
                                                                 <X onClick={() => { removeImage(key) }} className="mdi mdi-close absolute right-1 hover:opacity-0.7 cursor-pointer" />
-                                                                <img className="h-20 w-20 rounded-md" src={url} />
+                                                                <img className="h-20 w-20 rounded-md" src={url} alt="" />
                                                             </div>
                                                         )
                                                     })}

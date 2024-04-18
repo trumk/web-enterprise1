@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import logo from '../assets/logo.jpg'
 import {
   Navbar,
   Typography,
@@ -9,13 +10,13 @@ import {
   Avatar,
   MenuList,
   MenuItem,
+  MobileNav,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail } from "lucide-react";
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { createAxios } from "../../redux/createInstance";
-import { loginSuccess } from "../../redux/authSlice";
 import { getSelf, logout } from "../../redux/apiRequest";
+import { MobileNavItem } from "./mobile-nav";
 
 export default function NavbarDefault() {
   const [openNav, setOpenNav] = React.useState(false);
@@ -25,9 +26,8 @@ export default function NavbarDefault() {
   const navigate = useNavigate();
   const id = user?._id;
   const accessToken = user?.accessToken;
-  const axiosJWT = createAxios(user, dispatch, loginSuccess);
   const handleLogout = () => {
-    logout(dispatch, id, navigate, accessToken, axiosJWT);
+    logout(dispatch, id, navigate, accessToken);
   };
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -55,15 +55,97 @@ export default function NavbarDefault() {
     );
   }, []);
   useEffect(() => {
-    if(user && user._id) {
-      dispatch(getSelf(user._id, axiosJWT));
+    if (user && user._id) {
+      dispatch(getSelf(user._id));
     }
   }, [dispatch, user]);
+  const guestRoutes = [
+    {
+      href: "/contributions",
+      icon: PartyPopper,
+      label: "All Contributions",
+    },
+    {
+      href: "/",
+      icon: Users,
+      label: "Faculty",
+    },
+    {
+      href: "/userContribution",
+      icon: FileSliders,
+      label: "My Contribution",
+    },
+  ];
+  const adminRoutes = [
+    {
+      href: "/admin/user",
+      icon: Users,
+      label: "Manage User",
+    },
+    {
+      href: "/admin/faculty",
+      icon: CalendarDays,
+      label: "Manage Faculty",
+    },
+    {
+      href: "/admin/event",
+      icon: PartyPopper,
+      label: "Manage Event",
+    },
+    {
+      href: "/admin/contribution",
+      icon: FileSliders,
+      label: "Manage Contribution",
+    },
+  ];
+  const marketingCoordinatorRoutes = [
+    {
+      href: "/marketingCoordinator",
+      icon: FileSliders,
+      label: "Manage Contribution",
+    },
+    {
+      href: "/marketingCoordinator/exception",
+      icon: ShieldAlert,
+      label: "Exception Contribution",
+    }
+  ];
 
-  const handleNavigateByRole = ()=>{
-    if(user?.role === 'admin'){
+  const marketingManagerRoutes = [
+    {
+      href: "/marketingManager/faculty",
+      icon: School,
+      label: "Faculties",
+    },
+    {
+      href: "/marketingManager",
+      icon: BarChart3,
+      label: "Analytics",
+    }
+  ];
+
+  const isMarketingCoordinatorPage = window.location.pathname.startsWith(
+    "/marketingCoordinator"
+  );
+  const isMarketingManagerPage = window.location.pathname.startsWith(
+    "/marketingManager"
+  );
+  const isAdminPage = window.location.pathname.startsWith("/admin");
+  let routes;
+
+  if (isAdminPage) {
+    routes = adminRoutes;
+  } else if (isMarketingCoordinatorPage) {
+    routes = marketingCoordinatorRoutes;
+  } else if (isMarketingManagerPage) {
+    routes = marketingManagerRoutes;
+  } else {
+    routes = guestRoutes;
+  }
+  const handleNavigateByRole = () => {
+    if (user?.role === 'admin') {
       navigate('/admin/user')
-    } else if(user?.role === 'marketing manager'){
+    } else if (user?.role === 'marketing manager') {
       navigate('/marketingManager')
     } else {
       navigate('/')
@@ -75,12 +157,12 @@ export default function NavbarDefault() {
       <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
-  
+
             <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-            <img src="https://cms.greenwich.edu.vn/pluginfile.php/1/theme_adaptable/logo/1698976651/2022-Greenwich-Eng.jpg" alt="logo" size="sm" className="mr-2 h-10" />
+              <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
             </Typography>
 
-            
+
           </Button>
           <div className="flex items-center gap-4">
             {!user ? (
@@ -104,7 +186,7 @@ export default function NavbarDefault() {
                   </Button>
                 </Link>
               </div>
-            )  : (
+            ) : (
               <>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
                   <MenuHandler>
@@ -135,9 +217,9 @@ export default function NavbarDefault() {
                         <Link to={href}>
                           <MenuItem
                             key={label}
-                            onClick={() =>{
+                            onClick={() => {
                               closeMenu();
-                              if(action) action();
+                              if (action) action();
                             }}
                             className={`flex items-center gap-2 rounded ${isLastItem
                               ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
@@ -162,7 +244,7 @@ export default function NavbarDefault() {
                     })}
                   </MenuList>
                 </Menu>
-                </>
+              </>
             )}
 
             <IconButton
@@ -203,7 +285,40 @@ export default function NavbarDefault() {
               )}
             </IconButton>
           </div>
+
         </div>
+        <MobileNav open={openNav}>
+
+          <div className="container mx-auto">
+            <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+              {
+                routes.map((route) => (
+                  <MobileNavItem
+                    href={route.href}
+                    key={route.label}
+                    icon={route.icon}
+                    label={route.label}
+                  />
+                ))
+              }
+
+            </ul>
+            { !user && (
+              <div className="flex items-center gap-x-1">
+                <Link to="/login">
+              <Button fullWidth variant="text" size="sm" className="">
+                <span>Log In</span>
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button fullWidth variant="gradient" size="sm" className="">
+                <span>Sign in</span>
+              </Button>
+            </Link>
+            </div>
+            )}
+          </div>
+        </MobileNav>
       </Navbar>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
-import { deleteFaculty, getAllEventsByFaculty, getEventsByFaculty, getOneFaculty } from "../../../../redux/apiRequest";
+import { deleteFaculty, getAllEventsByFaculty, getOneFaculty } from "../../../../redux/apiRequest";
 import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -21,16 +21,6 @@ export const FacultyDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const refreshToken = async () => {
-    try {
-      const response = await axios.post("http://localhost:5503/refresh", {
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (err) {
-      console.log(err);
-    }
-  }
   useEffect(() => {
     if (user && user.accessToken) {
       dispatch(getOneFaculty(id, user.accessToken));
@@ -40,7 +30,7 @@ export const FacultyDetail = () => {
     if (user) {
       dispatch(getAllEventsByFaculty(id, user.accessToken))
     }
-  }, [user, dispatch])
+  }, [user, id, dispatch])
   const detail = faculty?.Faculty
   const eventData = eventInFaculty?.events
   console.log(eventData)

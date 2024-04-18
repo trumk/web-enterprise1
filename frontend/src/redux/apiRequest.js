@@ -77,12 +77,18 @@ import {
   deleteEventFailed,
 } from "./eventSlice";
 import {
+  ascSortFailed,
+  ascSortStart,
+  ascSortSuccess,
   commentFailed,
   commentStart,
   commentSuccess,
   deleteContributionFailed,
   deleteContributionStart,
   deleteContributionSuccess,
+  descSortFailed,
+  descSortStart,
+  descSortSuccess,
   editContributionFailed,
   editContributionStart,
   editContributionSuccess,
@@ -96,6 +102,9 @@ import {
   getContributionsFailed, 
   getContributionsStart, 
   getContributionsSuccess, 
+  getExceptionFailed, 
+  getExceptionStart, 
+  getExceptionSuccess, 
   publishFailed, 
   publishStart, 
   publishSuccess, 
@@ -111,7 +120,7 @@ import {
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-const BACKEND_URL = "http://localhost:5503";
+const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -290,9 +299,11 @@ export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) 
       },
     });
     dispatch(enrollFacultySuccess(res.data));
+    toast.success("Join faculty successfully");
     navigate(`/faculty/${id}`)
   } catch (err) {
     dispatch(enrollFacultyFailed());
+    toast.error(err.response.data);
     console.log(err)
   }
 }
@@ -634,9 +645,11 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
       },
     });
     dispatch(editContributionSuccess(res.data));
+    toast.success("Edit contribution successfully");
     navigate(`/userContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
+    toast.error(error.response.data);
     console.error(error);
   }
 }
@@ -650,8 +663,10 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
       },
     });
     dispatch(deleteContributionSuccess());
+    toast.success("Delete contribution successfully");
   } catch (err) {
     dispatch(deleteContributionFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }
@@ -666,6 +681,7 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
       },
     });
     dispatch(commentSuccess());
+    toast.success("Comment successfully");
   } catch (error) {
     dispatch(commentFailed());
     console.error(error);
@@ -682,9 +698,11 @@ export const publicContribution = (id, accessToken, navigate) => async (dispatch
       },
     });
     dispatch(publishSuccess());
+    toast.success("Publish contribution successfully");
     navigate("/marketingCoordinator");
   } catch (err) {
     dispatch(publishFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }
@@ -705,3 +723,48 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
     console.log(error)
   }
 };
+
+export const sortAsc = (accessToken) => async (dispatch) => {
+  dispatch(ascSortStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/asc`, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(ascSortSuccess(response.data));
+  } catch (error) {
+    dispatch(ascSortFailed(error.message));
+    console.log(error)
+  }
+};
+
+export const sortDesc = (accessToken) => async (dispatch) => {
+  dispatch(descSortStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/desc`, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(descSortSuccess(response.data));
+  } catch (error) {
+    dispatch(descSortFailed(error.message));
+    console.log(error)
+  }
+};
+
+export const getExceptionContributions = (accessToken) => async (dispatch) => {
+  dispatch(getExceptionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/exception`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getExceptionSuccess(res.data));
+  } catch (err) {
+    dispatch(getExceptionFailed());
+    console.log(err);
+  }
+}
