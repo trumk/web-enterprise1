@@ -61,17 +61,6 @@ async function createEvent(req, res) {
   }
 }
 
-async function getEventsByFaculty(req,res){
-  try{
-    const facultyId= req.params.facultyId;
-    const events = await Event.find({ facultyId }).select('topic content createEvent closureDate finalDate');
-    return res.json({ success: true, events});
-  }catch(error){
-    console.error(error);
-    return res.status(500).json({ success: false, message: 'SERVER ERROR'});
-  }
-}
-
 function FilterExpression(filter) {
   const filterExpression = {};
   for (const key in filter) {
