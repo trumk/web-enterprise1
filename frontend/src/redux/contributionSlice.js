@@ -49,6 +49,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    exception: {
+      exceptionContributions: null,
+      isFetching: false,
+      error: false,
+    }
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -168,6 +173,18 @@ const contributionSlice = createSlice({
       state.searchContribution.isFetching = false;
       state.searchContribution.error = true;
     },
+    getExceptionStart: (state) => {
+      state.exception.isFetching = true;
+    },
+    getExceptionSuccess: (state, action) => {
+      state.exception.isFetching = false;
+      state.exception.exceptionContributions = action.payload;
+      state.exception.error = false;
+    },
+    getExceptionFailed: (state) => {
+      state.exception.isFetching = false;
+      state.exception.error = true;
+    },
   },
 });
 export const {
@@ -200,6 +217,9 @@ export const {
   publishFailed,
   searchContributionStart,
   searchContributionSuccess,
-  searchContributionFailed
+  searchContributionFailed,
+  getExceptionStart,
+  getExceptionSuccess,
+  getExceptionFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;

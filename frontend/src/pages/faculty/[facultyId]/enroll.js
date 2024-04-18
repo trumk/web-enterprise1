@@ -35,7 +35,7 @@ export const EnrollFaculty = () => {
     const enroll={
       enrollKey:enrollKey,
     }
-    dispatch(joinFaculty(facultyId, user.accessToken, enroll, navigate));
+    dispatch(joinFaculty(facultyId, user?.accessToken, enroll, navigate));
   };
 
   console.log(facultyId)

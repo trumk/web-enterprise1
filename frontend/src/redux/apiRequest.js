@@ -96,6 +96,9 @@ import {
   getContributionsFailed, 
   getContributionsStart, 
   getContributionsSuccess, 
+  getExceptionFailed, 
+  getExceptionStart, 
+  getExceptionSuccess, 
   publishFailed, 
   publishStart, 
   publishSuccess, 
@@ -290,9 +293,11 @@ export const joinFaculty = (id, accessToken, key, navigate) => async (dispatch) 
       },
     });
     dispatch(enrollFacultySuccess(res.data));
+    toast.success("Join faculty successfully");
     navigate(`/faculty/${id}`)
   } catch (err) {
     dispatch(enrollFacultyFailed());
+    toast.error(err.response.data);
     console.log(err)
   }
 }
@@ -634,9 +639,11 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
       },
     });
     dispatch(editContributionSuccess(res.data));
+    toast.success("Edit contribution successfully");
     navigate(`/userContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
+    toast.error(error.response.data);
     console.error(error);
   }
 }
@@ -650,8 +657,10 @@ export const removeContribution = (id, accessToken) => async (dispatch) => {
       },
     });
     dispatch(deleteContributionSuccess());
+    toast.success("Delete contribution successfully");
   } catch (err) {
     dispatch(deleteContributionFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }
@@ -666,6 +675,7 @@ export const commentContribution = (id, comment, accessToken) => async (dispatch
       },
     });
     dispatch(commentSuccess());
+    toast.success("Comment successfully");
   } catch (error) {
     dispatch(commentFailed());
     console.error(error);
@@ -682,9 +692,11 @@ export const publicContribution = (id, accessToken, navigate) => async (dispatch
       },
     });
     dispatch(publishSuccess());
+    toast.success("Publish contribution successfully");
     navigate("/marketingCoordinator");
   } catch (err) {
     dispatch(publishFailed());
+    toast.error(err.response.data);
     console.log(err);
   }
 }
@@ -705,3 +717,18 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
     console.log(error)
   }
 };
+
+export const getExceptionContributions = (accessToken) => async (dispatch) => {
+  dispatch(getExceptionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/exception`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getExceptionSuccess(res.data));
+  } catch (err) {
+    dispatch(getExceptionFailed());
+    console.log(err);
+  }
+}

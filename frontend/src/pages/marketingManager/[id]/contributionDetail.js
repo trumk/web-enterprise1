@@ -8,7 +8,6 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
 import { File, Download } from "lucide-react";
 import { format } from "date-fns";
 import { getOneContribution } from "../../../redux/apiRequest";
@@ -88,7 +87,7 @@ export const ContributionDetailManager = () => {
                       </p>
                     </div>
                     <div>
-                        <a target="_blank" href={file} ><Button><Download/></Button></a>
+                        <a target="_blank" rel="noreferrer" href={file} ><Button><Download/></Button></a>
                     </div>
                   </div>
                 ))}
