@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import logo from '../assets/logo.jpg'
 import {
   Navbar,
   Typography,
