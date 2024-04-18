@@ -82,15 +82,7 @@ const contributionController = {
           img: ["data", "http"],
         },
       });
-      const newContribution = new Contribution({
-        title: req.body.title,
-        content: cleanContent,
-        image: imagesPaths,
-        file: filesPaths,
-        userID: req.user.id,
-        eventID: req.body.eventID,
-      });
-      const contribution = await newContribution.save();
+
       const event = await Event.findById(req.body.eventID);
       const profiles = await Profile.find({
         facultyID: event.facultyId,
@@ -104,17 +96,26 @@ const contributionController = {
       const emailAddresses = marketingCoordinators
         .map((coordinator) => coordinator.email)
         .join(",");
-      const Student = await User.findById(req.user.id);
+      const Student = await Profile.findOne({userID: req.user.id});
       if (!emailAddresses) {
         return res
           .status(500)
-          .json("Please set role for marketing coordinator");
+          .json("This faculty doesn't have a Marketing Condinator");
       }
+      const newContribution = new Contribution({
+        title: req.body.title,
+        content: cleanContent,
+        image: imagesPaths,
+        file: filesPaths,
+        userID: req.user.id,
+        eventID: req.body.eventID,
+      });
+      const contribution = await newContribution.save();
       const mailOptions = {
         from: process.env.EMAIL,
         to: emailAddresses,
-        subject: "New Submission",
-        html: `<p>Student<b> ${Student.userName} </b> submitted</p><br>`,
+        subject: `<b>New Submission</b>`,
+        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has been submitted</p><br>`,
       };
       await new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {

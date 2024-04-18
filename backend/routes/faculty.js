@@ -11,6 +11,7 @@ router.use(authorization.verifyToken);
 
 router.post("/add", authorization.verifyManager, FacultyController.createFaculty);
 router.get("/get", FacultyController.getAllFaculty);
+router.get("/getManager", FacultyController.getFacultyManager);
 router.put("/:facultyId", authorization.verifyManager, FacultyController.updateFaculty);
 router.delete("/:facultyId", authorization.verifyManager, FacultyController.deleteFaculty);
 router.post("/search", upload.none(), FacultyController.searchFaculty);

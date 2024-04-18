@@ -230,7 +230,6 @@ module.exports = {
   updateEvent,
   deleteEvent,
   getAllEvent,
-  getOneEvent,
-  getEventsByFaculty
+  getOneEvent
 
 };
