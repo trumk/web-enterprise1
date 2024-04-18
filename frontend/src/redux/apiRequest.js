@@ -77,12 +77,18 @@ import {
   deleteEventFailed,
 } from "./eventSlice";
 import {
+  ascSortFailed,
+  ascSortStart,
+  ascSortSuccess,
   commentFailed,
   commentStart,
   commentSuccess,
   deleteContributionFailed,
   deleteContributionStart,
   deleteContributionSuccess,
+  descSortFailed,
+  descSortStart,
+  descSortSuccess,
   editContributionFailed,
   editContributionStart,
   editContributionSuccess,
@@ -718,19 +724,32 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
   }
 };
 
-export const searchContributionByName = (searchTerm, accessToken) => async (dispatch) => {
-  dispatch(searchContributionStart());
+export const sortAsc = (accessToken) => async (dispatch) => {
+  dispatch(ascSortStart());
   try {
-    const response = await axios.post(`${BACKEND_URL}/contribution/searchByName`, {
-      keyword:searchTerm,
-    }, {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/asc`, {
       headers: {
         token: `Bearer ${accessToken}`, 
       },
     });
-    dispatch(searchContributionSuccess(response.data));
+    dispatch(ascSortSuccess(response.data));
   } catch (error) {
-    dispatch(searchContributionFailed(error.message));
+    dispatch(ascSortFailed(error.message));
+    console.log(error)
+  }
+};
+
+export const sortDesc = (accessToken) => async (dispatch) => {
+  dispatch(descSortStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/desc`, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(descSortSuccess(response.data));
+  } catch (error) {
+    dispatch(descSortFailed(error.message));
     console.log(error)
   }
 };
