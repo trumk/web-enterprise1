@@ -43,6 +43,11 @@ const contributionSchema = new Schema({
         ref: "Event",
         required: true
     },
+    facultyID: {
+        type: Schema.Types.ObjectId,
+        ref: "Faculty",
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

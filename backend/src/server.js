@@ -35,8 +35,8 @@ app.use(bodyParser.json());
 
 
 app.use(cors({
-  origin: 'https://okvkiu.onrender.com',
-  credentials: true,
+  // origin: 'https://okvkiu.onrender.com',
+  // credentials: true,
 }));
 app.use(cookieParser())
 app.use(express.json())

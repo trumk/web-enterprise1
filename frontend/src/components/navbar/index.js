@@ -13,7 +13,7 @@ import {
   MobileNav,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3 } from "lucide-react";
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3, Contact, KeyRound, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { getSelf, logout } from "../../redux/apiRequest";
 import { MobileNavItem } from "./mobile-nav";
@@ -76,6 +76,23 @@ export default function NavbarDefault() {
       label: "My Contribution",
     },
   ];
+    const userRoutes = [
+      {
+        href: `/user/${user?._id}/profile`,
+        icon: Contact,
+        label: 'Profile'
+      },
+      {
+        href: `/user/${user?._id}/changePassword`,
+        icon: KeyRound,
+        label: 'Authenticate'
+      },
+      {
+        href: `/user/${user?._id}/edit`,
+        icon: Settings,
+        label: 'Settings'
+      }
+    ];
   const adminRoutes = [
     {
       href: "/admin/user",
@@ -131,6 +148,7 @@ export default function NavbarDefault() {
     "/marketingManager"
   );
   const isAdminPage = window.location.pathname.startsWith("/admin");
+  const isUserPage = window.location.pathname.startsWith("/user");
   let routes;
 
   if (isAdminPage) {
@@ -139,6 +157,8 @@ export default function NavbarDefault() {
     routes = marketingCoordinatorRoutes;
   } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
+  } else if(isUserPage) {
+    routes = userRoutes;
   } else {
     routes = guestRoutes;
   }

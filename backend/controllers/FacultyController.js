@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Faculty = require("../models/Faculty")
 const Profile = require("../models/Profile")
-const User = require("../models/User")
+const { User, Otp } = require("../models/User")
 
 async function createFaculty(req, res) {
   try {

@@ -30,14 +30,15 @@ import { FacultyManager } from "./pages/marketingManager/faculty";
 import { FacultyDetailManager } from "./pages/marketingManager/[id]/detailFaculty";
 import { EventDetailManager } from "./pages/marketingManager/[id]/eventDetail";
 import { ContributionDetailManager } from "./pages/marketingManager/[id]/contributionDetail";
-import { MyContributionPage } from "./pages/userContribution";
-import { EditContribution } from "./pages/userContribution/[id]/edit";
+import { MyContributionPage } from "./pages/myContribution";
+import { EditContribution } from "./pages/myContribution/[id]/edit";
 import { ManageContribution } from "./pages/marketingCoordinator/contribution/[id]/action";
 import { ToastContainer } from 'react-toastify';
 import { ExceptionContribution } from "./pages/marketingCoordinator/exception";
 import { PrivateRoute } from "./components/authorization/private-routes";
 import { useSelector } from "react-redux";
 import { ContributionsDashboard } from "./pages/contributions";
+import { ReadContributionDashboard } from "./pages/contributions/[contributionId]/read";
 
 function App() {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -59,9 +60,10 @@ function App() {
           <Route path="/user/:id/profile" element={<UserProfile />} />
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
-          <Route path="/userContribution" element={<MyContributionPage/>}/>
-          <Route path="/userContribution/:id/edit" element={<EditContribution/>}/>
+          <Route path="/myContribution" element={<MyContributionPage/>}/>
+          <Route path="/myContribution/:id/edit" element={<EditContribution/>}/>
           <Route path="/contributions" element={<ContributionsDashboard/>}/>
+          <Route path="/contributions/:contributionId/read" element={<ReadContributionDashboard/>}/>
           {/* Marketing Manager */}
           <Route path="/marketingManager" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<MarketingManagerPage />} />}/>
           <Route path="/marketingManager/faculty" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<FacultyManager />} />}/>
