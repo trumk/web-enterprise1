@@ -1,20 +1,18 @@
-const Contribution = require("../models/Contribution")
-const Faculty = require("../models/Faculty")
-const Event = require("../models/Event")
-const { User, Otp } = require("../models/User")
-const { cloudinary, uploadImage } = require("../middlewares/cloudinary")
-const nodemailer = require('nodemailer');
+const Contribution = require("../models/Contribution");
+const Faculty = require("../models/Faculty");
+const Event = require("../models/Event");
+const { User, Otp } = require("../models/User");
+const { cloudinary, uploadImage } = require("../middlewares/cloudinary");
+const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
-const sanitizeHtml = require('sanitize-html');
-const mongoose = require('mongoose');
+const sanitizeHtml = require("sanitize-html");
+const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Profile = require("../models/Profile");
 
-
-
 const transporter = nodemailer.createTransport({
-  service: 'hotmail',
+  service: "hotmail",
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASSWORD,
@@ -24,10 +22,14 @@ const transporter = nodemailer.createTransport({
 const contributionController = {
   submitContribution: async (req, res) => {
     try {
-      const imagesPaths = req.body.firebaseUrls.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = req.body.firebaseUrls.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
-      console.log(imagesPaths)
-      console.log(filesPaths)
+      const imagesPaths = req.body.firebaseUrls.filter((url) =>
+        url.match(/\.(jpeg|jpg|gif|png)$/i)
+      );
+      const filesPaths = req.body.firebaseUrls.filter(
+        (url) => !url.match(/\.(jpeg|jpg|gif|png)$/i)
+      );
+      console.log(imagesPaths);
+      console.log(filesPaths);
       if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }
@@ -35,47 +37,85 @@ const contributionController = {
         return res.status(403).json("File is required");
       }
       const cleanContent = sanitizeHtml(req.body.content, {
-        allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-          'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
-          'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img'],
+        allowedTags: [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "blockquote",
+          "p",
+          "a",
+          "ul",
+          "ol",
+          "nl",
+          "li",
+          "b",
+          "i",
+          "strong",
+          "em",
+          "strike",
+          "code",
+          "hr",
+          "br",
+          "div",
+          "table",
+          "thead",
+          "caption",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+          "pre",
+          "iframe",
+          "img",
+        ],
         allowedAttributes: {
-          a: ['href', 'name', 'target'],
-          img: ['src'],
-          iframe: ['src'],
-          div: ['class'],
+          a: ["href", "name", "target"],
+          img: ["src"],
+          iframe: ["src"],
+          div: ["class"],
         },
-        allowedSchemes: ['http', 'https'],
+        allowedSchemes: ["http", "https"],
         allowedSchemesByTag: {
-          img: ['data', 'http'],
-        }
+          img: ["data", "http"],
+        },
       });
+
+      const event = await Event.findById(req.body.eventID);
+      const profiles = await Profile.find({
+        facultyID: event.facultyId,
+      }).exec();
+
+      const userIds = profiles.map((profile) => profile.userID);
+      const marketingCoordinators = await User.find({
+        _id: { $in: userIds },
+        role: "marketing coordinator",
+      }).exec();
+      const emailAddresses = marketingCoordinators
+        .map((coordinator) => coordinator.email)
+        .join(",");
+      const Student = await Profile.findOne({userID: req.user.id});
+      if (!emailAddresses) {
+        return res
+          .status(500)
+          .json("This faculty doesn't have a Marketing Condinator");
+      }
       const newContribution = new Contribution({
         title: req.body.title,
         content: cleanContent,
         image: imagesPaths,
         file: filesPaths,
         userID: req.user.id,
-        eventID: req.body.eventID
+        eventID: req.body.eventID,
       });
       const contribution = await newContribution.save();
-      const event = await Event.findById(req.body.eventID);
-      const profiles = await Profile.find({ facultyID: event.facultyId }).exec();
-
-      const userIds = profiles.map(profile => profile.userID);
-      const marketingCoordinators = await User.find({
-        _id: { $in: userIds },
-        role: 'marketing coordinator'
-      }).exec();
-      const emailAddresses = marketingCoordinators.map(coordinator => coordinator.email).join(',')
-      const Student = await User.findById(req.user.id);
-      if (!emailAddresses) {
-        return res.status(500).json("Please set role for marketing coordinator");
-      }
       const mailOptions = {
         from: process.env.EMAIL,
         to: emailAddresses,
-        subject: 'New Submission',
-        html: `<p>Student<b> ${Student.userName} </b> submitted</p><br>`,
+        subject: `<b>New Submission</b>`,
+        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has been submitted</p><br>`,
       };
       await new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
@@ -96,17 +136,21 @@ const contributionController = {
     try {
       let query = { isPublic: true, eventID: req.params.id };
       const role = req.user.role;
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
         query = { eventID: req.params.id };
       }
       const contributions = await Contribution.find(query)
         .populate({
-          path: 'userID',
-          select: 'userName -_id'
+          path: "userID",
+          select: "userName -_id",
         })
         .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
+          path: "comments.userID",
+          select: "userName -_id",
         });
       res.status(200).json(contributions);
     } catch (error) {
@@ -117,7 +161,11 @@ const contributionController = {
     try {
       let query = { isPublic: true };
       const role = req.user.role;
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
         query = {};
       }
       const contributions = await Contribution.aggregate([
@@ -127,22 +175,22 @@ const contributionController = {
             from: "profiles",
             localField: "userID",
             foreignField: "userID",
-            as: "userProfile"
-          }
+            as: "userProfile",
+          },
         },
         {
           $unwind: {
             path: "$userProfile",
-            preserveNullAndEmptyArrays: true
-          }
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
             from: "events",
             localField: "eventID",
             foreignField: "_id",
-            as: "event"
-          }
+            as: "event",
+          },
         },
         {
           $project: {
@@ -157,12 +205,12 @@ const contributionController = {
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
-              avatar: "$userProfile.avatar"
+              avatar: "$userProfile.avatar",
             },
-            createdAt: 1
-          }
-        }
-      ])
+            createdAt: 1,
+          },
+        },
+      ]);
       // .populate({
       //   path: 'userID',
       //   select: 'userName -_id'
@@ -179,15 +227,15 @@ const contributionController = {
 
   getMyContribution: async (req, res) => {
     try {
-      const userID = req.user.id
+      const userID = req.user.id;
       const contribution = await Contribution.find({ userID: userID })
         .populate({
-          path: 'userID',
-          select: 'userName -_id'
+          path: "userID",
+          select: "userName -_id",
         })
         .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
+          path: "comments.userID",
+          select: "userName -_id",
         });
       if (!contribution) {
         return res.status(404).json({ message: "Contribution not found." });
@@ -203,22 +251,22 @@ const contributionController = {
       const contributions = await Contribution.aggregate([
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id)
-          }
+            _id: new mongoose.Types.ObjectId(req.params.id),
+          },
         },
         {
           $lookup: {
             from: "profiles",
             localField: "userID",
             foreignField: "userID",
-            as: "userProfile"
-          }
+            as: "userProfile",
+          },
         },
         {
           $unwind: {
             path: "$userProfile",
-            preserveNullAndEmptyArrays: true
-          }
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
@@ -228,13 +276,13 @@ const contributionController = {
               {
                 $match: {
                   $expr: {
-                    $in: ["$userID", "$$user_ids"]
-                  }
-                }
-              }
+                    $in: ["$userID", "$$user_ids"],
+                  },
+                },
+              },
             ],
-            as: "commentProfiles"
-          }
+            as: "commentProfiles",
+          },
         },
         {
           $addFields: {
@@ -251,16 +299,18 @@ const contributionController = {
                           $filter: {
                             input: "$commentProfiles",
                             as: "profile",
-                            cond: { $eq: ["$$profile.userID", "$$comment.userID"] }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                            cond: {
+                              $eq: ["$$profile.userID", "$$comment.userID"],
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
         },
         {
           $project: {
@@ -272,11 +322,11 @@ const contributionController = {
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
-              avatar: "$userProfile.avatar"
+              avatar: "$userProfile.avatar",
             },
-            comments: 1
-          }
-        }
+            comments: 1,
+          },
+        },
       ]);
 
       if (contributions.length === 0) {
@@ -292,19 +342,40 @@ const contributionController = {
     try {
       const contribution = await Contribution.findById(req.params.id);
       if (!contribution) {
-        return res.status(404).send('Contribution not found');
+        return res.status(404).send("Contribution not found");
       }
-      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
+      if (
+        req.user.id != contribution.userID &&
+        !(
+          req.user.role == "admin" ||
+          req.user.role == "marketing manager" ||
+          req.user.role == "marketing coordinator"
+        )
+      ) {
         return res.status(404).json("You do not have permission");
       }
 
-      const firebaseUrls = Array.isArray(req.body.firebaseUrls) ? req.body.firebaseUrls : [];
+      const firebaseUrls = Array.isArray(req.body.firebaseUrls)
+        ? req.body.firebaseUrls
+        : [];
 
-      const imagesPaths = firebaseUrls?.filter(url => url.match(/\.(jpeg|jpg|gif|png)$/i));
-      const filesPaths = firebaseUrls?.filter(url => !url.match(/\.(jpeg|jpg|gif|png)$/i));
+      const imagesPaths = firebaseUrls?.filter((url) =>
+        url.match(/\.(jpeg|jpg|gif|png)$/i)
+      );
+      const filesPaths = firebaseUrls?.filter(
+        (url) => !url.match(/\.(jpeg|jpg|gif|png)$/i)
+      );
 
-      const existingImages = req.body.image ? (Array.isArray(req.body.image) ? req.body.image : [req.body.image]) : [];
-      const existingFiles = req.body.file ? (Array.isArray(req.body.file) ? req.body.file : [req.body.file]) : [];
+      const existingImages = req.body.image
+        ? Array.isArray(req.body.image)
+          ? req.body.image
+          : [req.body.image]
+        : [];
+      const existingFiles = req.body.file
+        ? Array.isArray(req.body.file)
+          ? req.body.file
+          : [req.body.file]
+        : [];
 
       if (req.body.title === "") {
         return res.status(403).json("Title is not null");
@@ -323,12 +394,16 @@ const contributionController = {
         return res.status(403).json("File is required");
       }
 
-      const updatedContribution = await Contribution.findByIdAndUpdate(req.params.id, {
-        title: req.body.title,
-        content: req.body.content,
-        image: updatedImages.length > 0 ? updatedImages : [],
-        file: updatedFiles.length > 0 ? updatedFiles : []
-      }, { new: true });
+      const updatedContribution = await Contribution.findByIdAndUpdate(
+        req.params.id,
+        {
+          title: req.body.title,
+          content: req.body.content,
+          image: updatedImages.length > 0 ? updatedImages : [],
+          file: updatedFiles.length > 0 ? updatedFiles : [],
+        },
+        { new: true }
+      );
 
       res.status(200).json(updatedContribution);
     } catch (error) {
@@ -338,15 +413,22 @@ const contributionController = {
   },
   deleteContribution: async (req, res) => {
     try {
-      const contribution = await Contribution.findById(req.params.id)
+      const contribution = await Contribution.findById(req.params.id);
       if (!contribution) {
         return res.status(404).json("contribution not found");
       }
-      if (req.user.id != contribution.userID && !(req.user.role == 'admin' || req.user.role == 'marketing manager' || req.user.role == 'marketing coordinator')) {
+      if (
+        req.user.id != contribution.userID &&
+        !(
+          req.user.role == "admin" ||
+          req.user.role == "marketing manager" ||
+          req.user.role == "marketing coordinator"
+        )
+      ) {
         return res.status(404).json("You do not have permission");
       }
-      await Contribution.findByIdAndDelete(req.params.id)
-      res.status(200).json("Delete Successfully")
+      await Contribution.findByIdAndDelete(req.params.id);
+      res.status(200).json("Delete Successfully");
     } catch (error) {
       res.status(500).json(error);
     }
@@ -356,7 +438,11 @@ const contributionController = {
       const keyword = req.body.keyword;
       const role = req.user.role;
       let query = { title: new RegExp(keyword, "i"), isPublic: true };
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
         query = { title: new RegExp(keyword, "i") };
       }
       const contributions = await Contribution.aggregate([
@@ -366,22 +452,22 @@ const contributionController = {
             from: "profiles",
             localField: "userID",
             foreignField: "userID",
-            as: "userProfile"
-          }
+            as: "userProfile",
+          },
         },
         {
           $unwind: {
             path: "$userProfile",
-            preserveNullAndEmptyArrays: true
-          }
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
             from: "events",
             localField: "eventID",
             foreignField: "_id",
-            as: "event"
-          }
+            as: "event",
+          },
         },
         {
           $project: {
@@ -396,20 +482,20 @@ const contributionController = {
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
-              avatar: "$userProfile.avatar"
+              avatar: "$userProfile.avatar",
             },
-            createdAt: 1
-          }
-        }
-      ])
-        // .populate({
-        //   path: 'userID',
-        //   select: 'userName -_id'
-        // })
-        // .populate({
-        //   path: 'comments.userID',
-        //   select: 'userName -_id'
-        // });
+            createdAt: 1,
+          },
+        },
+      ]);
+      // .populate({
+      //   path: 'userID',
+      //   select: 'userName -_id'
+      // })
+      // .populate({
+      //   path: 'comments.userID',
+      //   select: 'userName -_id'
+      // });
       return res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json(error);
@@ -419,10 +505,20 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
-      const users = await User.find({ userName: new RegExp(keyword, "i") }).select('_id');
-      const userIds = users.map(user => user._id);
-      let query = { userID: { $in: userIds }, isPublic: true, eventID: req.cookies.eventId };
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
+      const users = await User.find({
+        userName: new RegExp(keyword, "i"),
+      }).select("_id");
+      const userIds = users.map((user) => user._id);
+      let query = {
+        userID: { $in: userIds },
+        isPublic: true,
+        eventID: req.cookies.eventId,
+      };
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
         query = { userID: { $in: userIds }, eventID: req.cookies.eventId };
       }
       const contributions = await Contribution.aggregate([
@@ -432,22 +528,22 @@ const contributionController = {
             from: "profiles",
             localField: "userID",
             foreignField: "userID",
-            as: "userProfile"
-          }
+            as: "userProfile",
+          },
         },
         {
           $unwind: {
             path: "$userProfile",
-            preserveNullAndEmptyArrays: true
-          }
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
             from: "events",
             localField: "eventID",
             foreignField: "_id",
-            as: "event"
-          }
+            as: "event",
+          },
         },
         {
           $project: {
@@ -462,11 +558,11 @@ const contributionController = {
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
-              avatar: "$userProfile.avatar"
+              avatar: "$userProfile.avatar",
             },
-            createdAt: 1
-          }
-        }
+            createdAt: 1,
+          },
+        },
       ]);
 
       return res.status(200).json(contributions);
@@ -476,44 +572,142 @@ const contributionController = {
   },
   filterContributionDesc: async (req, res) => {
     try {
+      let query = { isPublic: true };
       const role = req.user.role;
-      let query = { isPublic: true, eventID: req.cookies.eventId };
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
+        query = {};
       }
-      const contributions = await Contribution.find(query)
-        .sort({ createdAt: -1 })
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
-      return res.status(200).json(contributions);
+
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event",
+          },
+        },
+        {
+          $unwind: {
+            path: "$event",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            createdAt: 1,
+          },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]);
+
+      res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json(error);
     }
   },
   filterContributionAsc: async (req, res) => {
     try {
+      let query = { isPublic: true };
       const role = req.user.role;
-      let query = { isPublic: true, eventID: req.cookies.eventId };
-      if (role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') {
-        query = { eventID: req.cookies.eventId };
+
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
+        query = {};
       }
-      const contributions = await Contribution.find(query)
-        .sort({ createdAt: 1 })
-        .populate({
-          path: 'userID',
-          select: 'userName -_id'
-        })
-        .populate({
-          path: 'comments.userID',
-          select: 'userName -_id'
-        });
-      return res.status(200).json(contributions);
+
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event",
+          },
+        },
+        {
+          $unwind: {
+            path: "$event",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            createdAt: 1,
+          },
+        },
+        {
+          $sort: { createdAt: 1 },
+        },
+      ]);
+
+      res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -528,15 +722,19 @@ const contributionController = {
       contributionId,
       { isPublic: true },
       { new: true }
-    ).populate({
-      path: 'userID',
-      select: 'userName -_id'
-    }).populate({
-      path: 'comments.userID',
-      select: 'userName -_id'
-    });
+    )
+      .populate({
+        path: "userID",
+        select: "userName -_id",
+      })
+      .populate({
+        path: "comments.userID",
+        select: "userName -_id",
+      });
     if (!updatedContribution) {
-      return res.status(404).json({ message: "Unable to publish contribution." });
+      return res
+        .status(404)
+        .json({ message: "Unable to publish contribution." });
     }
     res.status(200).json(updatedContribution);
   },
@@ -544,10 +742,14 @@ const contributionController = {
     try {
       const contributionId = req.params.id;
       const userId = req.user.id;
-      const user = await Profile.findOne({ userID: userId })
+      const user = await Profile.findOne({ userID: userId });
 
       if (!user.firstName || !user.lastName || !user.avatar) {
-        return res.status(403).json({ message: "You need to set your name and your avatar before comment" })
+        return res
+          .status(403)
+          .json({
+            message: "You need to set your name and your avatar before comment",
+          });
       }
 
       const commentContent = req.body.comment;
@@ -561,15 +763,23 @@ const contributionController = {
       var targetDate = new Date(contributionDate);
       targetDate.setDate(targetDate.getDate() + 14);
       if (currentDate.getTime() > targetDate.getTime()) {
-        return res.status(403).json({ message: "You cannot comment because the contribution is expired" });
+        return res
+          .status(403)
+          .json({
+            message: "You cannot comment because the contribution is expired",
+          });
       }
       const newComment = {
         comment: commentContent,
-        userID: userId
+        userID: userId,
       };
-      var contribution = await Contribution.findByIdAndUpdate(contributionId, {
-        $push: { comments: newComment }
-      }, { new: true });
+      var contribution = await Contribution.findByIdAndUpdate(
+        contributionId,
+        {
+          $push: { comments: newComment },
+        },
+        { new: true }
+      );
 
       res.status(200).json(contribution);
     } catch (error) {
@@ -586,37 +796,40 @@ const contributionController = {
       const allFaculties = await Faculty.find();
 
       let totalContributions = 0;
-      const facultyStats = await Promise.all(allFaculties.map(async (faculty) => {
-        const events = await Event.find({ facultyId: faculty._id });
-        let numberOfContributions = 0;
-        let numberOfContributors = new Set();
+      const facultyStats = await Promise.all(
+        allFaculties.map(async (faculty) => {
+          const events = await Event.find({ facultyId: faculty._id });
+          let numberOfContributions = 0;
+          let numberOfContributors = new Set();
 
-        for (let event of events) {
-          const contributions = await Contribution.find({
-            eventID: event._id,
-            createdAt: { $gte: startDate, $lte: endDate }
-          });
-          contributions.forEach(contribution => {
-            numberOfContributions++;
-            numberOfContributors.add(contribution.userID.toString());
-          });
-        }
+          for (let event of events) {
+            const contributions = await Contribution.find({
+              eventID: event._id,
+              createdAt: { $gte: startDate, $lte: endDate },
+            });
+            contributions.forEach((contribution) => {
+              numberOfContributions++;
+              numberOfContributors.add(contribution.userID.toString());
+            });
+          }
 
-        totalContributions += numberOfContributions;
-        return {
-          facultyName: faculty.facultyName,
-          numberOfContributions,
-          numberOfContributors: numberOfContributors.size
-        };
-      }));
+          totalContributions += numberOfContributions;
+          return {
+            facultyName: faculty.facultyName,
+            numberOfContributions,
+            numberOfContributors: numberOfContributors.size,
+          };
+        })
+      );
 
-      const statistics = facultyStats.map(faculty => {
-        const percentage = (totalContributions > 0)
-          ? (faculty.numberOfContributions / totalContributions * 100)
-          : 0;
+      const statistics = facultyStats.map((faculty) => {
+        const percentage =
+          totalContributions > 0
+            ? (faculty.numberOfContributions / totalContributions) * 100
+            : 0;
         return {
           ...faculty,
-          contributionPercentage: isNaN(percentage) ? 0 : percentage
+          contributionPercentage: isNaN(percentage) ? 0 : percentage,
         };
       });
 
@@ -631,9 +844,9 @@ const contributionController = {
       const noComments = await Contribution.aggregate([
         {
           $match: {
-            comments: { $size: 0 }
-          }
-        }
+            comments: { $size: 0 },
+          },
+        },
       ]);
       const noCommentsAfter14Days = await Contribution.aggregate([
         {
@@ -641,21 +854,26 @@ const contributionController = {
             $expr: {
               $and: [
                 { $eq: [{ $size: "$comments" }, 0] },
-                { $lt: ["$createdAt", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)] }
-              ]
-            }
-          }
-        }
+                {
+                  $lt: [
+                    "$createdAt",
+                    new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+                  ],
+                },
+              ],
+            },
+          },
+        },
       ]);
 
       res.status(200).json({
         noComments,
-        noCommentsAfter14Days
+        noCommentsAfter14Days,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
+  },
 };
 
 module.exports = contributionController;

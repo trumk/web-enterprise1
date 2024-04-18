@@ -77,12 +77,18 @@ import {
   deleteEventFailed,
 } from "./eventSlice";
 import {
+  ascSortFailed,
+  ascSortStart,
+  ascSortSuccess,
   commentFailed,
   commentStart,
   commentSuccess,
   deleteContributionFailed,
   deleteContributionStart,
   deleteContributionSuccess,
+  descSortFailed,
+  descSortStart,
+  descSortSuccess,
   editContributionFailed,
   editContributionStart,
   editContributionSuccess,
@@ -114,7 +120,7 @@ import {
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-const BACKEND_URL = "http://localhost:5503";
+const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -714,6 +720,36 @@ export const searchContribution = (searchTerm, accessToken) => async (dispatch) 
     dispatch(searchContributionSuccess(response.data));
   } catch (error) {
     dispatch(searchContributionFailed(error.message));
+    console.log(error)
+  }
+};
+
+export const sortAsc = (accessToken) => async (dispatch) => {
+  dispatch(ascSortStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/asc`, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(ascSortSuccess(response.data));
+  } catch (error) {
+    dispatch(ascSortFailed(error.message));
+    console.log(error)
+  }
+};
+
+export const sortDesc = (accessToken) => async (dispatch) => {
+  dispatch(descSortStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/contribution/sort/desc`, {
+      headers: {
+        token: `Bearer ${accessToken}`, 
+      },
+    });
+    dispatch(descSortSuccess(response.data));
+  } catch (error) {
+    dispatch(descSortFailed(error.message));
     console.log(error)
   }
 };

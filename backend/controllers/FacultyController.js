@@ -1,31 +1,41 @@
 const mongoose = require("mongoose");
 const Faculty = require("../models/Faculty")
 const Profile = require("../models/Profile")
+const User = require("../models/User")
 
-function createFaculty(req, res) {
-  const faculty = new Faculty({
-    facultyName: req.body.facultyName,
-    enrollKey : req.body.enrollKey,
-    descActive: req.body.descActive,
-  });
-  return faculty
-    .save()
-    .then((newFaculty) => {
-      return res.status(200).json({
-        success: true,
-        message: 'new Faculty created successfully',
-        Faculty: newFaculty,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error. Please try again',
-        error: error.message,
-      });
+async function createFaculty(req, res) {
+  try {
+    const faculty = new Faculty({
+      facultyName: req.body.facultyName,
+      enrollKey: req.body.enrollKey,
+      descActive: req.body.descActive,
     });
-};
+    const newFaculty = await faculty.save();
+    const user = await User.findByIdAndUpdate(
+      req.body.userID,
+      { role: "marketing coordinator" },
+      { new: true }
+    );
+    await Profile.findOneAndUpdate(
+      { userID: user._id },
+      { facultyID: newFaculty._id }
+    );
+    res.status(200).json({
+      success: true,
+      message: 'New Faculty created successfully',
+      Faculty: newFaculty,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again',
+      error: error.message,
+    });
+  }
+}
+
+
 function getAllFaculty(req, res) {
   Faculty.find() //to retrieve all Facultys from the database.
     .select('facultyName descActive') //properties
@@ -44,6 +54,28 @@ function getAllFaculty(req, res) {
       });
     });
 };
+
+async function getFacultyManager(req, res) {
+  profile = await Profile.findOne({userID: req.user.id})
+
+  await Faculty.findById(profile.facultyID)
+    .select('facultyName descActive') //properties
+    .then((allFaculty) => {
+      return res.status(200).json({
+        success: true,
+        message: ' Faculty',
+        Faculty: allFaculty,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
+
 async function searchFaculty(req, res) {
   try {
     const keyword = req.body.keyword;
@@ -239,6 +271,7 @@ module.exports = {
   getAllFaculty,
   getOneFaculty,
   searchFaculty,
-  enrollStudent
+  enrollStudent,
+  getFacultyManager
   
 };

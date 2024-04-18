@@ -3,7 +3,7 @@ import NavbarDefault from '../../../components/navbar';
 import DefaultSidebar from '../../../components/sidebar';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllContributions, searchContribution } from '../../../redux/apiRequest';
-import { Badge, Button, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
+import { Badge, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
@@ -19,7 +19,6 @@ export const Contribution = () => {
     const contributionsPerPage = 4
     const displayList = searchTerm !== "" ? filterContribution : contributions;
     const currentItems = displayList?.slice((currentPage - 1) * contributionsPerPage, currentPage * contributionsPerPage);
-
 
     useEffect(() => {
         if (user) {
@@ -47,7 +46,7 @@ export const Contribution = () => {
                     <div className="flex items-center gap-2 mt-2">
                         <Input
                             type="text"
-                            placeholder="Search contributions..."
+                            label="Search contributions..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-1/3 mb-4"

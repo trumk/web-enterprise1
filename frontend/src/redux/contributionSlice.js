@@ -53,7 +53,17 @@ const contributionSlice = createSlice({
       exceptionContributions: null,
       isFetching: false,
       error: false,
-    }
+    },
+    ascSort: {
+      sortedContribution: null,
+      isFetching: false,
+      error: false,
+    },
+    descSort: {
+      sortedContribution: null,
+      isFetching: false,
+      error: false,
+    },
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -185,6 +195,33 @@ const contributionSlice = createSlice({
       state.exception.isFetching = false;
       state.exception.error = true;
     },
+    ascSortStart: (state) => {
+      state.ascSort.isFetching = true;
+      state.ascSort.error = false;
+    },
+    ascSortSuccess: (state, action) => {
+      state.ascSort.isFetching = false;
+      state.ascSort.sortedContribution = action.payload;
+      state.ascSort.error = false;
+    },
+    ascSortFailed: (state, action) => {
+      state.ascSort.isFetching = false;
+      state.ascSort.error = action.payload;
+    },
+
+    descSortStart: (state) => {
+      state.descSort.isFetching = true;
+      state.descSort.error = false;
+    },
+    descSortSuccess: (state, action) => {
+      state.descSort.isFetching = false;
+      state.descSort.sortedContribution = action.payload;
+      state.descSort.error = false;
+    },
+    descSortFailed: (state, action) => {
+      state.descSort.isFetching = false;
+      state.descSort.error = action.payload;
+    },
   },
 });
 export const {
@@ -218,8 +255,17 @@ export const {
   searchContributionStart,
   searchContributionSuccess,
   searchContributionFailed,
+  searchByNameStart,
+  searchByNameSuccess,
+  searchByNameFailed,
   getExceptionStart,
   getExceptionSuccess,
   getExceptionFailed,
+  ascSortStart,
+  ascSortSuccess,
+  ascSortFailed,
+  descSortStart,
+  descSortSuccess,
+  descSortFailed
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
