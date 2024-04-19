@@ -3,7 +3,11 @@ import NavbarDefault from '../../../components/navbar';
 import DefaultSidebar from '../../../components/sidebar';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllContributions, searchContribution } from '../../../redux/apiRequest';
+<<<<<<< Updated upstream
 import { Badge, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
+=======
+import { Badge, Button, Card, CardFooter, Chip, Input, Typography } from "@material-tailwind/react";
+>>>>>>> Stashed changes
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
@@ -125,9 +129,10 @@ export const Contribution = () => {
                                                     )}
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50">
-                                                    <Badge
-                                                        className='w-[100px]'
-                                                        content={contribution.isPublic ? "Published" : "Not Published"}
+                                                    <Chip
+                                                    className={contribution.isPublic ? "w-24" : "w-32"}
+                                                        variant="outlined"
+                                                        value={contribution.isPublic ? "Published" : "Not Published"}
                                                         color={contribution.isPublic ? "green" : "red"}
                                                     />
                                                 </td>
@@ -137,7 +142,7 @@ export const Contribution = () => {
                                                         color="blue-gray"
                                                         className="font-normal"
                                                     >
-                                                        {contribution?.author?.firstName} {contribution?.author?.lastName}
+                                                        {contribution?.author?.firstName} {contribution?.author.lastName}
                                                     </Typography>
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50 w-20">
