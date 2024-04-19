@@ -66,7 +66,7 @@ export default function NavbarDefault() {
       label: "All Contributions",
     },
     {
-      href: "/",
+      href: "/dashboard",
       icon: Users,
       label: "Faculty",
     },
@@ -167,8 +167,10 @@ export default function NavbarDefault() {
       navigate('/admin/user')
     } else if (user?.role === 'marketing manager') {
       navigate('/marketingManager')
+    } else if (user?.role === 'marketing coordinator'){
+      navigate('/marketingCoordinator')
     } else {
-      navigate('/')
+      navigate('/dashboard')
     }
   }
   const profile = useSelector((state) => state.user.user?.user);

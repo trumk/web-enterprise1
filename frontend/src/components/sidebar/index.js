@@ -24,7 +24,7 @@ export default function DefaultSidebar() {
       label: "All Contributions",
     },
     {
-      href: "/",
+      href: "/dashboard",
       icon: Users,
       label: "Faculty",
     },
