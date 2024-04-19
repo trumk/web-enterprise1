@@ -41,6 +41,9 @@ export const User = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
+          <Typography variant="h3" className="mb-5">
+            Users
+          </Typography>
           <Card className="h-full w-full">
             <table className="w-full min-w-max table-auto text-left">
               <thead>

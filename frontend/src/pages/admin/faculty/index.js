@@ -49,9 +49,11 @@ export const Faculty = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
+        <Link to="/admin/faculty/add">
           <Button className="mt-2.5 mb-2.5">
-            <Link to="/admin/faculty/add">Create new</Link>
+            Create new
           </Button>
+          </Link>
           <div className="flex items-center gap-2">
             <Input
               type="text"

@@ -23,8 +23,8 @@ export const ContributionsDashboard = () => {
     const filterContribution = useSelector(
         (state) => state.contribution.searchContribution?.filterContribution
     );
-    const descContribution = useSelector((state) => state.contribution?.descSort.sortedContribution)
-    const ascContribution = useSelector((state) => state.contribution?.ascSort.sortedContribution)
+    const descContribution = useSelector((state) => state.contribution?.descSort?.sortedContribution)
+    const ascContribution = useSelector((state) => state.contribution?.ascSort?.sortedContribution)
     const dispatch = useDispatch();
     useEffect(() => {
         if (user) {
