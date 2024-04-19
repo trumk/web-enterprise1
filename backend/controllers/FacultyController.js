@@ -35,76 +35,24 @@ async function createFaculty(req, res) {
   }
 }
 
-async function getAllFaculty(req, res) {
-  // try {
-  //   const faculties = await Faculty.find().select('facultyName descActive marketingCoordinator').populate('marketingCoordinator');
-  //   const facultiesWithCoordinator = await Promise.all(faculties.map(async (faculty) => {
-  //     const profile = await Profile.findOne({ facultyID: faculty._id });
-  //     if (profile) {
-  //       const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
-  //       return {
-  //         ...faculty._doc,
-  //         marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
-  //       };
-  //     }
-  //   }));
-  //   res.status(200).json({
-  //     success: true,
-  //     message: ' all Faculty',
-  //     Faculty: facultiesWithCoordinator,
-  //   });
-  // } catch (error) {
-  //   res.status(500).json({
-  //     success: false,
-  //     message: 'Server error. Please try again',
-  //     error: error.message,
-  //   });
-  // }
-  try {
-    // Lấy thông tin về tất cả các khoa học viện
-    const faculties = await Faculty.find({}, { _id: 1, facultyName: 1, enrollKey: 1, descActive: 1 });
-  
-    // Lấy danh sách id của tất cả các khoa học viện
-    const facultyIds = faculties.map(faculty => faculty._id);
-  
-    // Lấy thông tin về người phụ trách marketing từ collection User
-    const marketingCoordinators = await Profile.find(
-      { facultyID: { $in: facultyIds } }, 
-      { userID: 1 }
-    ).populate({
-      path: 'userID',
-      select: '_id userName',
-      match: { role: 'marketing coordinator' }
+function getAllFaculty(req, res) {
+  Faculty.find() //to retrieve all Facultys from the database.
+    .select('facultyName descActive') //properties
+    .then((allFaculty) => {
+      return res.status(200).json({
+        success: true,
+        message: ' all Faculty',
+        Faculty: allFaculty,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
     });
-  
-    // Tạo kết quả cuối cùng với thông tin về người phụ trách marketing
-    const result = faculties.map(faculty => {
-      const coordinator = marketingCoordinators.find(coordinator => coordinator.facultyID?.toString() === faculty._id.toString());
-      return {
-        _id: faculty._id,
-        facultyName: faculty.facultyName,
-        enrollKey: faculty.enrollKey,
-        descActive: faculty.descActive,
-        marketingCoordinator: coordinator ? { _id: coordinator.userID._id, userName: coordinator.userID.userName } : null
-      };
-    });
-  
-    res.status(200).json({
-      success: true,
-      message: 'All Faculty',
-      Faculty: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again',
-      error: error.message,
-    });
-  }
-  
-  
-}
-
+};
 async function getFacultyManager(req, res) {
   profile = await Profile.findOne({ userID: req.user.id })
 
