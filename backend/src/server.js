@@ -34,7 +34,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const __dirname = path.resolve();
+
 
 app.use(cors());
 app.use(cookieParser())
@@ -55,10 +55,9 @@ app.use("/contribution", contributionRouter);
 
 app.use(express.static(path.join(__dirname,"")))
 
-app.use(express.static(path.join(__dirname, '../../frontend/build')));
-
+app.use(express.static(path.join(__dirname, '../../../frontend/dist')));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../../../frontend/dist/index.html'));
 });
 
 const hostname = 'localhost'
