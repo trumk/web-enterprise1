@@ -13,7 +13,7 @@ import NavbarDefault from '../../components/navbar';
 import DefaultSidebar from '../../components/sidebar';
 import { getContributionsByUser, removeContribution } from '../../redux/apiRequest';
 import { Link } from 'react-router-dom';
-import { Info, Settings, Trash } from 'lucide-react';
+import { Book, Info, Settings, Trash } from 'lucide-react';
 
 export const MyContributionPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -142,7 +142,8 @@ export const MyContributionPage = () => {
                             </td>
                             <td className="p-4 border-b border-blue-gray-50 w-20">
                               <div className="flex gap-2 items-center">
-                                <IconButton variant="gradient" color="amber"><Link to={`/userContribution/${contribution._id}/edit`}> <Settings/> </Link></IconButton>
+                                <Link to={`/myContribution/${contribution._id}/detail`}><IconButton variant="gradient" color="blue"><Book/></IconButton></Link>
+                                <Link to={`/myContribution/${contribution._id}/edit`}><IconButton variant="gradient" color="amber"> <Settings/> </IconButton></Link>
                                 <IconButton color="red" onClick={()=> handleDelete(contribution._id)}> <Trash /> </IconButton>
                               </div>
                             </td>

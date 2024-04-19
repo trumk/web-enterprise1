@@ -11,7 +11,7 @@ import { Editor } from '../../../../../../components/manage/editor'
 import { ImageUp, X, FileUp, File } from 'lucide-react';
 import { postContribution } from '../../../../../../redux/apiRequest'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Term } from '../../../../../Term'
 
 export const SubmitContribution = () => {
@@ -24,7 +24,6 @@ export const SubmitContribution = () => {
 
   const { facultyId, eventId } = useParams();
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const faculty = useSelector((state) => state.faculty.faculty.currentFaculty);
   const event = useSelector((state) => state.event.event?.currentEvent);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -87,6 +86,7 @@ export const SubmitContribution = () => {
     dispatch(postContribution(contribution, user.accessToken, handleSuccess));
   }
   const handleAccept = () => {
+    setIsTermOpen(false);
     navigate(`/faculty/${facultyId}/event/${eventId}`);
   }
   return (
@@ -95,6 +95,7 @@ export const SubmitContribution = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full h-full">
+          <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button>Back</Button></Link>
           <Typography variant='h4' className='text-center'>
             Post New Contribution
           </Typography>

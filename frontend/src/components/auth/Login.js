@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Input from "./form-input";
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/apiRequest';
-import { ToastContainer, toast } from "react-toastify";
 
 const fields=loginFields;
 let fieldsState = {};
@@ -40,7 +39,7 @@ export default function Login(){
             } else if (currentUser.role === "marketing manager") {
                 navigate("/marketingManager")
             } else{
-                navigate("/")
+                navigate("/dashboard")
             }
         }
     }, [currentUser, navigate]);
