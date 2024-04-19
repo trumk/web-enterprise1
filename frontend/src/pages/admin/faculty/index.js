@@ -54,7 +54,9 @@ export const Faculty = () => {
             Create new
           </Button>
           </Link>
+          <Typography variant="h3" className="mb-2">Faculties</Typography>
           <div className="flex items-center gap-2">
+            
             <Input
               type="text"
               placeholder="Search faculty..."

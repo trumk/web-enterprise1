@@ -43,6 +43,7 @@ export const Contribution = () => {
             <div className="flex">
                 <DefaultSidebar />
                 <div className='ml-5 w-full'>
+                <Typography variant="h3" className="mb-2">Contributions</Typography>
                     <div className="flex items-center gap-2 mt-2">
                         <Input
                             type="text"
