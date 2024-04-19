@@ -35,8 +35,8 @@ app.use(bodyParser.json());
 
 
 app.use(cors({
-  // origin: 'https://okvkiu.onrender.com',
-  // credentials: true,
+  origin: 'https://okvkiu.onrender.com',
+  credentials: true,
 }));
 app.use(cookieParser())
 app.use(express.json())
@@ -58,8 +58,8 @@ app.use("/contribution", contributionRouter);
 
 
 const hostname = 'localhost'
-const port = 5503
+const port = process.env.PORT || 8000;
 
-app.listen(5503, () => {
+app.listen(port, () => {
     console.log(`hello nxt, server http://${hostname}:${port}/`)
   })
