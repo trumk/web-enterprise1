@@ -21,9 +21,9 @@ export const ReadContributionDashboard = () => {
   const indexOfLastComment = currentPage * commentsPerPage;
   const indexOfFirstComment = indexOfLastComment - commentsPerPage;
   const currentComments = comments?.slice(indexOfFirstComment, indexOfLastComment);
-  const sortedComments = currentComments.sort((a, b) => {
-    if (a.userProfile.user.role === 'marketing coordinator') return -1;
-    if (b.userProfile.user.role === 'marketing coordinator') return 1;
+  const sortedComments = currentComments?.sort((a, b) => {
+    if (a.userProfile?.user.role === 'marketing coordinator') return -1;
+    if (b.userProfile?.user.role === 'marketing coordinator') return 1;
     return 0;
   });
   const paginate = pageNumber => setCurrentPage(pageNumber);
@@ -45,7 +45,7 @@ export const ReadContributionDashboard = () => {
   };
   const images = contribution?.image.map(image => ({ img: image }))
   const [active, setActive] = useState(images?.img);
-  console.log(comments[1].userProfile.user.role)
+  // console.log(comments[1].userProfile?.user.role)
   return (
     <>
       <NavbarDefault />
@@ -53,6 +53,7 @@ export const ReadContributionDashboard = () => {
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
           <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+          <Link to={`/contributions`}><Button variant='outlined'>Back to Dashboard</Button></Link>
             <header className="mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
@@ -134,13 +135,13 @@ export const ReadContributionDashboard = () => {
 
               {sortedComments?.map((comment) => (
                 <article 
-                className={`p-6 mb-6 text-base rounded-md border-t dark:border-gray-700 ${comment.userProfile.user.role === 'marketing coordinator' ? 'bg-yellow-100 dark:bg-yellow-600' : 'bg-white dark:bg-gray-900'}`}
+                className={`p-6 mb-6 text-base rounded-md border-t dark:border-gray-700 ${comment.userProfile?.user.role === 'marketing coordinator' ? 'bg-yellow-100 dark:bg-yellow-600' : 'bg-white dark:bg-gray-900'}`}
               >
                   <footer className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                       <p className="inline-flex items-center mr-3 font-semibold text-sm text-gray-900 dark:text-white">
-                        <Avatar className="mr-2 w-6 h-6 rounded-full" src={comment.userProfile.avatar} alt={comment.userID} />
-                        {comment.userProfile.firstName} {comment.userProfile.lastName} {comment.userProfile.user.role === "marketing coordinator" ? "(Marketing Coordinator)" : ""}
+                        <Avatar className="mr-2 w-6 h-6 rounded-full" src={comment.userProfile?.avatar} alt={comment.userID} />
+                        {comment.userProfile?.firstName} {comment.userProfile?.lastName} {comment.userProfile?.user.role === "marketing coordinator" ? "(Marketing Coordinator)" : ""}
                       </p>
                     </div>
                   </footer>

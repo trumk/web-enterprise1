@@ -87,7 +87,7 @@ const AddFaculty = () => {
             </div>
             <div className="mb-4">
               <label className="block text-md font-medium text-gray-700">
-                Description:
+                Set Marketing Coordinator
               </label>
               <select
                 type="text"
