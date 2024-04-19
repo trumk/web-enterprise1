@@ -35,28 +35,78 @@ async function createFaculty(req, res) {
   }
 }
 
-
-function getAllFaculty(req, res) {
-  Faculty.find() //to retrieve all Facultys from the database.
-    .select('facultyName descActive') //properties
-    .then((allFaculty) => {
-      return res.status(200).json({
-        success: true,
-        message: ' all Faculty',
-        Faculty: allFaculty,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        success: false,
-        message: 'Server error. Please try again.',
-        error: err.message,
-      });
+async function getAllFaculty(req, res) {
+  // try {
+  //   const faculties = await Faculty.find().select('facultyName descActive marketingCoordinator').populate('marketingCoordinator');
+  //   const facultiesWithCoordinator = await Promise.all(faculties.map(async (faculty) => {
+  //     const profile = await Profile.findOne({ facultyID: faculty._id });
+  //     if (profile) {
+  //       const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+  //       return {
+  //         ...faculty._doc,
+  //         marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+  //       };
+  //     }
+  //   }));
+  //   res.status(200).json({
+  //     success: true,
+  //     message: ' all Faculty',
+  //     Faculty: facultiesWithCoordinator,
+  //   });
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success: false,
+  //     message: 'Server error. Please try again',
+  //     error: error.message,
+  //   });
+  // }
+  try {
+    // Lấy thông tin về tất cả các khoa học viện
+    const faculties = await Faculty.find({}, { _id: 1, facultyName: 1, enrollKey: 1, descActive: 1 });
+  
+    // Lấy danh sách id của tất cả các khoa học viện
+    const facultyIds = faculties.map(faculty => faculty._id);
+  
+    // Lấy thông tin về người phụ trách marketing từ collection User
+    const marketingCoordinators = await Profile.find(
+      { facultyID: { $in: facultyIds } }, 
+      { userID: 1 }
+    ).populate({
+      path: 'userID',
+      select: '_id userName',
+      match: { role: 'marketing coordinator' }
     });
-};
+  
+    // Tạo kết quả cuối cùng với thông tin về người phụ trách marketing
+    const result = faculties.map(faculty => {
+      const coordinator = marketingCoordinators.find(coordinator => coordinator.facultyID?.toString() === faculty._id.toString());
+      return {
+        _id: faculty._id,
+        facultyName: faculty.facultyName,
+        enrollKey: faculty.enrollKey,
+        descActive: faculty.descActive,
+        marketingCoordinator: coordinator ? { _id: coordinator.userID._id, userName: coordinator.userID.userName } : null
+      };
+    });
+  
+    res.status(200).json({
+      success: true,
+      message: 'All Faculty',
+      Faculty: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again',
+      error: error.message,
+    });
+  }
+  
+  
+}
 
 async function getFacultyManager(req, res) {
-  profile = await Profile.findOne({userID: req.user.id})
+  profile = await Profile.findOne({ userID: req.user.id })
 
   await Faculty.findById(profile.facultyID)
     .select('facultyName descActive') //properties
@@ -76,33 +126,37 @@ async function getFacultyManager(req, res) {
     });
 };
 
+
 async function searchFaculty(req, res) {
   try {
     const keyword = req.body.keyword;
     const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
       .select('facultyName descActive');
-
-    if (faculties.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Not found'
-      });
-    }
-
-    return res.status(200).json({
+    const facultiesWithCoordinator = await Promise.all(faculties.map(async (faculty) => {
+      const profile = await Profile.findOne({ facultyID: faculty._id });
+      if (profile) {
+        const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+        return {
+          ...faculty._doc,
+          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+        };
+      }
+    }));
+    res.status(200).json({
       success: true,
-      message: 'Faculties found',
-      faculties: faculties
+      message: 'Search results',
+      Faculty: facultiesWithCoordinator,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server error. Please try again.',
-      error: err.message
+      message: 'Server error. Please try again',
+      error: error.message,
     });
   }
 }
+
+
 async function getOneFaculty(req, res) {
   const id = req.params.id;
   res.cookie("facultyId", id, {
@@ -116,21 +170,30 @@ async function getOneFaculty(req, res) {
   const role = req.user.role;
 
   if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== id) {
-
     return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
   }
   Faculty.findById(id)
-    .then(faculty => {
+    .then(async (faculty) => {
       if (!faculty) {
         return res.status(404).json({
           success: false,
           message: 'Faculty not found with ID: ' + id,
         });
       }
+      const profile = await Profile.findOne({ facultyID: faculty._id });
+      if (!profile) return res.status(200).json({
+        success: true,
+        message: 'Faculty',
+        Faculty: faculty,
+      });
+      const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
       res.status(200).json({
         success: true,
-        message: 'Faculty found',
-        Faculty: faculty,
+        message: 'Faculty',
+        Faculty: {
+          ...faculty._doc,
+          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+        },
       });
     })
     .catch(err => {
@@ -142,48 +205,36 @@ async function getOneFaculty(req, res) {
     });
 };
 
-
-async function searchFaculty(req, res) {
-  try {
-    var keyword= req.body.keyword;
-    const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
-      .select('facultyName descActive');
-
-    if (faculties.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Not found'
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Faculties found',
-      faculties: faculties
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again.',
-      error: err.message
-    });
-  }
-}
-
-
-
-function updateFaculty(req, res) {
+async function updateFaculty(req, res) {
   const id = req.params.facultyId;
   const updateObject = req.body; //update data from the request body as json, contain field edit
-  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey) {
+  const userID = req.body.userID;
+  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey || !userID) {
     return res.status(400).json({
       success: false,
       message: 'Missing required fields'
     });
   }
-  // update query using mongo
-  Faculty.updateOne({ _id: id }, { $set: updateObject })  //to retrieve id, set object update operation with request body 
+  const oldProfile = await Profile.findOne({ 'facultyID': id });
+  if (oldProfile) {
+    const oldUser = await User.findOne({ _id: oldProfile.userID, role: 'marketing coordinator' });
+    if (oldUser) {
+      await User.updateOne({ _id: oldUser._id }, { $set: { role: 'user' } });
+    }
+  }
+  console.log(oldProfile)
+  await User.updateOne({ _id: userID }, { $set: { role: 'marketing coordinator' } })
+
+  const newProfile = await Profile.findOne({ userID: userID });
+  if (newProfile) {
+    // for (let facultyID of newProfile.facultyID) {
+    //   await Profile.updateOne({ _id: newProfile._id, 'facultyID': facultyID }, { $set: { 'facultyID.$': id } })
+    // }
+    await Profile.updateOne({ _id: newProfile._id }, { $addToSet: { facultyID: id } })
+  } else {
+    await Profile.create({ userID: userID, facultyID: [id] })
+  };
+  await Faculty.updateOne({ _id: id }, { $set: { ...updateObject, marketingCoordinator: userID } }) 
     .exec() //execute update query built
     //exec success 
     .then(() => {
@@ -195,12 +246,14 @@ function updateFaculty(req, res) {
     })
     //exec error
     .catch((err) => {
+      console.log(err)
       res.status(500).json({
         success: false,
         message: 'Server error. Please try again.'
       });
     });
 };
+
 async function enrollStudent(req, res) {
   try {
     const id = req.params.id;
@@ -213,7 +266,7 @@ async function enrollStudent(req, res) {
     }
 
     if (faculty.enrollKey === req.body.enrollKey) {
-      const result = await Profile.updateOne({ userID: req.user.id }, { $push:{facultyID: id}}).exec();
+      const result = await Profile.updateOne({ userID: req.user.id }, { $push: { facultyID: id } }).exec();
       if (result.nModified === 0) {
         return res.status(404).json({
           success: false,
@@ -243,7 +296,7 @@ function deleteFaculty(req, res) {
   const id = req.params.facultyId;
 
   // ID
-  Faculty.findOneAndDelete({_id: id}) //find id
+  Faculty.findOneAndDelete({ _id: id }) //find id
     .exec()
     .then(deletedFaculty => {
       if (!deletedFaculty) {
@@ -252,7 +305,7 @@ function deleteFaculty(req, res) {
           message: "Faculty not found with ID: " + id
         });
       }
-   // deleted successfully
+      // deleted successfully
       return res.status(204).json({
         success: true
       });
@@ -273,5 +326,5 @@ module.exports = {
   searchFaculty,
   enrollStudent,
   getFacultyManager
-  
+
 };

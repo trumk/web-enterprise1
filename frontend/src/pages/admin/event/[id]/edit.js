@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../../components/navbar";
 import DefaultSidebar from "../../../../components/sidebar";
-import {  editEvent, getOneEvent, } from "../../../../redux/apiRequest";
+import { editEvent, getOneEvent, } from "../../../../redux/apiRequest";
 import { format } from "date-fns";
 import DatePicker from "../../../../components/manage/date-picker";
 import { Select, Option } from "@material-tailwind/react";
@@ -29,7 +29,7 @@ const EditEvent = () => {
       dispatch(getOneEvent(id, user.accessToken));
     }
   }, [dispatch, id, user]);
-
+  console.log(faculty)
   useEffect(() => {
     if (eventData) {
       setTopic(eventData?.Event.topic || "");
@@ -40,17 +40,17 @@ const EditEvent = () => {
     }
   }, [eventData]);
 
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const event = {
-        topic: topic,
-        content: content,
-        closureDate: closureDate,
-        finalDate: finalDate,
-        facultyId: faculty,
-      };
+      topic: topic,
+      content: content,
+      closureDate: closureDate,
+      finalDate: finalDate,
+      facultyId: faculty,
+    };
     dispatch(editEvent(id, event, user.accessToken, navigate))
   };
 
@@ -105,7 +105,9 @@ const EditEvent = () => {
               <label className="block text-md font-medium text-gray-700">
                 Faculty:
               </label>
-              <Select value={faculty} onChange={(value) => setFaculty(value)}>
+              <Select
+                value={faculty}
+                onChange={(value) => setFaculty(value)}>
                 {selectFaculty.map((faculty) => (
                   <Option key={faculty._id} value={faculty._id}>
                     {faculty.facultyName}
