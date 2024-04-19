@@ -39,7 +39,11 @@ const __dirname = path.resolve();
 app.use(cors());
 app.use(cookieParser())
 app.use(express.json())
-app.use(session());
+app.use(session({
+  secret: '122332y',
+  resave: false,
+  saveUninitialized: true
+}));
 
 
 //routes
@@ -49,7 +53,7 @@ app.use("/user", userRouter);
 app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
 
-app.user(express.static(path.join(__dirname,"")))
+app.use(express.static(path.join(__dirname,"")))
 
 app.use(express.static(path.join(__dirname, '../../frontend/build')));
 
