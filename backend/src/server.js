@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+var path = require('path');
 
 const authRouter = require("../routes/auth");
 const userRouter = require("../routes/user");
@@ -34,17 +35,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-app.use(cors({
-  // origin: 'https://okvkiu.onrender.com',
-  // credentials: true,
-}));
+
+app.use(cors());
 app.use(cookieParser())
 app.use(express.json())
 app.use(session({
-  secret: "123456cat",
+  secret: '122332y',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } 
+  saveUninitialized: true
 }));
 
 
@@ -56,10 +54,14 @@ app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
 
 
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+});
 
 const hostname = 'localhost'
-const port = 5503
+const port = process.env.PORT || 5000;
 
-app.listen(5503, () => {
+app.listen(port, () => {
     console.log(`hello nxt, server http://${hostname}:${port}/`)
   })
