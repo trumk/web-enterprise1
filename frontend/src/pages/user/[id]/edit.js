@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import NavbarDefault from '../../../components/navbar'
-import DefaultSidebar from '../components/sidebar'
 import { Button, Card, CardBody, CardHeader, Input, Popover, PopoverContent, PopoverHandler, Textarea, Typography } from '@material-tailwind/react'
 import { format } from 'date-fns'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
 import { ChevronLeftIcon, ChevronRightIcon, ImageUp, } from 'lucide-react'
 import { editProfile, getSelf } from '../../../redux/apiRequest'
+import NavbarDefault from '../../../components/navbar';
+import DefaultSidebar from '../../../components/sidebar';
 
 export const EditProfile = () => {
   const user = useSelector((state) => state.auth.login.currentUser);
@@ -72,9 +72,9 @@ export const EditProfile = () => {
     <>
       <NavbarDefault />
       <div className='flex'>
-        <DefaultSidebar />
+        <DefaultSidebar className="flex" />
         <div className='ml-5 w-full'>
-          <Card className="w-[900px] mt-20 border">
+          <Card className="w-[900px] mt-20 border items-center">
             <CardHeader>
               <Typography variant='h4' className='mt-2 mb-2'>{profile?.firstName} {profile?.lastName}&apos;s profile</Typography>
             </CardHeader>

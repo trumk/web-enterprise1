@@ -92,6 +92,9 @@ import {
   editContributionFailed,
   editContributionStart,
   editContributionSuccess,
+  getContributionByCoordinatorFailed,
+  getContributionByCoordinatorStart,
+  getContributionByCoordinatorSuccess,
   getContributionFailed,
   getContributionStart,
   getContributionSuccess,
@@ -120,7 +123,8 @@ import {
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-const BACKEND_URL = "https://web-enterprise1.onrender.com";
+// const BACKEND_URL = "https://web-enterprise1.onrender.com";
+const BACKEND_URL = "http://localhost:5503";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -765,6 +769,21 @@ export const getExceptionContributions = (accessToken) => async (dispatch) => {
     dispatch(getExceptionSuccess(res.data));
   } catch (err) {
     dispatch(getExceptionFailed());
+    console.log(err);
+  }
+}
+
+export const getContributionByCoordinator = (accessToken) => async (dispatch) => {
+  dispatch(getContributionByCoordinatorStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getContributionByFaculty`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionByCoordinatorSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionByCoordinatorFailed());
     console.log(err);
   }
 }
