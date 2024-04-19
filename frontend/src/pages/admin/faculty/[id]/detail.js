@@ -64,6 +64,9 @@ export const FacultyDetail = () => {
               <Typography variant="h5" className="ml-3">
                 Description: {detail?.descActive}
               </Typography>
+              <Typography variant="h5" className="ml-3">
+                Manage by: {detail?.marketingCoordinator?.userName}
+              </Typography>
               <CardFooter>
                 <Link to="/admin/faculty">
                   <Button>Back to List</Button>

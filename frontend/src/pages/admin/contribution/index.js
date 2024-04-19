@@ -3,11 +3,7 @@ import NavbarDefault from '../../../components/navbar';
 import DefaultSidebar from '../../../components/sidebar';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllContributions, searchContribution } from '../../../redux/apiRequest';
-<<<<<<< Updated upstream
-import { Badge, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
-=======
-import { Badge, Button, Card, CardFooter, Chip, Input, Typography } from "@material-tailwind/react";
->>>>>>> Stashed changes
+import { Card, CardFooter, Chip, Input, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';

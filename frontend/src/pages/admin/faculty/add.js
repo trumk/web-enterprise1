@@ -4,6 +4,7 @@ import { addFaculty, getAllUsers } from "../../../redux/apiRequest";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
+import { Button, Input, Option, Select, Typography } from "@material-tailwind/react";
 
 const AddFaculty = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -50,10 +51,10 @@ const AddFaculty = () => {
           <h1 className="text-3xl font-bold mb-4">Add Faculty</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Faculty Name:
-              </label>
-              <input
+              </Typography>
+              <Input
                 type="text"
                 value={facultyName}
                 onChange={(e) => setFacultyName(e.target.value)}
@@ -62,10 +63,10 @@ const AddFaculty = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Enroll Key:
-              </label>
-              <input
+              </Typography>
+              <Input
                 type="text"
                 value={enrollKey}
                 onChange={(e) => setEnrollKey(e.target.value)}
@@ -77,7 +78,7 @@ const AddFaculty = () => {
               <label className="block text-md font-medium text-gray-700">
                 Description:
               </label>
-              <input
+              <Input
                 type="text"
                 value={descActive}
                 onChange={(e) => setDescActive(e.target.value)}
@@ -86,30 +87,28 @@ const AddFaculty = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Set Marketing Coordinator
-              </label>
-              <select
-                type="text"
+              </Typography>
+              <Select
                 value={marketingCoordinator}
-                onChange={(e) => setMarketingCoordinator(e.target.value)}
-                className="mt-1 p-2 border border-gray-400 rounded-md w-full"
+                onChange={(value) => setMarketingCoordinator(value)}
                 required
               >
-                {filteredUsers?.map((user) => (
-                  <option key={user._id} value={user._id}>
+                {filteredUsers.map((user) => (
+                  <Option key={user._id} value={user._id}>
                     {user.userName}
-                  </option>
+                  </Option>
                 ))}
-              </select>
+              </Select>
             </div>
-            <button
+            <Button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              className="bg-blue-500 text-white rounded-md hover:bg-blue-600"
               onClick={handleSubmit}
             >
               Add Faculty
-            </button>
+            </Button>
           </form>
         </div>
       </div>

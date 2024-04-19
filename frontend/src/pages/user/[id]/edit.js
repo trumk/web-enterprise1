@@ -27,6 +27,7 @@ export const EditProfile = () => {
   const [description, setDescription] = useState('');
   const [avatar, setAvatar] = useState(profile.avatar);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleEditAvatar = () => {
     setIsEditing(true);
@@ -52,7 +53,7 @@ export const EditProfile = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true);
     const editedProfile = new FormData();
     editedProfile.append("firstName", firstName);
     editedProfile.append("lastName", lastName);
@@ -203,7 +204,7 @@ export const EditProfile = () => {
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)} />
-                  <Button className="mt-6" fullWidth onClick={handleSubmit}>
+                  <Button className="mt-6" fullWidth onClick={handleSubmit} disabled={isSubmitting}>
                     Save
                   </Button>
                 </div>
