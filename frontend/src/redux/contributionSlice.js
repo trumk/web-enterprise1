@@ -64,6 +64,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getContributionByCoordinator: {
+      contributions: null,
+      isFetching: false,
+      error: false,
+    },
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -222,6 +227,18 @@ const contributionSlice = createSlice({
       state.descSort.isFetching = false;
       state.descSort.error = action.payload;
     },
+    getContributionByCoordinatorStart: (state) => {
+      state.getContributionByCoordinator.isFetching = true;
+    },
+    getContributionByCoordinatorSuccess: (state, action) => {
+      state.getContributionByCoordinator.isFetching = false;
+      state.getContributionByCoordinator.contributions = action.payload;
+      state.getContributionByCoordinator.error = false;
+    },
+    getContributionByCoordinatorFailed: (state) => {
+      state.getContributionByCoordinator.isFetching = false;
+      state.getContributionByCoordinator.error = true;
+    },
   },
 });
 export const {
@@ -266,6 +283,9 @@ export const {
   ascSortFailed,
   descSortStart,
   descSortSuccess,
-  descSortFailed
+  descSortFailed,
+  getContributionByCoordinatorStart,
+  getContributionByCoordinatorSuccess,
+  getContributionByCoordinatorFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;

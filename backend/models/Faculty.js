@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 const facultySchema = new Schema({
     facultyName:{
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     enrollKey:{
         type: String,

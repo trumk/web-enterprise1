@@ -6,10 +6,14 @@ import {
   CalendarDays,
   School,
   BarChart3,
-  ShieldAlert
+  ShieldAlert,
+  Contact,
+  KeyRound,
+  Settings
 } from "lucide-react";
 import { NavItem } from "./nav-item";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function DefaultSidebar() {
 
@@ -20,16 +24,34 @@ export default function DefaultSidebar() {
       label: "All Contributions",
     },
     {
-      href: "/",
+      href: "/dashboard",
       icon: Users,
       label: "Faculty",
     },
     {
-      href: "/userContribution",
+      href: "/myContribution",
       icon: FileSliders,
       label: "My Contribution",
     },
   ];
+  const user = useSelector((state) => state.auth.login.currentUser);
+    const userRoutes = [
+      {
+        href: `/user/${user?._id}/profile`,
+        icon: Contact,
+        label: 'Profile'
+      },
+      {
+        href: `/user/${user?._id}/changePassword`,
+        icon: KeyRound,
+        label: 'Authenticate'
+      },
+      {
+        href: `/user/${user?._id}/edit`,
+        icon: Settings,
+        label: 'Settings'
+      }
+    ];
   const adminRoutes = [
     {
       href: "/admin/user",
@@ -85,6 +107,7 @@ export default function DefaultSidebar() {
     "/marketingManager"
   );
   const isAdminPage = window.location.pathname.startsWith("/admin");
+  const isUserPage = window.location.pathname.startsWith("/user");
   let routes;
 
   if (isAdminPage) {
@@ -93,6 +116,8 @@ export default function DefaultSidebar() {
     routes = marketingCoordinatorRoutes;
   } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
+  } else if (isUserPage) {
+    routes = userRoutes;
   } else {
     routes = guestRoutes;
   }

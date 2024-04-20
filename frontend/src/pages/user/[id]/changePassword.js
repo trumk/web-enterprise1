@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import {
   Card,
-  CardHeader,
   Input,
   Button,
   Typography,
 } from "@material-tailwind/react";
-import NavbarDefault from "../../../components/navbar";
-import DefaultSidebar from "../components/sidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUserPassword } from "../../../redux/apiRequest";
+import NavbarDefault from "../../../components/navbar";
+import DefaultSidebar from "../../../components/sidebar";
 
 export function ChangePassword() {
   const userId = useParams();
@@ -39,8 +38,8 @@ export function ChangePassword() {
     <>
       <NavbarDefault />
       <div className="flex">
-        <DefaultSidebar />
-        <div className="mt-5 ml-5 w-full">
+        <DefaultSidebar className="flex" />
+        <div className="mt-5 ml-5 w-full flex flex-col items-center">
           <Card color="transparent" shadow={false}>
               <Typography color="blue-gray" variant="h4">
                 Change Password

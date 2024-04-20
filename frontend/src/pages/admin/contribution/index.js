@@ -3,7 +3,7 @@ import NavbarDefault from '../../../components/navbar';
 import DefaultSidebar from '../../../components/sidebar';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllContributions, searchContribution } from '../../../redux/apiRequest';
-import { Badge, Card, CardFooter, Input, Typography } from "@material-tailwind/react";
+import { Card, CardFooter, Chip, Input, Typography } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
@@ -43,6 +43,7 @@ export const Contribution = () => {
             <div className="flex">
                 <DefaultSidebar />
                 <div className='ml-5 w-full'>
+                <Typography variant="h3" className="mb-2">Contributions</Typography>
                     <div className="flex items-center gap-2 mt-2">
                         <Input
                             type="text"
@@ -125,9 +126,10 @@ export const Contribution = () => {
                                                     )}
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50">
-                                                    <Badge
-                                                        className='w-[100px]'
-                                                        content={contribution.isPublic ? "Published" : "Not Published"}
+                                                    <Chip
+                                                    className={contribution.isPublic ? "w-24" : "w-32"}
+                                                        variant="outlined"
+                                                        value={contribution.isPublic ? "Published" : "Not Published"}
                                                         color={contribution.isPublic ? "green" : "red"}
                                                     />
                                                 </td>
@@ -137,7 +139,7 @@ export const Contribution = () => {
                                                         color="blue-gray"
                                                         className="font-normal"
                                                     >
-                                                        {contribution?.author?.firstName} {contribution?.author?.lastName}
+                                                        {contribution?.author?.firstName} {contribution?.author.lastName}
                                                     </Typography>
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50 w-20">

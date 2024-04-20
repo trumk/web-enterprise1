@@ -41,9 +41,11 @@ export function DefaultPagination({ totalPages, paginate }) {
         <ChevronLeft strokeWidth={2} className="h-4 w-4" /> Previous
       </Button>
       <div className="flex items-center gap-2">
-        {Array(totalPages).fill().map((_, index) => (
-          <IconButton {...getItemProps(index + 1)}>{index + 1}</IconButton>
-        ))}
+        {Number.isInteger(totalPages) && totalPages > 0 ? (
+          Array(totalPages).fill().map((_, index) => (
+            <IconButton {...getItemProps(index + 1)}>{index + 1}</IconButton>
+          ))
+        ) : null}
       </div>
       <Button
         variant="text"

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
-import NavbarDefault from '../../../components/navbar'
 import { Tooltip } from '@material-tailwind/react'
-import DefaultSidebar from '../components/sidebar'
 import { useDispatch, useSelector } from 'react-redux'
 import { getSelf } from '../../../redux/apiRequest'
 import { format } from 'date-fns';
 import { Pen, } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import NavbarDefault from '../../../components/navbar';
+import DefaultSidebar from '../../../components/sidebar';
 
 export const UserProfile = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);

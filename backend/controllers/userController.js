@@ -13,22 +13,39 @@ const userController = {
       res.status(500).json(error);
     }
   },
-  setRoleUser: async (req, res) => {
+setRoleUser: async (req, res) => {
     try {
-      const userUpdated = await User.findByIdAndUpdate(
-        req.params.id,
-        { role: req.body.role },
-        { new: true }
-      );
-      if (!userUpdated) {
-        return res.status(404).json("User not found");
-      }
-      const { password, ...others } = userUpdated._doc;
-      res.status(200).json({ "messenger": "Change role successfully", ...others });
+        if (req.body.role === "marketing coordinator") {
+            const coordinator = await Profile.findOne({ userID: req.params.id });
+            if (coordinator && coordinator.facultyID) {
+                // Find all other marketing coordinators in the same faculty
+                const otherCoordinators = await Profile.find({
+                    facultyID: { $in: coordinator.facultyID },
+                    userID: { $ne: req.params.id }
+                }).populate('userID', 'role');
+                for (let other of otherCoordinators) {
+                    if (other.userID.role === 'marketing coordinator') {
+                        await User.findByIdAndUpdate(other.userID._id, { role: 'user' });
+                    }
+                }
+            }
+        }
+
+        const userUpdated = await User.findByIdAndUpdate(
+            req.params.id,
+            { role: req.body.role },
+            { new: true }
+        );
+
+        if (!userUpdated) {
+            return res.status(404).json("User not found");
+        }
+        const { password, ...others } = userUpdated._doc;
+        res.status(200).json({ "message": "Change role successfully", ...others });
     } catch (error) {
-      res.status(500).json(error);
+        res.status(500).json(error);
     }
-  },
+},
 
   deleteUser: async (req, res) => {
     try {

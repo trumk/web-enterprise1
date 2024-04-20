@@ -13,7 +13,7 @@ import {
   MobileNav,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3 } from "lucide-react";
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3, Contact, KeyRound, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { getSelf, logout } from "../../redux/apiRequest";
 import { MobileNavItem } from "./mobile-nav";
@@ -66,7 +66,7 @@ export default function NavbarDefault() {
       label: "All Contributions",
     },
     {
-      href: "/",
+      href: "/dashboard",
       icon: Users,
       label: "Faculty",
     },
@@ -76,6 +76,23 @@ export default function NavbarDefault() {
       label: "My Contribution",
     },
   ];
+    const userRoutes = [
+      {
+        href: `/user/${user?._id}/profile`,
+        icon: Contact,
+        label: 'Profile'
+      },
+      {
+        href: `/user/${user?._id}/changePassword`,
+        icon: KeyRound,
+        label: 'Authenticate'
+      },
+      {
+        href: `/user/${user?._id}/edit`,
+        icon: Settings,
+        label: 'Settings'
+      }
+    ];
   const adminRoutes = [
     {
       href: "/admin/user",
@@ -131,6 +148,7 @@ export default function NavbarDefault() {
     "/marketingManager"
   );
   const isAdminPage = window.location.pathname.startsWith("/admin");
+  const isUserPage = window.location.pathname.startsWith("/user");
   let routes;
 
   if (isAdminPage) {
@@ -139,6 +157,8 @@ export default function NavbarDefault() {
     routes = marketingCoordinatorRoutes;
   } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
+  } else if(isUserPage) {
+    routes = userRoutes;
   } else {
     routes = guestRoutes;
   }
@@ -147,8 +167,10 @@ export default function NavbarDefault() {
       navigate('/admin/user')
     } else if (user?.role === 'marketing manager') {
       navigate('/marketingManager')
+    } else if (user?.role === 'marketing coordinator'){
+      navigate('/marketingCoordinator')
     } else {
-      navigate('/')
+      navigate('/dashboard')
     }
   }
   const profile = useSelector((state) => state.user.user?.user);
@@ -159,7 +181,7 @@ export default function NavbarDefault() {
           <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
 
             <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-              <img src="https://cms.greenwich.edu.vn/pluginfile.php/1/theme_adaptable/logo/1698976651/2022-Greenwich-Eng.jpg" alt="logo" size="sm" className="mr-2 h-10" />
+              <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
             </Typography>
 
 

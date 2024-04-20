@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../../../components/navbar";
 import DefaultSidebar from "../../../components/sidebar";
 import DatePicker from "../../../components/manage/date-picker";
-import { Select, Option } from "@material-tailwind/react";
+import { Select, Option, Typography, Input } from "@material-tailwind/react";
 import { Editor } from "../../../components/manage/editor";
 
 const AddEvent = () => {
@@ -50,7 +50,7 @@ const AddEvent = () => {
               <label className="block text-md font-medium text-gray-700">
                 Topic:
               </label>
-              <input
+              <Input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
@@ -59,9 +59,9 @@ const AddEvent = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Content:
-              </label>
+              </Typography>
               <Editor
                 value={content}
                 onChange={setContent}
@@ -70,28 +70,32 @@ const AddEvent = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Closure Date:
-              </label>
+              </Typography>
               <DatePicker
                 date={closureDate}
                 setDate={setClosureDate}
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Final Date:
-              </label>
+              </Typography>
               <DatePicker
                 date={finalDate}
                 setDate={setFinalDate}
               />
             </div>
             <div className="mb-4">
-              <label className="block text-md font-medium text-gray-700">
+              <Typography className="block text-md font-medium text-gray-700">
                 Faculty:
-              </label>
-              <Select value={faculty} onChange={(value) => setFaculty(value)} required>
+              </Typography>
+              <Select
+                value={faculty}
+                onChange={(value) => setFaculty(value)}
+                required
+              >
                 {selectFaculty.map((faculty) => (
                   <Option key={faculty._id} value={faculty._id}>
                     {faculty.facultyName}

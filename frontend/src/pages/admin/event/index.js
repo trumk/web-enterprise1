@@ -34,6 +34,7 @@ export const Event = () => {
           <Button className="mt-2.5 mb-2.5">
             <Link to="/admin/event/add">Create new</Link>
           </Button>
+          <Typography variant="h3" className="mb-2">Events</Typography>
           <Card className="h-full w-full">
             <table className="w-full min-w-max table-auto text-left">
               <thead>

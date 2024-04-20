@@ -1,31 +1,40 @@
 const mongoose = require("mongoose");
 const Faculty = require("../models/Faculty")
 const Profile = require("../models/Profile")
+const { User, Otp } = require("../models/User")
 
-function createFaculty(req, res) {
-  const faculty = new Faculty({
-    facultyName: req.body.facultyName,
-    enrollKey : req.body.enrollKey,
-    descActive: req.body.descActive,
-  });
-  return faculty
-    .save()
-    .then((newFaculty) => {
-      return res.status(200).json({
-        success: true,
-        message: 'new Faculty created successfully',
-        Faculty: newFaculty,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error. Please try again',
-        error: error.message,
-      });
+async function createFaculty(req, res) {
+  try {
+    const faculty = new Faculty({
+      facultyName: req.body.facultyName,
+      enrollKey: req.body.enrollKey,
+      descActive: req.body.descActive,
     });
-};
+    const newFaculty = await faculty.save();
+    const user = await User.findByIdAndUpdate(
+      req.body.userID,
+      { role: "marketing coordinator" },
+      { new: true }
+    );
+    await Profile.findOneAndUpdate(
+      { userID: user._id },
+      { facultyID: newFaculty._id }
+    );
+    res.status(200).json({
+      success: true,
+      message: 'New Faculty created successfully',
+      Faculty: newFaculty,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again',
+      error: error.message,
+    });
+  }
+}
+
 function getAllFaculty(req, res) {
   Faculty.find() //to retrieve all Facultys from the database.
     .select('facultyName descActive') //properties
@@ -44,33 +53,58 @@ function getAllFaculty(req, res) {
       });
     });
 };
+async function getFacultyManager(req, res) {
+  profile = await Profile.findOne({ userID: req.user.id })
+
+  await Faculty.findById(profile.facultyID)
+    .select('facultyName descActive') //properties
+    .then((allFaculty) => {
+      return res.status(200).json({
+        success: true,
+        message: ' Faculty',
+        Faculty: allFaculty,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Server error. Please try again.',
+        error: err.message,
+      });
+    });
+};
+
+
 async function searchFaculty(req, res) {
   try {
     const keyword = req.body.keyword;
     const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
       .select('facultyName descActive');
-
-    if (faculties.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Not found'
-      });
-    }
-
-    return res.status(200).json({
+    const facultiesWithCoordinator = await Promise.all(faculties.map(async (faculty) => {
+      const profile = await Profile.findOne({ facultyID: faculty._id });
+      if (profile) {
+        const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+        return {
+          ...faculty._doc,
+          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+        };
+      }
+    }));
+    res.status(200).json({
       success: true,
-      message: 'Faculties found',
-      faculties: faculties
+      message: 'Search results',
+      Faculty: facultiesWithCoordinator,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server error. Please try again.',
-      error: err.message
+      message: 'Server error. Please try again',
+      error: error.message,
     });
   }
 }
+
+
 async function getOneFaculty(req, res) {
   const id = req.params.id;
   res.cookie("facultyId", id, {
@@ -84,21 +118,30 @@ async function getOneFaculty(req, res) {
   const role = req.user.role;
 
   if (!(role === 'admin' || role === 'marketing coordinator' || role === 'marketing manager') && facultyID !== id) {
-
     return res.status(500).json({ message: "You haven't enrolled in this Faculty yet" });
   }
   Faculty.findById(id)
-    .then(faculty => {
+    .then(async (faculty) => {
       if (!faculty) {
         return res.status(404).json({
           success: false,
           message: 'Faculty not found with ID: ' + id,
         });
       }
+      const profile = await Profile.findOne({ facultyID: faculty._id });
+      if (!profile) return res.status(200).json({
+        success: true,
+        message: 'Faculty',
+        Faculty: faculty,
+      });
+      const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
       res.status(200).json({
         success: true,
-        message: 'Faculty found',
-        Faculty: faculty,
+        message: 'Faculty',
+        Faculty: {
+          ...faculty._doc,
+          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+        },
       });
     })
     .catch(err => {
@@ -110,48 +153,36 @@ async function getOneFaculty(req, res) {
     });
 };
 
-
-async function searchFaculty(req, res) {
-  try {
-    var keyword= req.body.keyword;
-    const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
-      .select('facultyName descActive');
-
-    if (faculties.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Not found'
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Faculties found',
-      faculties: faculties
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again.',
-      error: err.message
-    });
-  }
-}
-
-
-
-function updateFaculty(req, res) {
+async function updateFaculty(req, res) {
   const id = req.params.facultyId;
   const updateObject = req.body; //update data from the request body as json, contain field edit
-  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey) {
+  const userID = req.body.userID;
+  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey || !userID) {
     return res.status(400).json({
       success: false,
       message: 'Missing required fields'
     });
   }
-  // update query using mongo
-  Faculty.updateOne({ _id: id }, { $set: updateObject })  //to retrieve id, set object update operation with request body 
+  const oldProfile = await Profile.findOne({ 'facultyID': id });
+  if (oldProfile) {
+    const oldUser = await User.findOne({ _id: oldProfile.userID, role: 'marketing coordinator' });
+    if (oldUser) {
+      await User.updateOne({ _id: oldUser._id }, { $set: { role: 'user' } });
+    }
+  }
+  console.log(oldProfile)
+  await User.updateOne({ _id: userID }, { $set: { role: 'marketing coordinator' } })
+
+  const newProfile = await Profile.findOne({ userID: userID });
+  if (newProfile) {
+    // for (let facultyID of newProfile.facultyID) {
+    //   await Profile.updateOne({ _id: newProfile._id, 'facultyID': facultyID }, { $set: { 'facultyID.$': id } })
+    // }
+    await Profile.updateOne({ _id: newProfile._id }, { $addToSet: { facultyID: id } })
+  } else {
+    await Profile.create({ userID: userID, facultyID: [id] })
+  };
+  await Faculty.updateOne({ _id: id }, { $set: { ...updateObject, marketingCoordinator: userID } }) 
     .exec() //execute update query built
     //exec success 
     .then(() => {
@@ -163,12 +194,14 @@ function updateFaculty(req, res) {
     })
     //exec error
     .catch((err) => {
+      console.log(err)
       res.status(500).json({
         success: false,
         message: 'Server error. Please try again.'
       });
     });
 };
+
 async function enrollStudent(req, res) {
   try {
     const id = req.params.id;
@@ -181,7 +214,7 @@ async function enrollStudent(req, res) {
     }
 
     if (faculty.enrollKey === req.body.enrollKey) {
-      const result = await Profile.updateOne({ userID: req.user.id }, { $push:{facultyID: id}}).exec();
+      const result = await Profile.updateOne({ userID: req.user.id }, { $push: { facultyID: id } }).exec();
       if (result.nModified === 0) {
         return res.status(404).json({
           success: false,
@@ -211,7 +244,7 @@ function deleteFaculty(req, res) {
   const id = req.params.facultyId;
 
   // ID
-  Faculty.findOneAndDelete({_id: id}) //find id
+  Faculty.findOneAndDelete({ _id: id }) //find id
     .exec()
     .then(deletedFaculty => {
       if (!deletedFaculty) {
@@ -220,7 +253,7 @@ function deleteFaculty(req, res) {
           message: "Faculty not found with ID: " + id
         });
       }
-   // deleted successfully
+      // deleted successfully
       return res.status(204).json({
         success: true
       });
@@ -239,6 +272,7 @@ module.exports = {
   getAllFaculty,
   getOneFaculty,
   searchFaculty,
-  enrollStudent
-  
+  enrollStudent,
+  getFacultyManager
+
 };

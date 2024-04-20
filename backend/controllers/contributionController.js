@@ -82,15 +82,7 @@ const contributionController = {
           img: ["data", "http"],
         },
       });
-      const newContribution = new Contribution({
-        title: req.body.title,
-        content: cleanContent,
-        image: imagesPaths,
-        file: filesPaths,
-        userID: req.user.id,
-        eventID: req.body.eventID,
-      });
-      const contribution = await newContribution.save();
+
       const event = await Event.findById(req.body.eventID);
       const profiles = await Profile.find({
         facultyID: event.facultyId,
@@ -104,17 +96,28 @@ const contributionController = {
       const emailAddresses = marketingCoordinators
         .map((coordinator) => coordinator.email)
         .join(",");
-      const Student = await User.findById(req.user.id);
+      const Student = await Profile.findOne({ userID: req.user.id });
       if (!emailAddresses) {
         return res
           .status(500)
-          .json("Please set role for marketing coordinator");
+          .json("This faculty doesn't have a Marketing Condinator");
       }
+      const faculty = await Faculty.findById(event.facultyId);
+      const newContribution = new Contribution({
+        title: req.body.title,
+        content: cleanContent,
+        image: imagesPaths,
+        file: filesPaths,
+        userID: req.user.id,
+        eventID: req.body.eventID,
+        facultyID: faculty._id,
+      });
+      const contribution = await newContribution.save();
       const mailOptions = {
         from: process.env.EMAIL,
         to: emailAddresses,
-        subject: "New Submission",
-        html: `<p>Student<b> ${Student.userName} </b> submitted</p><br>`,
+        subject: `<b>New Submission</b>`,
+        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has been submitted</p><br>`,
       };
       await new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
@@ -223,7 +226,75 @@ const contributionController = {
       res.status(500).json({ message: error.message, ...error });
     }
   },
-
+  getContributionByCoordinator: async (req, res) => {
+    try {
+      const facultyId = await Profile.findOne({ userID: req.user.id });
+      console.log(facultyId)
+      let query = { isPublic: true, facultyID: { $in: facultyId.facultyID } };
+      const role = req.user.role;
+      if (
+        role === "admin" ||
+        role === "marketing coordinator" ||
+        role === "marketing manager"
+      ) {
+        query = { facultyID: { $in: facultyId.facultyID } };
+      }
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event",
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: {
+              topic: "$event.topic",
+            },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            createdAt: 1,
+          },
+        },
+      ]);
+      // .populate({
+      //   path: 'userID',
+      //   select: 'userName -_id'
+      // })
+      // .populate({
+      //   path: 'comments.userID',
+      //   select: 'userName -_id'
+      // });
+      res.status(200).json(contributions);
+    } catch (error) {
+      res.status(500).json({ message: error.message, ...error });
+    }
+  },
   getMyContribution: async (req, res) => {
     try {
       const userID = req.user.id;
@@ -245,98 +316,222 @@ const contributionController = {
     }
   },
 
+  // getOneContribution: async (req, res) => {
+  //   try {
+  //     const contributions = await Contribution.aggregate([
+  //       {
+  //         $match: {
+  //           _id: new mongoose.Types.ObjectId(req.params.id),
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "profiles",
+  //           localField: "userID",
+  //           foreignField: "userID",
+  //           as: "userProfile",
+  //         },
+  //       },
+  //       {
+  //         $unwind: {
+  //           path: "$userProfile",
+  //           preserveNullAndEmptyArrays: true,
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "profiles",
+  //           let: { user_ids: "$comments.userID" },
+  //           pipeline: [
+  //             {
+  //               $match: {
+  //                 $expr: {
+  //                   $in: ["$userID", "$$user_ids"],
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //           as: "commentProfiles",
+  //         },
+  //       },
+  //       {
+  //         $addFields: {
+  //           comments: {
+  //             $map: {
+  //               input: "$comments",
+  //               as: "comment",
+  //               in: {
+  //                 $mergeObjects: [
+  //                   "$$comment",
+  //                   {
+  //                     userProfile: {
+  //                       $first: {
+  //                         $filter: {
+  //                           input: "$commentProfiles",
+  //                           as: "profile",
+  //                           cond: {
+  //                             $eq: ["$$profile.userID", "$$comment.userID"],
+  //                           },
+  //                         },
+  //                       },
+  //                     },
+  //                   },
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //       {
+  //         $project: {
+  //           title: 1,
+  //           content: 1,
+  //           image: 1,
+  //           file: 1,
+  //           isPublic: 1,
+  //           author: {
+  //             firstName: "$userProfile.firstName",
+  //             lastName: "$userProfile.lastName",
+  //             avatar: "$userProfile.avatar",
+  //           },
+  //           comments: 1,
+  //         },
+  //       },
+  //     ]);
+
+  //     if (contributions.length === 0) {
+  //       return res.status(404).json({ message: "Contribution not found." });
+  //     }
+
+  //     await res.status(200).json(contributions[0]);
+  //   } catch (error) {
+  //     res.status(500).json({ message: error.message });
+  //   }
+  // },
   getOneContribution: async (req, res) => {
     try {
-      const contributions = await Contribution.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-        {
-          $lookup: {
-            from: "profiles",
-            localField: "userID",
-            foreignField: "userID",
-            as: "userProfile",
-          },
-        },
-        {
-          $unwind: {
-            path: "$userProfile",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "profiles",
-            let: { user_ids: "$comments.userID" },
-            pipeline: [
-              {
+        const contributions = await Contribution.aggregate([
+            {
                 $match: {
-                  $expr: {
-                    $in: ["$userID", "$$user_ids"],
-                  },
+                    _id: new mongoose.Types.ObjectId(req.params.id),
                 },
-              },
-            ],
-            as: "commentProfiles",
-          },
-        },
-        {
-          $addFields: {
-            comments: {
-              $map: {
-                input: "$comments",
-                as: "comment",
-                in: {
-                  $mergeObjects: [
-                    "$$comment",
-                    {
-                      userProfile: {
-                        $first: {
-                          $filter: {
-                            input: "$commentProfiles",
-                            as: "profile",
-                            cond: {
-                              $eq: ["$$profile.userID", "$$comment.userID"],
+            },
+            {
+                $lookup: {
+                    from: "profiles",
+                    localField: "userID",
+                    foreignField: "userID",
+                    as: "userProfile",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$userProfile",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "profiles",
+                    let: { user_ids: "$comments.userID" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $in: ["$userID", "$$user_ids"],
+                                },
                             },
-                          },
                         },
-                      },
-                    },
-                  ],
+                        {
+                            $lookup: {
+                                from: "users",
+                                localField: "userID",
+                                foreignField: "_id",
+                                as: "user",
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$user",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                        {
+                            $addFields: {
+                                "commentRole": "$user.role",
+                            },
+                        },
+                    ],
+                    as: "commentProfiles",
                 },
-              },
             },
-          },
-        },
-        {
-          $project: {
-            title: 1,
-            content: 1,
-            image: 1,
-            file: 1,
-            isPublic: 1,
-            author: {
-              firstName: "$userProfile.firstName",
-              lastName: "$userProfile.lastName",
-              avatar: "$userProfile.avatar",
+            {
+                $addFields: {
+                    comments: {
+                        $map: {
+                            input: "$comments",
+                            as: "comment",
+                            in: {
+                                $mergeObjects: [
+                                    "$$comment",
+                                    {
+                                        userProfile: {
+                                            $first: {
+                                                $filter: {
+                                                    input: "$commentProfiles",
+                                                    as: "profile",
+                                                    cond: {
+                                                        $eq: ["$$profile.userID", "$$comment.userID"],
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             },
-            comments: 1,
-          },
-        },
-      ]);
+            {
+                $project: {
+                    title: 1,
+                    content: 1,
+                    image: 1,
+                    file: 1,
+                    isPublic: 1,
+                    author: {
+                        firstName: "$userProfile.firstName",
+                        lastName: "$userProfile.lastName",
+                        avatar: "$userProfile.avatar",
+                    },
+                    comments: {
+                        $map: {
+                            input: "$comments",
+                            as: "comment",
+                            in: {
+                                $mergeObjects: [
+                                    "$$comment",
+                                    {
+                                        role: "$$comment.userRole",
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        ]);
 
-      if (contributions.length === 0) {
-        return res.status(404).json({ message: "Contribution not found." });
-      }
+        if (contributions.length === 0) {
+            return res.status(404).json({ message: "Contribution not found." });
+        }
 
-      await res.status(200).json(contributions[0]);
+        await res.status(200).json(contributions[0]);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-  },
+},
   editContribution: async (req, res) => {
     try {
       const contribution = await Contribution.findById(req.params.id);

@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
-import { Homepage } from "./pages/Homepage";
+import { Homepage } from "./pages/dashboard";
 import 'react-toastify/dist/ReactToastify.css';
 import { UserProfile } from "./pages/user/[id]/profile";
 import { Term } from "./pages/Term";
@@ -30,14 +30,17 @@ import { FacultyManager } from "./pages/marketingManager/faculty";
 import { FacultyDetailManager } from "./pages/marketingManager/[id]/detailFaculty";
 import { EventDetailManager } from "./pages/marketingManager/[id]/eventDetail";
 import { ContributionDetailManager } from "./pages/marketingManager/[id]/contributionDetail";
-import { MyContributionPage } from "./pages/userContribution";
-import { EditContribution } from "./pages/userContribution/[id]/edit";
+import { MyContributionPage } from "./pages/myContribution";
+import { EditContribution } from "./pages/myContribution/[id]/edit";
 import { ManageContribution } from "./pages/marketingCoordinator/contribution/[id]/action";
 import { ToastContainer } from 'react-toastify';
 import { ExceptionContribution } from "./pages/marketingCoordinator/exception";
 import { PrivateRoute } from "./components/authorization/private-routes";
 import { useSelector } from "react-redux";
 import { ContributionsDashboard } from "./pages/contributions";
+import { ReadContributionDashboard } from "./pages/contributions/[contributionId]/read";
+import Landing from "./pages/landing";
+import { MyContributionDetail } from "./pages/myContribution/[id]/detail";
 
 function App() {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -47,7 +50,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Homepage />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/dashboard" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/terms" element={<Term />} />
@@ -59,9 +63,11 @@ function App() {
           <Route path="/user/:id/profile" element={<UserProfile />} />
           <Route path="/user/:id/changePassword" element={<ChangePassword />} />
           <Route path="/user/:id/edit" element={<EditProfile />} />
-          <Route path="/userContribution" element={<MyContributionPage/>}/>
-          <Route path="/userContribution/:id/edit" element={<EditContribution/>}/>
+          <Route path="/myContribution" element={<MyContributionPage/>}/>
+          <Route path="/myContribution/:id/edit" element={<EditContribution/>}/>
+          <Route path="/mycontribution/:id/detail" element={<MyContributionDetail/>}/>
           <Route path="/contributions" element={<ContributionsDashboard/>}/>
+          <Route path="/contributions/:contributionId/read" element={<ReadContributionDashboard/>}/>
           {/* Marketing Manager */}
           <Route path="/marketingManager" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<MarketingManagerPage />} />}/>
           <Route path="/marketingManager/faculty" element={<PrivateRoute userRole={user?.role} path="/marketingManager" element={<FacultyManager />} />}/>

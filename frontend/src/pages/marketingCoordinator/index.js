@@ -2,7 +2,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
-import { getAllContributions, searchContribution } from "../../redux/apiRequest";
+import { getContributionByCoordinator, searchContribution } from "../../redux/apiRequest";
 import {
   Badge,
   Card,
@@ -19,7 +19,7 @@ import { TablePagination } from "../../components/manage/edit-pagination";
 
 export const MarketingCoordinatorPage = () => {
   const contributions = useSelector(
-    (state) => state.contribution.contributions.allContributions
+    (state) => state.contribution.getContributionByCoordinator?.contributions
   );
   const filterContribution = useSelector(
     (state) => state.contribution.searchContribution?.filterContribution
@@ -37,7 +37,7 @@ export const MarketingCoordinatorPage = () => {
 
   useEffect(() => {
     if (user) {
-      dispatch(getAllContributions(user.accessToken, dispatch));
+      dispatch(getContributionByCoordinator(user.accessToken));
     }
   }, [user, dispatch]);
   console.log(contributions);
@@ -120,8 +120,8 @@ export const MarketingCoordinatorPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {contributions ? (
-                  contributions && contributions.length > 0 ? (
+                {currentItems ? (
+                  currentItems && currentItems.length > 0 ? (
                     currentItems?.map((contribution, index) => (
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">

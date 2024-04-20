@@ -49,10 +49,14 @@ export const Faculty = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
+        <Link to="/admin/faculty/add">
           <Button className="mt-2.5 mb-2.5">
-            <Link to="/admin/faculty/add">Create new</Link>
+            Create new
           </Button>
+          </Link>
+          <Typography variant="h3" className="mb-2">Faculties</Typography>
           <div className="flex items-center gap-2">
+            
             <Input
               type="text"
               placeholder="Search faculty..."
@@ -83,6 +87,15 @@ export const Faculty = () => {
                       Description
                     </Typography>
                   </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      Marketing Coordinator
+                    </Typography>
+                  </th>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center">
                     <Typography
                       variant="small"
@@ -95,8 +108,8 @@ export const Faculty = () => {
                 </tr>
               </thead>
               <tbody>
-                {searchTerm && filterFaculty?.faculties && filterFaculty?.faculties.length > 0 ? (
-                  filterFaculty.faculties.map((faculty, index) => (
+                {searchTerm && filterFaculty?.Faculty && filterFaculty?.Faculty.length > 0 ? (
+                  filterFaculty.Faculty.map((faculty, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
                         <Link to={`/admin/faculty/${faculty._id}`}>
@@ -118,20 +131,21 @@ export const Faculty = () => {
                           {faculty.descActive}
                         </Typography>
                       </td>
+                      <td className="p-4 border-b border-blue-gray-50">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {faculty?.marketingCoordinator?.userName}
+                          </Typography>
+                        </td>
                       <td className="p-4 border-b border-blue-gray-50 w-20">
-                        <Select label="Select action below">
-                          <Option>
-                            <Link to={`/admin/faculty/${faculty._id}`}>
-                              Detail
-                            </Link>
-                          </Option>
-                          <Option>
-                            <Link to={`/admin/faculty/${faculty._id}/edit`}>
-                              Edit
-                            </Link>
-                          </Option>
-                        </Select>
-                      </td>
+                          <div className="flex gap-2 items-center">
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/faculty/${faculty._id}/edit`}> <Settings/> </Link></IconButton>
+                            </div>
+                        </td>
                     </tr>
                   ))
                 ):faculties ? (
@@ -156,6 +170,15 @@ export const Faculty = () => {
                             className="font-normal"
                           >
                             {faculty.descActive}
+                          </Typography>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {faculty?.marketingCoordinator?.userName}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
