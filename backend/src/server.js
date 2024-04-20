@@ -15,7 +15,7 @@ const facultyRouter = require("../routes/faculty");
 
 const session = require('express-session');
 dotenv.config();
-
+const __dirname = path.resolve();
 const app = express();
 
 app.use((err, req, res, next) => {
@@ -53,11 +53,10 @@ app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
 
 
-app.use(express.static(path.join(__dirname, "../../frontend/build")));
-
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/build/index.html"));
+	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 
