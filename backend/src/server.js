@@ -54,9 +54,9 @@ app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
 
 
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/build/App.js'));
+  res.sendFile(path.join(__dirname, 'frontend/build/index.js'));
 });
 
 const hostname = 'localhost'
