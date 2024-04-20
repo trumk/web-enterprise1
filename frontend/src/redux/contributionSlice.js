@@ -69,6 +69,15 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getNotifications: {
+      notifications: null,
+      isFetching: false,
+      error: false,
+    },
+    readNotification: {
+      isFetching: false,
+      error: false,
+    },
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -239,6 +248,29 @@ const contributionSlice = createSlice({
       state.getContributionByCoordinator.isFetching = false;
       state.getContributionByCoordinator.error = true;
     },
+    getNotificationsStart: (state) => {
+      state.getNotifications.isFetching = true;
+    },
+    getNotificationsSuccess: (state, action) => {
+      state.getNotifications.isFetching = false;
+      state.getNotifications.notifications = action.payload;
+      state.getNotifications.error = false;
+    },
+    getNotificationsFailed: (state) => {
+      state.getNotifications.isFetching = false;
+      state.getNotifications.error = true;
+    },
+    readNotificationStart: (state) => {
+      state.readNotification.isFetching = true;
+    },
+    readNotificationSuccess: (state) => {
+      state.readNotification.isFetching = false;
+      state.readNotification.error = false;
+    },
+    readNotificationFailed: (state) => {
+      state.readNotification.isFetching = false;
+      state.readNotification.error = true;
+    },
   },
 });
 export const {
@@ -287,5 +319,11 @@ export const {
   getContributionByCoordinatorStart,
   getContributionByCoordinatorSuccess,
   getContributionByCoordinatorFailed,
+  getNotificationsStart,
+  getNotificationsSuccess,
+  getNotificationsFailed,
+  readNotificationStart,
+  readNotificationSuccess,
+  readNotificationFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
