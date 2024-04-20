@@ -908,6 +908,7 @@ const contributionController = {
             peopleID: [userId],
             contributionID: contributionId
           });
+          await notification.save();
         } else {
           const index = notification.peopleID.indexOf(userId);
           if (index > -1) {
