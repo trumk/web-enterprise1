@@ -34,7 +34,7 @@ export default function NavbarDefault() {
 
   const closeMenu = () => setIsMenuOpen(false);
   const notification = useSelector((state) => state.contribution.getNotifications?.notifications);
-  
+
   useEffect(() => {
     if (user && user._id) {
       dispatch(getAllNotifications(accessToken));
@@ -43,7 +43,7 @@ export default function NavbarDefault() {
   console.log(notification);
   const handleReadNotification = (id) => {
     setOpenNotification(false);
-    if(user && user?.accessToken){
+    if (user && user?.accessToken) {
       dispatch(getOneNotification(id, accessToken))
     }
   }
@@ -229,7 +229,11 @@ export default function NavbarDefault() {
             ) : (
               <>
                 <Menu open={openNotification} handler={setOpenNotification} placement="bottom-end">
-                  <Badge color="red" className="ml-2 relative -right-12 z-10" content={notification?.filter(item => !item.viewed).length} />
+                  {
+                    notification?.filter(item => !item.viewed).length > 0 && (
+                      <Badge color="red" className="ml-2 relative -right-12 z-10" content={notification?.filter(item => !item.viewed).length} />
+                    )
+                  }
                   <MenuHandler>
                     <IconButton
                       variant="text"
@@ -243,7 +247,7 @@ export default function NavbarDefault() {
                   </MenuHandler>
                   <MenuList className="p-1 max-w-96">
                     {notification?.length > 0 ? (
-                      notification?.map((item) => {
+                      notification?.slice(0, 5).map((item) => {
                         const isRead = !item?.viewed;
                         return (
                           <>
@@ -253,7 +257,7 @@ export default function NavbarDefault() {
                                   ? "bg-yellow-500/10 focus:bg-yellow-500/10 active:bg-yellow-500/10"
                                   : ""
                                   }`}
-                                  onClick={() => handleReadNotification(item?._id)}
+                                onClick={() => handleReadNotification(item?._id)}
                               >
                                 <Avatar src={item?.avatar} />
                                 <p
