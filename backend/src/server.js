@@ -14,7 +14,6 @@ const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
 
 const session = require('express-session');
-const __dirname = path.resolve();
 dotenv.config();
 
 const app = express();
