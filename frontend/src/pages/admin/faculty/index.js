@@ -112,13 +112,13 @@ export const Faculty = () => {
                   filterFaculty.Faculty.map((faculty, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/admin/faculty/${faculty._id}`}>
+                        <Link to={`/admin/faculty/${faculty?._id}`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {faculty.facultyName}
+                            {faculty?.facultyName}
                           </Typography>
                         </Link>
                       </td>
@@ -128,7 +128,7 @@ export const Faculty = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {faculty.descActive}
+                          {faculty?.descActive}
                         </Typography>
                       </td>
                       <td className="p-4 border-b border-blue-gray-50">
@@ -142,8 +142,8 @@ export const Faculty = () => {
                         </td>
                       <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty._id}`}> <Info/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/faculty/${faculty._id}/edit`}> <Settings/> </Link></IconButton>
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty?._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/faculty/${faculty?._id}/edit`}> <Settings/> </Link></IconButton>
                             </div>
                         </td>
                     </tr>
@@ -153,13 +153,13 @@ export const Faculty = () => {
                     faculties.Faculty.map((faculty, index) => (
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                          <Link to={`/admin/faculty/${faculty._id}`}>
+                          <Link to={`/admin/faculty/${faculty?._id}`}>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {faculty.facultyName}
+                              {faculty?.facultyName}
                             </Typography>
                           </Link>
                         </td>
@@ -169,7 +169,7 @@ export const Faculty = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {faculty.descActive}
+                            {faculty?.descActive}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
@@ -183,8 +183,8 @@ export const Faculty = () => {
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty._id}`}> <Info/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/faculty/${faculty._id}/edit`}> <Settings/> </Link></IconButton>
+                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty?._id}`}> <Info/> </Link></IconButton>
+                            <IconButton color="red"><Link to={`/admin/faculty/${faculty?._id}/edit`}> <Settings/> </Link></IconButton>
                             </div>
                         </td>
                       </tr>
