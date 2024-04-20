@@ -29,6 +29,8 @@ router.get("/sort/asc", contributionController.filterContributionAsc);
 router.get("/sort/desc", contributionController.filterContributionDesc);
 router.post("/public/:id", authorization.verifyManager, contributionController.publishContribution);
 router.post("/comment/:id", contributionController.commentContribution);
+router.get("/notifications", contributionController.getAllNotification);
+router.get("/notification/:id", contributionController.getOneNotification);
 router.get("/exception", contributionController.getExceptionReports);
 router.get("/getContributionByFaculty", contributionController.getContributionByCoordinator);
 router.get("/:id", contributionController.getOneContribution);
