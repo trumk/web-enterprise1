@@ -175,17 +175,14 @@ export default function NavbarDefault() {
   }
   const profile = useSelector((state) => state.user.user?.user);
   return (
-    <div className="max-h-[768px] w-full">
-      <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
+    <div className="w-full">
+      <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
-
-            <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-              <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
-            </Typography>
-
-
-          </Button>
+         
+          <Link to={"/admin/user"}>
+            <img src={logo} alt="logo" size="md" className="mr-2 w-[60px]" />
+          </Link>
+          
           <div className="flex items-center gap-4">
             {!user ? (
               <div className="flex items-center gap-x-1">

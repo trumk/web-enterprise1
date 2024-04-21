@@ -66,7 +66,7 @@ export const Faculty = () => {
             />
           </div>
           <Card className="h-full w-full mt-2">
-            <table className="w-full min-w-max table-auto text-left">
+            <table className="w-full  table-auto text-left">
               <thead>
                 <tr>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
