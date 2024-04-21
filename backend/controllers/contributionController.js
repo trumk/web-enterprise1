@@ -10,6 +10,9 @@ const sanitizeHtml = require("sanitize-html");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Profile = require("../models/Profile");
+const Notification = require("../models/Notification");
+const notification = require("../models/Notification");
+const contribution = require("../models/Contribution");
 
 const transporter = nodemailer.createTransport({
   service: "hotmail",
@@ -97,6 +100,9 @@ const contributionController = {
         .map((coordinator) => coordinator.email)
         .join(",");
       const Student = await Profile.findOne({ userID: req.user.id });
+      if(!Student.firstName || !Student.lastName || !Student.avatar){
+        return res.status(403).json("You need to set your profile before submitting")
+      }
       if (!emailAddresses) {
         return res
           .status(500)
@@ -113,11 +119,22 @@ const contributionController = {
         facultyID: faculty._id,
       });
       const contribution = await newContribution.save();
+      const marketingID = marketingCoordinators
+      .map((coordinator) => coordinator._id)
+      .join(",");
+      const message = `<p>Student<b> ${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`;
+      let notification = new Notification({
+        message,
+        userID: marketingID,
+        peopleID: [req.user.id],
+        contributionID: contribution._id
+      });
+      await notification.save();
       const mailOptions = {
         from: process.env.EMAIL,
         to: emailAddresses,
         subject: `<b>New Submission</b>`,
-        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has been submitted</p><br>`,
+        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`,
       };
       await new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
@@ -316,222 +333,130 @@ const contributionController = {
     }
   },
 
-  // getOneContribution: async (req, res) => {
-  //   try {
-  //     const contributions = await Contribution.aggregate([
-  //       {
-  //         $match: {
-  //           _id: new mongoose.Types.ObjectId(req.params.id),
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: "profiles",
-  //           localField: "userID",
-  //           foreignField: "userID",
-  //           as: "userProfile",
-  //         },
-  //       },
-  //       {
-  //         $unwind: {
-  //           path: "$userProfile",
-  //           preserveNullAndEmptyArrays: true,
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: "profiles",
-  //           let: { user_ids: "$comments.userID" },
-  //           pipeline: [
-  //             {
-  //               $match: {
-  //                 $expr: {
-  //                   $in: ["$userID", "$$user_ids"],
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //           as: "commentProfiles",
-  //         },
-  //       },
-  //       {
-  //         $addFields: {
-  //           comments: {
-  //             $map: {
-  //               input: "$comments",
-  //               as: "comment",
-  //               in: {
-  //                 $mergeObjects: [
-  //                   "$$comment",
-  //                   {
-  //                     userProfile: {
-  //                       $first: {
-  //                         $filter: {
-  //                           input: "$commentProfiles",
-  //                           as: "profile",
-  //                           cond: {
-  //                             $eq: ["$$profile.userID", "$$comment.userID"],
-  //                           },
-  //                         },
-  //                       },
-  //                     },
-  //                   },
-  //                 ],
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //       {
-  //         $project: {
-  //           title: 1,
-  //           content: 1,
-  //           image: 1,
-  //           file: 1,
-  //           isPublic: 1,
-  //           author: {
-  //             firstName: "$userProfile.firstName",
-  //             lastName: "$userProfile.lastName",
-  //             avatar: "$userProfile.avatar",
-  //           },
-  //           comments: 1,
-  //         },
-  //       },
-  //     ]);
-
-  //     if (contributions.length === 0) {
-  //       return res.status(404).json({ message: "Contribution not found." });
-  //     }
-
-  //     await res.status(200).json(contributions[0]);
-  //   } catch (error) {
-  //     res.status(500).json({ message: error.message });
-  //   }
-  // },
   getOneContribution: async (req, res) => {
     try {
-        const contributions = await Contribution.aggregate([
-            {
+      const contributions = await Contribution.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(req.params.id),
+          },
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            let: { user_ids: "$comments.userID" },
+            pipeline: [
+              {
                 $match: {
-                    _id: new mongoose.Types.ObjectId(req.params.id),
+                  $expr: {
+                    $in: ["$userID", "$$user_ids"],
+                  },
                 },
-            },
-            {
+              },
+              {
                 $lookup: {
-                    from: "profiles",
-                    localField: "userID",
-                    foreignField: "userID",
-                    as: "userProfile",
+                  from: "users",
+                  localField: "userID",
+                  foreignField: "_id",
+                  as: "user",
                 },
-            },
-            {
+              },
+              {
                 $unwind: {
-                    path: "$userProfile",
-                    preserveNullAndEmptyArrays: true,
+                  path: "$user",
+                  preserveNullAndEmptyArrays: true,
                 },
-            },
-            {
-                $lookup: {
-                    from: "profiles",
-                    let: { user_ids: "$comments.userID" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $in: ["$userID", "$$user_ids"],
-                                },
-                            },
-                        },
-                        {
-                            $lookup: {
-                                from: "users",
-                                localField: "userID",
-                                foreignField: "_id",
-                                as: "user",
-                            },
-                        },
-                        {
-                            $unwind: {
-                                path: "$user",
-                                preserveNullAndEmptyArrays: true,
-                            },
-                        },
-                        {
-                            $addFields: {
-                                "commentRole": "$user.role",
-                            },
-                        },
-                    ],
-                    as: "commentProfiles",
-                },
-            },
-            {
+              },
+              {
                 $addFields: {
-                    comments: {
-                        $map: {
-                            input: "$comments",
-                            as: "comment",
-                            in: {
-                                $mergeObjects: [
-                                    "$$comment",
-                                    {
-                                        userProfile: {
-                                            $first: {
-                                                $filter: {
-                                                    input: "$commentProfiles",
-                                                    as: "profile",
-                                                    cond: {
-                                                        $eq: ["$$profile.userID", "$$comment.userID"],
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                ],
-                            },
-                        },
-                    },
+                  "commentRole": "$user.role",
                 },
-            },
-            {
-                $project: {
-                    title: 1,
-                    content: 1,
-                    image: 1,
-                    file: 1,
-                    isPublic: 1,
-                    author: {
-                        firstName: "$userProfile.firstName",
-                        lastName: "$userProfile.lastName",
-                        avatar: "$userProfile.avatar",
-                    },
-                    comments: {
-                        $map: {
-                            input: "$comments",
-                            as: "comment",
-                            in: {
-                                $mergeObjects: [
-                                    "$$comment",
-                                    {
-                                        role: "$$comment.userRole",
-                                    },
-                                ],
+              },
+            ],
+            as: "commentProfiles",
+          },
+        },
+        {
+          $addFields: {
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      userProfile: {
+                        $first: {
+                          $filter: {
+                            input: "$commentProfiles",
+                            as: "profile",
+                            cond: {
+                              $eq: ["$$profile.userID", "$$comment.userID"],
                             },
+                          },
                         },
+                      },
                     },
+                  ],
                 },
+              },
             },
-        ]);
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      role: "$$comment.userRole",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ]);
 
-        if (contributions.length === 0) {
-            return res.status(404).json({ message: "Contribution not found." });
-        }
+      if (contributions.length === 0) {
+        return res.status(404).json({ message: "Contribution not found." });
+      }
 
-        await res.status(200).json(contributions[0]);
+      await res.status(200).json(contributions[0]);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-},
+  },
   editContribution: async (req, res) => {
     try {
       const contribution = await Contribution.findById(req.params.id);
@@ -682,14 +607,6 @@ const contributionController = {
           },
         },
       ]);
-      // .populate({
-      //   path: 'userID',
-      //   select: 'userName -_id'
-      // })
-      // .populate({
-      //   path: 'comments.userID',
-      //   select: 'userName -_id'
-      // });
       return res.status(200).json(contributions);
     } catch (error) {
       res.status(500).json(error);
@@ -930,6 +847,14 @@ const contributionController = {
         .status(404)
         .json({ message: "Unable to publish contribution." });
     }
+    const message = `Marketing Coordinator published your contribution.`;
+    let notification = new Notification({
+      message,
+      userID: contribution.userID,
+      peopleID: [req.user.id],
+      contributionID: contributionId
+    });
+    await notification.save();
     res.status(200).json(updatedContribution);
   },
   commentContribution: async (req, res) => {
@@ -937,7 +862,6 @@ const contributionController = {
       const contributionId = req.params.id;
       const userId = req.user.id;
       const user = await Profile.findOne({ userID: userId });
-
       if (!user.firstName || !user.lastName || !user.avatar) {
         return res
           .status(403)
@@ -974,11 +898,208 @@ const contributionController = {
         },
         { new: true }
       );
+      if (contribution.userID != userId) {
+        let notification = await Notification.findOne({ contributionID: contributionId });
+        if (!notification) {
+          const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
+          notification = new Notification({
+            message,
+            userID: contribution.userID,
+            peopleID: [userId],
+            contributionID: contributionId
+          });
+          await notification.save();
+        } else {
+          const index = notification.peopleID.indexOf(userId);
+          if (index > -1) {
+            notification.peopleID.splice(index, 1)
+          }
+          notification.peopleID.unshift(userId);
+          notification.viewed = false;
+          notification.createdAt = new Date().getTime();
 
+          const peopleNames = await Profile.find({
+            userID: { $in: notification.peopleID },
+          });
+
+          const sortedNames = notification.peopleID.map((id) =>
+            peopleNames.find((p) => p.userID.toString() === id.toString())
+          );
+
+          const peopleNamesList = sortedNames.map((p) => `<b>${p.firstName} ${p.lastName}</b>`);
+
+          if (peopleNamesList.length > 3) {
+            const firstTwo = peopleNamesList.slice(0, 2).join(", ");
+            const othersCount = peopleNamesList.length - 2;
+            notification.message = `${firstTwo} and ${othersCount} other people commented in your contribution.`;
+          } else if (peopleNamesList.length === 3) {
+            notification.message = `${peopleNamesList.slice(0, 2).join(", ")} and ${peopleNamesList[2]} commented in your contribution.`;
+          } else {
+            notification.message = `${peopleNamesList.join(", ")} commented in your contribution.`;
+          }
+          await notification.save();
+        }
+      }
       res.status(200).json(contribution);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: error });
+    }
+  },
+  getAllNotification: async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      let notifications = await Notification.find({ userID: userId })
+        .sort([
+          ['viewed', 1],
+          ['createdAt', -1]
+        ]);
+      notifications = await Promise.all(
+        notifications.map(async (notification) => {
+          let avatar = null;
+          if (notification.peopleID.length > 0) {
+            const firstPerson = notification.peopleID[0];
+            const profile = await Profile.findOne({ userID: firstPerson });
+            if (profile) {
+              avatar = profile.avatar;
+            }
+          }
+          return {
+            ...notification._doc,
+            avatar: avatar,
+            peopleID: undefined,
+          };
+        })
+      );
+      res.status(200).json(notifications);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  getOneNotification: async (req, res) => {
+    try {
+      const notification = await Notification.findById(req.params.id)
+      const contributionID = notification.contributionID.toString()
+      const contributions = await Contribution.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(contributionID),
+          },
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            let: { user_ids: "$comments.userID" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$userID", "$$user_ids"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "users",
+                  localField: "userID",
+                  foreignField: "_id",
+                  as: "user",
+                },
+              },
+              {
+                $unwind: {
+                  path: "$user",
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $addFields: {
+                  "commentRole": "$user.role",
+                },
+              },
+            ],
+            as: "commentProfiles",
+          },
+        },
+        {
+          $addFields: {
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      userProfile: {
+                        $first: {
+                          $filter: {
+                            input: "$commentProfiles",
+                            as: "profile",
+                            cond: {
+                              $eq: ["$$profile.userID", "$$comment.userID"],
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            comments: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      role: "$$comment.userRole",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ]);
+
+      if (contributions.length === 0) {
+        return res.status(404).json({ message: "Contribution not found." });
+      }
+      await Notification.findByIdAndUpdate(req.params.id, {viewed: true});
+      await res.status(200).json(contributions[0]);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   },
   getStatistic: async (req, res) => {
