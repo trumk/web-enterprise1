@@ -122,7 +122,7 @@ const contributionController = {
       const marketingID = marketingCoordinators
       .map((coordinator) => coordinator._id)
       .join(",");
-      const message = `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`;
+      const message = `<p>Student<b> ${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`;
       let notification = new Notification({
         message,
         userID: marketingID,
@@ -847,7 +847,7 @@ const contributionController = {
         .status(404)
         .json({ message: "Unable to publish contribution." });
     }
-    const message = `Marketing Coordinator is published your contribution.`;
+    const message = `Marketing Coordinator published your contribution.`;
     let notification = new Notification({
       message,
       userID: contribution.userID,
