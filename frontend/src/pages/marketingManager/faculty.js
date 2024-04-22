@@ -57,7 +57,7 @@ export const FacultyManager = () => {
             />
           </div>
           <Card className="h-full w-full mt-2">
-            <table className="w-full min-w-max table-auto text-left">
+            <table className="w-full table-auto text-left">
               <thead>
                 <tr>
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -90,17 +90,17 @@ export const FacultyManager = () => {
                 </tr>
               </thead>
               <tbody>
-                {searchTerm && filterFaculty?.faculties && filterFaculty?.faculties.length > 0 ? (
-                  filterFaculty.faculties.map((faculty, index) => (
+                {searchTerm && filterFaculty?.Faculty && filterFaculty?.Faculty.length > 0 ? (
+                  filterFaculty.Faculty.map((faculty, index) => (
                     <tr key={index}>
                       <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                        <Link to={`/marketingManager/faculty/${faculty._id}`}>
+                        <Link to={`/marketingManager/faculty/${faculty?._id}`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {faculty.facultyName}
+                            {faculty?.facultyName}
                           </Typography>
                         </Link>
                       </td>
@@ -110,13 +110,13 @@ export const FacultyManager = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {faculty.descActive}
+                          {faculty?.descActive}
                         </Typography>
                       </td>
                       <td className="p-4 border-b border-blue-gray-50 w-20">
                         <Select label="Select action below">
                           <Option>
-                            <Link to={`/marketingManager/faculty/${faculty._id}`}>
+                            <Link to={`/marketingManager/faculty/${faculty?._id}`}>
                               Detail
                             </Link>
                           </Option>
@@ -129,13 +129,13 @@ export const FacultyManager = () => {
                     faculties.Faculty.map((faculty, index) => (
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                          <Link to={`/marketingManager/faculty/${faculty._id}`}>
+                          <Link to={`/marketingManager/faculty/${faculty?._id}`}>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {faculty.facultyName}
+                              {faculty?.facultyName}
                             </Typography>
                           </Link>
                         </td>
@@ -145,13 +145,13 @@ export const FacultyManager = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {faculty.descActive}
+                            {faculty?.descActive}
                           </Typography>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
                             <Option>
-                              <Link to={`/marketingManager/faculty/${faculty._id}`}>
+                              <Link to={`/marketingManager/faculty/${faculty?._id}`}>
                                 Detail
                               </Link>
                             </Option>

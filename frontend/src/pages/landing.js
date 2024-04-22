@@ -58,7 +58,7 @@ export default function Landing() {
               }}>
             <div className="absolute top-0 w-full h-full bg-center bg-cover"
                 style={{
-                  backgroundImage: "url('https://img.chelseafc.com/image/upload/f_auto,c_fill,g_auto,q_90/editorial/generic%20content%20pages/USA%20tour/USA_Tour_Announcement_App_Assets_Latest_Image_2880x1620_V1.jpg')"
+                  backgroundImage: "url('https://www.visitgreenwich.org.uk/imageresizer/?image=%2Fdmsimgs%2FUniversity_of_Greenwich_Profile_image_Jan_2023_2020756971.jpg&action=ProductDetailProFullWidth&fbclid=IwZXh0bgNhZW0CMTAAAR1qQCggGuV6JfDCRfNDUqrdmDQJ-CrOO1taH2pR_IlxS6kEyAfxOdebWXM_aem_AZ_ndxrWLuth4TnwCVM51S5D257h5_imJ5Xw6KVNFRRbyv09CArVGeI0QK0e4Z22PABTZkeCVC7NvAW1j0pHRkZn')"
                 }}>
               <span id="blackOverlay" className="w-full h-full absolute opacity-75 bg-black"></span>
             </div>

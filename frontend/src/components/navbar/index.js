@@ -11,11 +11,12 @@ import {
   MenuList,
   MenuItem,
   MobileNav,
+  Badge,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3, Contact, KeyRound, Settings } from "lucide-react";
+import { ChevronDownIcon, PowerOff, UserCircleIcon, Mail, PartyPopper, Users, FileSliders, CalendarDays, ShieldAlert, School, BarChart3, Contact, KeyRound, Settings, BellIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { getSelf, logout } from "../../redux/apiRequest";
+import { getAllNotifications, getOneNotification, getSelf, logout } from "../../redux/apiRequest";
 import { MobileNavItem } from "./mobile-nav";
 
 export default function NavbarDefault() {
@@ -24,6 +25,7 @@ export default function NavbarDefault() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [openNotification, setOpenNotification] = React.useState(false);
   const id = user?._id;
   const accessToken = user?.accessToken;
   const handleLogout = () => {
@@ -31,7 +33,20 @@ export default function NavbarDefault() {
   };
 
   const closeMenu = () => setIsMenuOpen(false);
+  const notification = useSelector((state) => state.contribution.getNotifications?.notifications);
 
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(getAllNotifications(accessToken));
+    }
+  }, [dispatch, user]);
+  console.log(notification);
+  const handleReadNotification = (id) => {
+    setOpenNotification(false);
+    if (user && user?.accessToken) {
+      dispatch(getOneNotification(id, accessToken))
+    }
+  }
   const profileMenuItems = [
     {
       label: `${user?.email}`,
@@ -76,23 +91,23 @@ export default function NavbarDefault() {
       label: "My Contribution",
     },
   ];
-    const userRoutes = [
-      {
-        href: `/user/${user?._id}/profile`,
-        icon: Contact,
-        label: 'Profile'
-      },
-      {
-        href: `/user/${user?._id}/changePassword`,
-        icon: KeyRound,
-        label: 'Authenticate'
-      },
-      {
-        href: `/user/${user?._id}/edit`,
-        icon: Settings,
-        label: 'Settings'
-      }
-    ];
+  const userRoutes = [
+    {
+      href: `/user/${user?._id}/profile`,
+      icon: Contact,
+      label: 'Profile'
+    },
+    {
+      href: `/user/${user?._id}/changePassword`,
+      icon: KeyRound,
+      label: 'Authenticate'
+    },
+    {
+      href: `/user/${user?._id}/edit`,
+      icon: Settings,
+      label: 'Settings'
+    }
+  ];
   const adminRoutes = [
     {
       href: "/admin/user",
@@ -157,7 +172,7 @@ export default function NavbarDefault() {
     routes = marketingCoordinatorRoutes;
   } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
-  } else if(isUserPage) {
+  } else if (isUserPage) {
     routes = userRoutes;
   } else {
     routes = guestRoutes;
@@ -167,7 +182,7 @@ export default function NavbarDefault() {
       navigate('/admin/user')
     } else if (user?.role === 'marketing manager') {
       navigate('/marketingManager')
-    } else if (user?.role === 'marketing coordinator'){
+    } else if (user?.role === 'marketing coordinator') {
       navigate('/marketingCoordinator')
     } else {
       navigate('/dashboard')
@@ -175,8 +190,8 @@ export default function NavbarDefault() {
   }
   const profile = useSelector((state) => state.user.user?.user);
   return (
-    <div className="max-h-[768px] w-full">
-      <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
+    <div className="w-full">
+      <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
 
@@ -187,6 +202,8 @@ export default function NavbarDefault() {
 
           </Button>
           <div className="flex items-center gap-4">
+
+
             {!user ? (
               <div className="flex items-center gap-x-1">
                 <Link to="/login">
@@ -210,6 +227,65 @@ export default function NavbarDefault() {
               </div>
             ) : (
               <>
+                <Menu open={openNotification} handler={setOpenNotification} placement="bottom-end">
+                  {
+                    notification?.filter(item => !item.viewed).length > 0 && (
+                      <Badge color="red" className="ml-2 relative -right-12 z-10" content={notification?.filter(item => !item.viewed).length} />
+                    )
+                  }
+                  <MenuHandler>
+                    <IconButton
+                      variant="text"
+                      color="blue-gray"
+                      className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto z-0"
+                    >
+
+                      <BellIcon className="h-6 w-6" />
+                    </IconButton>
+
+                  </MenuHandler>
+                  <MenuList className="p-1 max-w-96">
+                    {notification?.length > 0 ? (
+                      notification?.slice(0, 5).map((item) => {
+                        const isRead = !item?.viewed;
+                        return (
+                          <>
+                            <Link to={item?.message.startsWith("Student") ? `/marketingCoordinator/contribution/${item.contributionID}/action` : `/myContribution/${item.contributionID}/detail`}>
+                              <MenuItem
+                                className={`flex items-center gap-2 rounded ${isRead
+                                  ? "bg-yellow-500/10 focus:bg-yellow-500/10 active:bg-yellow-500/10"
+                                  : ""
+                                  }`}
+                                onClick={() => handleReadNotification(item?._id)}
+                              >
+                                <Avatar src={item?.avatar} />
+                                <p
+                                  as="span"
+                                  variant="small"
+                                  className="line-clamp-2"
+                                  color={isRead ? "font-bold" : "font-normal inherit"}
+                                  dangerouslySetInnerHTML={{ __html: item?.message }}
+                                />
+                              </MenuItem>
+                            </Link>
+                          </>
+                        )
+
+                      })
+                    ) : (
+                      <Typography
+                        as="span"
+                        variant="small"
+                        className="line-clamp-2"
+                        color="font-normal inherit"
+                      >
+                        You don't have any notification
+                      </Typography>
+                    )
+                    }
+
+                  </MenuList>
+                </Menu>
                 <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
                   <MenuHandler>
                     <Button
@@ -325,19 +401,19 @@ export default function NavbarDefault() {
               }
 
             </ul>
-            { !user && (
+            {!user && (
               <div className="flex items-center gap-x-1">
                 <Link to="/login">
-              <Button fullWidth variant="text" size="sm" className="">
-                <span>Log In</span>
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button fullWidth variant="gradient" size="sm" className="">
-                <span>Sign in</span>
-              </Button>
-            </Link>
-            </div>
+                  <Button fullWidth variant="text" size="sm" className="">
+                    <span>Log In</span>
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button fullWidth variant="gradient" size="sm" className="">
+                    <span>Sign in</span>
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </MobileNav>

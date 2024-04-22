@@ -108,9 +108,15 @@ import {
   getExceptionFailed, 
   getExceptionStart, 
   getExceptionSuccess, 
+  getNotificationsFailed, 
+  getNotificationsStart, 
+  getNotificationsSuccess, 
   publishFailed, 
   publishStart, 
   publishSuccess, 
+  readNotificationFailed, 
+  readNotificationStart, 
+  readNotificationSuccess, 
   searchContributionFailed, 
   searchContributionStart, 
   searchContributionSuccess, 
@@ -123,10 +129,10 @@ import {
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-// const BACKEND_URL = "https://web-enterprise1.onrender.com";
+const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
 //const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
-const BACKEND_URL = "http://localhost:5000";
+//const BACKEND_URL = "http://localhost:5000";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -786,6 +792,36 @@ export const getContributionByCoordinator = (accessToken) => async (dispatch) =>
     dispatch(getContributionByCoordinatorSuccess(res.data));
   } catch (err) {
     dispatch(getContributionByCoordinatorFailed());
+    console.log(err);
+  }
+}
+
+export const getAllNotifications = (accessToken) => async (dispatch) => {
+  dispatch(getNotificationsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/notifications`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getNotificationsSuccess(res.data));
+  } catch (err) {
+    dispatch(getNotificationsFailed());
+    console.log(err);
+  }
+}
+
+export const getOneNotification = (id, accessToken) => async (dispatch) => {
+  dispatch(readNotificationStart());
+  try {
+    await axios.get(`${BACKEND_URL}/contribution/notification/${id}`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(readNotificationSuccess());
+  } catch (err) {
+    dispatch(readNotificationFailed());
     console.log(err);
   }
 }

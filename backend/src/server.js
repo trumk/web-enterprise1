@@ -14,9 +14,7 @@ const eventRouter = require("../routes/event");
 const facultyRouter = require("../routes/faculty");
 
 const session = require('express-session');
-
 dotenv.config();
-
 const app = express();
 
 app.use((err, req, res, next) => {
@@ -54,10 +52,8 @@ app.use("/faculty", facultyRouter);
 app.use("/contribution", contributionRouter);
 
 
-app.use(express.static(path.join(__dirname, 'frontend/dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
-});
+
+
 
 const hostname = 'localhost'
 const port = process.env.PORT || 5000;
