@@ -67,8 +67,11 @@ export const ReadContributionDashboard = () => {
                 </div>
               </address>
               <Typography variant='h5'>{contribution?.title}</Typography>
-              <Preview value={contribution?.content} className="text"/>
-              <div className="grid gap-5">
+              
+              
+            </header>
+            <div className= "border border-gray-900 rounded-sm p-2" >
+            <div className="grid gap-5">
                 <div>
                   <img
                     className="h-auto w-full max-w-full rounded-lg object-cover object-center md:h-[480px]"
@@ -89,12 +92,14 @@ export const ReadContributionDashboard = () => {
                   ))}
                 </div>
               </div>
-            </header>
+            <Preview value={contribution?.content} className="text"/>
+
+            </div>
            
             <section className="not-format">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6 mt-4">
                 <div>
-                  <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h2>
+                  <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h3>
                   {contribution?.file.length > 0 && (
                     <div className="space-y-2 mt-4">
                       {contribution?.file?.map((file, index) => (
@@ -120,7 +125,7 @@ export const ReadContributionDashboard = () => {
 
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
+                <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h3>
               </div>
               <form className="mb-6">
                 <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
