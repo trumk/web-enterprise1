@@ -35,24 +35,34 @@ async function createFaculty(req, res) {
   }
 }
 
-function getAllFaculty(req, res) {
-  Faculty.find() //to retrieve all Facultys from the database.
-    .select('facultyName descActive') //properties
-    .then((allFaculty) => {
-      return res.status(200).json({
-        success: true,
-        message: ' all Faculty',
-        Faculty: allFaculty,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        success: false,
-        message: 'Server error. Please try again.',
-        error: err.message,
-      });
+async function getAllFaculty(req, res) {
+  try {
+    const allFaculties = await Faculty.find(); // Retrieve all faculties from the database
+    const facultiesWithCoordinator = await Promise.all(allFaculties.map(async (faculty) => {
+      const profile = await Profile.findOne({ facultyID: faculty._id });
+      if (profile) {
+        const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+        return {
+          ...faculty._doc,
+          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+        };
+      }
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: 'All Faculties',
+      faculties: facultiesWithCoordinator,
     });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again.',
+      error: err.message,
+    });
+  }
 };
+
 async function getFacultyManager(req, res) {
   profile = await Profile.findOne({ userID: req.user.id })
 

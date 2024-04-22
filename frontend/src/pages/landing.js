@@ -98,7 +98,7 @@ export default function Landing() {
               </svg>
             </div>
           </div>
-  
+                
   
   
           <section className="pt-20 pb-48">

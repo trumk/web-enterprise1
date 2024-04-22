@@ -44,7 +44,10 @@ export const ReadContributionDashboard = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
-  const [active, setActive] = useState(images?.img);
+  const [active, setActive] = useState(images?.[0]?.img || '');
+  useEffect(() => {
+    setActive(images?.[0]?.img || '');
+  }, [images]);
   // console.log(comments[1].userProfile?.user.role)
   return (
     <>
@@ -53,18 +56,19 @@ export const ReadContributionDashboard = () => {
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
           <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-          <Link to={`/contributions`}><Button variant='outlined'>Back to Dashboard</Button></Link>
-            <header className="mb-4 lg:mb-6 not-format">
+          <Link to={`/contributions`}><Button  variant='outlined'>Back to home</Button></Link>
+            <header className=" mt-4 mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
-                  <div>
+                  <div className="mt-4" >
                     <Typography className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</Typography>
                   </div>
                 </div>
               </address>
-              <Typography variant='h3'>{contribution?.title}</Typography>
-              <div className="grid gap-4">
+              <Typography variant='h5'>{contribution?.title}</Typography>
+              <Preview value={contribution?.content} className="text"/>
+              <div className="grid gap-5">
                 <div>
                   <img
                     className="h-auto w-full max-w-full rounded-lg object-cover object-center md:h-[480px]"
@@ -86,13 +90,13 @@ export const ReadContributionDashboard = () => {
                 </div>
               </div>
             </header>
-            <Preview value={contribution?.content} className="text-md" />
+           
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h2>
                   {contribution?.file.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 mt-4">
                       {contribution?.file?.map((file, index) => (
                         <div
                           className="flex items-center justify-between mt-2 p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"

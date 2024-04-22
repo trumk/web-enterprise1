@@ -10,7 +10,7 @@ import {
 } from "../../redux/apiRequest";
 import { format } from "date-fns";
 import { Button, Input, Option, Select, Typography } from "@material-tailwind/react";
-import { ArrowBigLeft, ArrowRight } from "lucide-react";
+import { ArrowBigLeft, ArrowRight, Heading2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const ContributionsDashboard = () => {
@@ -41,7 +41,7 @@ export const ContributionsDashboard = () => {
             });
         }
     };
-    
+
     const handleSortChange = (option) => {
         setSortOption(option);
 
@@ -79,13 +79,12 @@ export const ContributionsDashboard = () => {
                         />
                         <Button onClick={handleSearch} color="purple" ripple="light">Search</Button>
                     </form>
-                    <Typography variant="h2" className="font-bold text-purple-600">
-                        Explore some interesting contributions
-                    </Typography>
                     {sortOption === "desc" ? (
                         descContribution?.map((contribution, index) => (
+
                             <div key={index} className="bg-purple-100 px-2 py-1">
                                 <article className="mx-auto my-2 flex max-w-md flex-col rounded-2xl bg-white px-4 shadow md:max-w-5xl md:flex-row md:items-center">
+
                                     <div className="shrink-0 my-4 md:mr-8 md:max-w-sm">
                                         <img
                                             className="rounded-2xl h-64 w-96 object-cover"
@@ -131,6 +130,7 @@ export const ContributionsDashboard = () => {
                     ) : sortOption === "asc" ? (
                         ascContribution?.map((contribution, index) => (
                             <div key={index} className="bg-purple-100 px-2 py-1">
+                                
                                 <article className="mx-auto my-2 flex max-w-md flex-col rounded-2xl bg-white px-4 shadow md:max-w-5xl md:flex-row md:items-center">
                                     <div className="shrink-0 my-4 md:mr-8 md:max-w-sm">
                                         <img
@@ -179,6 +179,7 @@ export const ContributionsDashboard = () => {
                     ) : searchTerm && filterContribution?.length > 0 ? (
                         filterContribution?.map((contribution, index) => (
                             <div key={index} className="bg-purple-100 px-2 py-1">
+                               
                                 <article className="mx-auto my-2 flex max-w-md flex-col rounded-2xl bg-white px-4 shadow md:max-w-5xl md:flex-row md:items-center">
                                     <div className="shrink-0 my-4 md:mr-8 md:max-w-sm">
                                         <img
@@ -229,7 +230,8 @@ export const ContributionsDashboard = () => {
                         <div className="mt-4 text-gray-500">Not found</div>
                     ) : (
                         contributionData?.map((contribution, index) => (
-                            <div key={index} className="bg-purple-100 px-2 py-1">
+                            <div key={index} className="bg-purple-100 px-2 py-1 mt-7">
+                                
                                 <article className="mx-auto my-2 flex max-w-md flex-col rounded-2xl bg-white px-4 shadow md:max-w-5xl md:flex-row md:items-center">
                                     <div className="shrink-0 my-4 md:mr-8 md:max-w-sm">
                                         <img

@@ -198,12 +198,8 @@ export default function NavbarDefault() {
             <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
               <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
             </Typography>
-
-
           </Button>
           <div className="flex items-center gap-4">
-
-
             {!user ? (
               <div className="flex items-center gap-x-1">
                 <Link to="/login">

@@ -19,6 +19,7 @@ export const MarketingManagerPage = () => {
   let numberOfContribution = null;
   let percentageContribution = null;
   let numberOfContributors = null;
+
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   const timeValue = { startDate: time };
@@ -255,8 +256,6 @@ export const MarketingManagerPage = () => {
                 </div>
               </section>
             </>
-
-
           </>
         </div>
       </div>
