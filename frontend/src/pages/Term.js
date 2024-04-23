@@ -10,10 +10,9 @@ import {
     Typography } from '@material-tailwind/react'
 import { Link } from 'react-router-dom';
 
-export const Term = ({onAccept}) => {
+export const Term = ({open, setOpen, onAccept}) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    const [open, setOpen] = React.useState(false);
  
     const handleOpen = () => setOpen(!open);
     const scrollRef = useRef();

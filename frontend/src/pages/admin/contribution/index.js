@@ -144,7 +144,7 @@ export const Contribution = () => {
                                                 </td>
                                                 <td className="p-4 border-b border-blue-gray-50 w-20">
                                                     <div className="flex gap-2 items-center">
-                                                        <IconButton variant="gradient" color="amber"><Link to={`/admin/contribution/${contribution._id}`}> <Info /> </Link></IconButton>
+                                                        <Link to={`/admin/contribution/${contribution._id}`}> <IconButton variant="gradient" color="amber"><Info /></IconButton> </Link>
                                                     </div>
                                                 </td>
                                             </tr>
