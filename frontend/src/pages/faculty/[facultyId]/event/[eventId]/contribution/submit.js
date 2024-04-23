@@ -217,7 +217,7 @@ export const SubmitContribution = () => {
            </div>
         </div>
       </div>
-      {isTermOpen && <Term onAccept={handleAccept} />}
+      <Term open={isTermOpen} setOpen={setIsTermOpen} onAccept={handleAccept}/>
     </>
   )
 }

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Input from "./form-input";
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/apiRequest';
+import { Option, Select } from '@material-tailwind/react';
 
 const fields=loginFields;
 let fieldsState = {};
@@ -66,6 +67,9 @@ export default function Login(){
                 )
             }
         </div>
+        <Select>
+            <Option value="">Faculty Name</Option>
+        </Select>
         <FormAction handleSubmit={handleSubmit} text="Login"/>
 
       </form>

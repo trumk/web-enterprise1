@@ -134,8 +134,8 @@ export const Event = () => {
                         </td>
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/event/${detail?._id}`}> <Settings/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/event/${detail?._id}/edit`}> <PenLine/> </Link></IconButton>
+                            <Link to={`/admin/event/${detail?._id}`}><IconButton variant="gradient" color="amber"> <Settings/></IconButton> </Link>
+                            <Link to={`/admin/event/${detail?._id}/edit`}><IconButton color="red"> <PenLine/> </IconButton></Link>
                             </div>
                         </td>
                       </tr>
