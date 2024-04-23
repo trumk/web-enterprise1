@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,19 +11,21 @@ export const MarketingManagerPage = () => {
   const statistic = useSelector((state) => state.user.statistic ? state.user.statistic.data : null);
   const dispatch = useDispatch();
   const [time, setTime] = useState();
-  // useEffect(() => {
-  //   if (user && user.accessToken) {
-  //     dispatch(getStatistic(user.accessToken, time));
-  //   }
-  // }, [user, dispatch]);
+  useEffect(() => {
+    if (user && user.accessToken && time) {
+      dispatch(getStatistic(user.accessToken, { startDate: time }));
+    }
+  }, [user, time]);
   let numberOfContribution = null;
   let percentageContribution = null;
   let numberOfContributors = null;
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const timeValue = { startDate: time };
-    dispatch(getStatistic(user.accessToken, timeValue));
-};
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const timeValue = { startDate: time };
+  //   dispatch(getStatistic(user.accessToken, timeValue));
+  // };
+
 
   const analytics = statistic?.statistics || [];
   console.log(statistic?.statistics);
@@ -220,9 +222,8 @@ export const MarketingManagerPage = () => {
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar className="flex" />
-        <div className="ml-5 w-full">
+        <div className="ml-5 w-full mt-5">
           <>
-            <form className="mt-3"onSubmit={handleSubmit}>
             <Select value={time} onChange={(value) => setTime(value)} label="Select year" className="mt-2.5">
               <Option value="2023">2023</Option>
               <Option value="2024">2024</Option>
@@ -233,31 +234,29 @@ export const MarketingManagerPage = () => {
               <Option value="2029">2029</Option>
               <Option value="2030">2030</Option>
             </Select>
-            <Button onClick={handleSubmit} className="mt-4">Save</Button>
-            </form>
-              <>
-                <section className="mt-4">
-                  <div className="border border-gray-900">
-                    <Typography variant="h4">Total Contribution</Typography>
-                    {numberOfContribution && numberOfContribution.type && <Chart {...numberOfContribution} />}
-                  </div>
-                </section>
-                <section className="mt-4">
-                  <div className="border border-gray-900">
-                    <Typography variant="h4">Number of Contributors</Typography>
-                    {numberOfContributors && numberOfContributors.type && <Chart {...numberOfContributors} />}
-                  </div>
-                </section>
-                <section className="mt-4">
-                  <div className="flex flex-col items-center gap-2 border border-gray-900">
-                    <Typography variant="h4">Percentage of Total</Typography>
-                    {percentageContribution && percentageContribution.type && <Chart {...percentageContribution} />}
-                  </div>
-                </section>
-              </>
-            
-
+            {/* <Button onClick={handleSubmit} className="mt-4">Save</Button>
+            </form> */}
+            <>
+              <section className="mt-4">
+                <div className="border border-gray-900">
+                  <Typography variant="h4">Total Contribution</Typography>
+                  {numberOfContribution && numberOfContribution.type && <Chart {...numberOfContribution} />}
+                </div>
+              </section>
+              <section className="mt-4">
+                <div className="border border-gray-900">
+                  <Typography variant="h4">Number of Contributors</Typography>
+                  {numberOfContributors && numberOfContributors.type && <Chart {...numberOfContributors} />}
+                </div>
+              </section>
+              <section className="mt-4">
+                <div className="flex flex-col items-center gap-2 border border-gray-900">
+                  <Typography variant="h4">Percentage of Total</Typography>
+                  {percentageContribution && percentageContribution.type && <Chart {...percentageContribution} />}
+                </div>
+              </section>
             </>
+          </>
         </div>
       </div>
     </>
