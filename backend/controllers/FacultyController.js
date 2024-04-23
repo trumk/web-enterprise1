@@ -2,34 +2,65 @@ const mongoose = require("mongoose");
 const Faculty = require("../models/Faculty")
 const Profile = require("../models/Profile")
 const { User, Otp } = require("../models/User")
+const bcrypt = require("bcrypt")
 
+function getRandomAvatar(avatarArray) {
+  const randomIndex = Math.floor(Math.random() * avatarArray.length);
+  return avatarArray[randomIndex];
+}
 async function createFaculty(req, res) {
   try {
+    const avatarGuest = [
+      "https://i.pinimg.com/originals/ed/f7/e0/edf7e0f65e3b10b60fe4912156457978.jpg",
+      "https://bizweb.dktcdn.net/100/438/408/files/gigachad-meme-yodyvn.jpg?v=1696388231581",
+      "https://bizweb.dktcdn.net/100/438/408/files/gigachad-meme-yodyvn4.jpg?v=1696388368875",
+      "https://vn.portal-pokemon.com/play/resources/pokedex/img/pm/0783062d0d860b8ae7d8e859241a700359c4d981.png",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuirOtqmZfYnkM0kAy9XC1ua-Y5sPsrXnlaMsJ5BL8cg&s",
+    ];
     const faculty = new Faculty({
       facultyName: req.body.facultyName,
       enrollKey: req.body.enrollKey,
       descActive: req.body.descActive,
     });
-    const newFaculty = await faculty.save();
-    const user = await User.findByIdAndUpdate(
-      req.body.userID,
-      { role: "marketing coordinator" },
-      { new: true }
-    );
-    await Profile.findOneAndUpdate(
-      { userID: user._id },
-      { facultyID: newFaculty._id }
-    );
+    const [newFaculty, updatedUser] = await Promise.all([
+      faculty.save(),
+      User.findByIdAndUpdate(
+        req.body.userID,
+        { role: "marketing coordinator" },
+        { new: true }
+      ),
+    ]);
+    const salt = await bcrypt.genSalt(10);
+    const passString = newFaculty._id.toString()
+    const hashedPassword = await bcrypt.hash(passString, salt);
+    const user = new User({
+      userName: `${newFaculty._id}`,
+      email: `${newFaculty._id}@gmail.com`,
+      password: hashedPassword,
+      isVerified: true,
+      role: "guest",
+    });
+    await Promise.all([
+      user.save(),
+      new Profile({
+        firstName: `${newFaculty.facultyName}`,
+        lastName: "Guest",
+        birthDay: "2020-01-01",
+        avatar: getRandomAvatar(avatarGuest),
+        description: `I am a guest in ${newFaculty.facultyName}`,
+        userID: user._id,
+        facultyID: newFaculty._id,
+      }).save(),
+    ]);
     res.status(200).json({
       success: true,
-      message: 'New Faculty created successfully',
+      message: "New Faculty created successfully",
       Faculty: newFaculty,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
-      message: 'Server error. Please try again',
+      message: "Server error. Please try again",
       error: error.message,
     });
   }
@@ -65,7 +96,6 @@ async function getAllFaculty(req, res) {
 
 async function getFacultyManager(req, res) {
   profile = await Profile.findOne({ userID: req.user.id })
-
   await Faculty.findById(profile.facultyID)
     .select('facultyName descActive') //properties
     .then((allFaculty) => {
@@ -164,53 +194,76 @@ async function getOneFaculty(req, res) {
 };
 
 async function updateFaculty(req, res) {
-  const id = req.params.facultyId;
-  const updateObject = req.body; //update data from the request body as json, contain field edit
-  const userID = req.body.userID;
-  if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey || !userID) {
-    return res.status(400).json({
-      success: false,
-      message: 'Missing required fields'
-    });
-  }
-  const oldProfile = await Profile.findOne({ 'facultyID': id });
-  if (oldProfile) {
-    const oldUser = await User.findOne({ _id: oldProfile.userID, role: 'marketing coordinator' });
-    if (oldUser) {
-      await User.updateOne({ _id: oldUser._id }, { $set: { role: 'user' } });
-    }
-  }
-  console.log(oldProfile)
-  await User.updateOne({ _id: userID }, { $set: { role: 'marketing coordinator' } })
+  try {
+    const id = req.params.facultyId;
+    const updateObject = req.body;
+    const userID = req.body.userID;
 
-  const newProfile = await Profile.findOne({ userID: userID });
-  if (newProfile) {
-    // for (let facultyID of newProfile.facultyID) {
-    //   await Profile.updateOne({ _id: newProfile._id, 'facultyID': facultyID }, { $set: { 'facultyID.$': id } })
-    // }
-    await Profile.updateOne({ _id: newProfile._id }, { $addToSet: { facultyID: id } })
-  } else {
-    await Profile.create({ userID: userID, facultyID: [id] })
-  };
-  await Faculty.updateOne({ _id: id }, { $set: { ...updateObject, marketingCoordinator: userID } }) 
-    .exec() //execute update query built
-    //exec success 
-    .then(() => {
-      res.status(200).json({
-        success: true,
-        message: 'Faculty is updated',
-        updateFaculty: updateObject,
-      });
-    })
-    //exec error
-    .catch((err) => {
-      console.log(err)
-      res.status(500).json({
+    // Check for required fields
+    if (!updateObject.facultyName || !updateObject.descActive || !updateObject.enrollKey || !userID) {
+      return res.status(400).json({
         success: false,
-        message: 'Server error. Please try again.'
+        message: 'Missing required fields',
       });
+    }
+
+    // Find the new marketing coordinator's profile
+    const newCoordinatorProfile = await Profile.findOne({ userID });
+    const faculty = await Faculty.findById(id);
+
+    // If faculty or profile not found, return error
+    if (!faculty) {
+      return res.status(404).json({
+        success: false,
+        message: 'Faculty not found',
+      });
+    }
+
+    if (!newCoordinatorProfile) {
+      await Profile.create({
+        userID,
+        facultyID: [id],
+      });
+    }
+
+    // Find all profiles with the same facultyID and change marketing coordinators to users
+    const existingCoordinators = await Profile.find({ facultyID: id }).populate('userID', 'role');
+    
+    const promises = [];
+    for (const profile of existingCoordinators) {
+      if (profile.userID.role === 'marketing coordinator') {
+        promises.push(
+          User.findByIdAndUpdate(profile.userID._id, { role: 'user' })  // Change role to user
+        );
+      }
+    }
+
+    // Assign the new marketing coordinator
+    promises.push(
+      User.findByIdAndUpdate(userID, { role: 'marketing coordinator' })  // Set new coordinator
+    );
+
+    await Promise.all(promises);
+
+    await Faculty.updateOne(
+      { _id: id },
+      { $set: { ...updateObject, marketingCoordinator: userID } }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Faculty updated successfully',
+      updatedFaculty: updateObject,
     });
-};
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again.',
+      error: error.message,
+    });
+  }
+}
+
 
 async function enrollStudent(req, res) {
   try {

@@ -46,9 +46,10 @@ export const ReadContributionDashboard = () => {
   const images = contribution?.image.map(image => ({ img: image }))
   const [active, setActive] = useState(images?.[0]?.img || '');
   useEffect(() => {
-    setActive(images?.[0]?.img || '');
-  }, [images]);
-  // console.log(comments[1].userProfile?.user.role)
+    if (contribution?.image.length > 0) {
+      setActive(contribution.image[0]);
+    }
+  }, [contribution]);
   return (
     <>
       <NavbarDefault />

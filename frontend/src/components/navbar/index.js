@@ -47,22 +47,24 @@ export default function NavbarDefault() {
       dispatch(getOneNotification(id, accessToken))
     }
   }
-  const profileMenuItems = [
-    {
-      label: `${user?.email}`,
-      icon: Mail
-    },
-    {
+  const profileMenuItems = [];
+  profileMenuItems.push({
+    label: `${user?.role == "guest"? "Guest" : user?.email}`,
+    icon: Mail
+  },
+  {
+    label: "Sign Out",
+    icon: PowerOff,
+    action: handleLogout,
+  })
+  if (user?.role !== "guest") {
+    profileMenuItems.splice(1, 0, {
       label: "My Profile",
       icon: UserCircleIcon,
       href: `/user/${user?._id}/profile`,
-    },
-    {
-      label: "Sign Out",
-      icon: PowerOff,
-      action: handleLogout,
-    },
-  ];
+    });
+  }
+
   React.useEffect(() => {
     window.addEventListener(
       "resize",

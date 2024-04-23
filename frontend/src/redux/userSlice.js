@@ -26,6 +26,11 @@ const userSlice = createSlice({
             data: null,
             isFetching: false,
             error: false,
+        },
+        getFacultyLogin: {
+            data: null,
+            isFetching: false,
+            error: false,
         }
     },
     reducers: {
@@ -99,7 +104,19 @@ const userSlice = createSlice({
         getStatisticFailed: (state) => {
             state.statistic.isFetching = false;
             state.statistic.error = true;
-        }
+        },
+        getFacultyLoginStart: (state) => {
+            state.getFacultyLogin.isFetching = true;
+        },
+        getFacultyLoginSuccess: (state, action) => {
+            state.getFacultyLogin.isFetching = false;
+            state.getFacultyLogin.data = action.payload; 
+            state.getFacultyLogin.error = false;
+        },
+        getFacultyLoginFailed: (state) => {
+            state.getFacultyLogin.isFetching = false;
+            state.getFacultyLogin.error = true;
+        },
     }
 });
 
@@ -121,7 +138,10 @@ export const {
     enrollFacultyFailed,
     getStatisticStart,
     getStatisticSuccess,
-    getStatisticFailed
+    getStatisticFailed,
+    getFacultyLoginStart,
+    getFacultyLoginSuccess,
+    getFacultyLoginFailed,
 } = userSlice.actions;
 
 export default userSlice.reducer;
