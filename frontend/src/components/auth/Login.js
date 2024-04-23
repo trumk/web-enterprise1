@@ -21,20 +21,20 @@ export default function Login() {
   const faculty = useSelector((state) => state.user?.getFacultyLogin?.data);
 
   useEffect(() => {
-    if (!currentUser) {
-      navigate("/");
-    } else if (currentUser.role === "admin") {
-      navigate("/admin/user");
-    } else if (currentUser.role === "marketing coordinator") {
-      navigate("/marketingCoordinator");
-    } else if (currentUser.role === "marketing manager") {
-      navigate("/marketingManager");
-    } else if (currentUser.role === "guest") {
-      navigate("/guest");
-    } else {
-      navigate("/dashboard");
+    if (currentUser) {
+        if (currentUser.role === "admin") {
+            navigate("/admin/user");
+        } else if (currentUser.role === "marketing coordinator"){
+            navigate("/marketingCoordinator");
+        } else if (currentUser.role === "marketing manager") {
+            navigate("/marketingManager")
+        } else if (currentUser.role === "guest") {
+            navigate("/guest")
+        } else if(!currentUser){
+            navigate("/dashboard")
+        }
     }
-  }, [currentUser, navigate]);
+}, [currentUser, navigate]);
 
   useEffect(() => {
     dispatch(getFacultyLogin());
@@ -60,7 +60,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const authenticateUser = isGuest
+    const authenticateUser = isGuest 
       ? { email: selectedFaculty, password: selectedFaculty }
       : { email: loginState.email, password: loginState.password };
 
