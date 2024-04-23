@@ -79,7 +79,7 @@ export const Homepage = () => {
                               {faculty.facultyName}
                             </Typography>
                           </div>
-                          <Typography variant='paragraph' color="white" className='ml-4 italic'>
+                          <Typography variant='paragraph' color="white" className='ml-4 italic line-clamp-2'>
                             {faculty.descActive}
                           </Typography>
                         </div>

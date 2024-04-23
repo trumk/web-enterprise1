@@ -61,47 +61,55 @@ export const EventDetail = () => {
       <NavbarDefault />
       <div className='flex'>
         <DefaultSidebar className='flex' />
-        <div className='ml-5 w-full h-full mt-2.5'>
-          <Link to={`/admin/event`}><Button color='black'><ArrowLeft/></Button></Link>
+        <div className='ml-5 w-full h-full '>
+          <Link to={`/admin/event`}><Button color=' blue'><ArrowLeft/></Button></Link>
           {eventData && (
-            <Card className="mt-10">
+            <Card className="mt-5">
+              <CardBody className ="border border-gray-900 rounded-lg " >
+                
               <CardHeader
                 variant="gradient"
                 color="gray"
-                className="grid h-28 place-items-center"
+                className="grid h-20 place-items-center mt-2"
               >
-                <Typography variant="h3" color="white">
+                <Typography variant="h4" color="white">
                   {eventData?.topic}
                 </Typography>
               </CardHeader>
               <CardBody className="">
-                <Typography variant="h6" className="ml-3">
+                <Typography variant="h5" className="ml-3 mt-4">
                   Description:
                 </Typography>
-                <Preview value={eventData?.content} />
-                <Typography variant="h6" className="ml-3">
-                  Closure Date: {eventData?.closureDate ? format(new Date(eventData?.closureDate), 'MMMM dd,yyyy') : 'N/A'}
-                </Typography>
-                <Typography variant="h6" className="ml-3">
-                  Final Date: {eventData?.finalDate ? format(new Date(eventData?.finalDate), 'MMMM dd,yyyy') : 'N/A'}
-                </Typography>
+                <div className='mt-2 text-slate-500 border rounded-lg' style={{ display: 'flex', justifyContent: 'space-between', marginLeft: '30px', marginRight: '30px' }}>
+                            <Preview value={eventData?.content} style={{ flexGrow: 5 }} />
+                        </div>
+             
                 <Typography variant="h6" className="ml-3">
                   Create Date: {eventData?.createEvent ? format(new Date(eventData?.createEvent), 'MMMM dd,yyyy') : 'N/A'}
                 </Typography>
-                <Link to="/admin/event"><Button>Back to list</Button></Link>
+                <Typography variant="h6" className="ml-3 mt-4">
+                  Closure Date: {eventData?.closureDate ? format(new Date(eventData?.closureDate), 'MMMM dd,yyyy') : 'N/A'}
+                </Typography>
+                <Typography variant="h6" className="ml-3 mt-4">
+                  Final Date: {eventData?.finalDate ? format(new Date(eventData?.finalDate), 'MMMM dd,yyyy') : 'N/A'}
+                </Typography>
+                
+                </CardBody>
+                <Link to="/admin/event"><Button color='blue' > Back to list</Button></Link>
                 <Button color='red' onClick={handleDelete} className='ml-3'><Trash className='h-4'/></Button>
               </CardBody>
+              
               <CardFooter className='mt-[-20px]'>
-                <Typography variant="h4" color='black' className="ml-3 mb-2">
+                <Typography variant="h4" color='black' className="ml-3 mb-2 mt-4">
                   Contributions
                 </Typography>
-                <div className='flex gap-5 items-center'>
+                <div className='flex gap-5 items-center mt-4'>
                   {
                     contributionData && contributionData.length > 3 && (
                       <IconButton onClick={handlePrev}><ChevronLeft /></IconButton>
                     )
                   }
-                  <div className='flex gap-6 item-center justify-between'>
+                  <div className='flex gap-6 item-center justify-between mt-4'>
                   {contributionData ? (
                     contributionData && contributionData.length > 0 ? (
                       contributionData.slice(currentIndex, currentIndex + 3).map((detail, index) => (

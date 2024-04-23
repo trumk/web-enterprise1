@@ -126,7 +126,7 @@ export const ReadContribution = () => {
             </section>
             
             <section className="not-format">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6 mt-4">
                 <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
               </div>
               <form className="mb-6">

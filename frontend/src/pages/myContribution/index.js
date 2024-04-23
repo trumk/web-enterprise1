@@ -91,12 +91,12 @@ export const MyContributionPage = () => {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal leading-none opacity-70"
+                          className="font-normal leading-none opacity-60"
                         >
                           Published
                         </Typography>
                       </th>
-                      <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                      <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-6">
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -132,7 +132,7 @@ export const MyContributionPage = () => {
                               )}
 
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="p-12 border-b border-blue-gray-50">
                               <Badge
                                 className='w-[100px]'
                                 content={contribution?.isPublic === true ? "Published" : "Not Published"}

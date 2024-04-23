@@ -658,7 +658,7 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
     });
     dispatch(editContributionSuccess(res.data));
     toast.success("Edit contribution successfully");
-    navigate(`/userContribution`);
+    navigate(`/myContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
     toast.error(error.response.data);
