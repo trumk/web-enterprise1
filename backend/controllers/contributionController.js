@@ -31,8 +31,6 @@ const contributionController = {
       const filesPaths = req.body.firebaseUrls.filter(
         (url) => !url.match(/\.(jpeg|jpg|gif|png)$/i)
       );
-      console.log(imagesPaths);
-      console.log(filesPaths);
       if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }
@@ -130,22 +128,22 @@ const contributionController = {
         contributionID: contribution._id
       });
       await notification.save();
-      const mailOptions = {
-        from: process.env.EMAIL,
-        to: emailAddresses,
-        subject: `<b>New Submission</b>`,
-        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`,
-      };
-      await new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(info);
-          }
-        });
-      });
-      res.status(201).json(contribution);
+      // const mailOptions = {
+      //   from: process.env.EMAIL,
+      //   to: emailAddresses,
+      //   subject: `<b>New Submission</b>`,
+      //   html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`,
+      // };
+      // await new Promise((resolve, reject) => {
+      //   transporter.sendMail(mailOptions, (error, info) => {
+      //     if (error) {
+      //       reject(error);
+      //     } else {
+      //       resolve(info);
+      //     }
+      //   });
+      // });
+      // res.status(201).json(contribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message, ...error });
@@ -246,7 +244,6 @@ const contributionController = {
   getContributionByCoordinator: async (req, res) => {
     try {
       const facultyId = await Profile.findOne({ userID: req.user.id });
-      console.log(facultyId)
       let query = { isPublic: true, facultyID: { $in: facultyId.facultyID } };
       const role = req.user.role;
       if (
