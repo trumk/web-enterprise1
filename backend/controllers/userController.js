@@ -18,7 +18,6 @@ setRoleUser: async (req, res) => {
         if (req.body.role === "marketing coordinator") {
             const coordinator = await Profile.findOne({ userID: req.params.id });
             if (coordinator && coordinator.facultyID) {
-                // Find all other marketing coordinators in the same faculty
                 const otherCoordinators = await Profile.find({
                     facultyID: { $in: coordinator.facultyID },
                     userID: { $ne: req.params.id }
