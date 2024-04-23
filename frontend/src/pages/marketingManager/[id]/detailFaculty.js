@@ -48,27 +48,30 @@ export const FacultyDetailManager = () => {
         <DefaultSidebar />
         <div className="mt-2.5 ml-5 w-full">
           {faculty && (
-            <Card className="mt-5">
+            <Card className="mt-5 border border-gray-900 rounded-lg">
               <CardHeader
                 variant="gradient"
                 color="gray"
-                className="mb-4 grid h-28 place-items-center"
+                className="mb-4 grid h-20 place-items-center mt-4"
               >
                 <Typography variant="h3" color="white">
                   {detail?.facultyName}
                 </Typography>
               </CardHeader>
-              <Typography variant="h5" className="ml-3">
+              <Typography variant="h6" className="ml-3 mt-4">
                 Description: {detail?.descActive}
+              </Typography>
+              <Typography variant="h6" className="ml-3 mt-4">
+                Manage by: {detail?.marketingCoordinator?.userName}
               </Typography>
               <CardFooter>
                 <Link to="/marketingManager/faculty">
-                  <Button>Back to List</Button>
+                  <Button color="green">Back to List</Button>
                 </Link>
               </CardFooter>
             </Card>
           )}
-          <Card className="h-full w-full">
+          <Card className="h-full w-full mt-7">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>

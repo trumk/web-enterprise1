@@ -47,7 +47,7 @@ export const FacultyManager = () => {
       <div className="flex">
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-7">
             <Input
               type="text"
               placeholder="Search faculty..."
@@ -56,7 +56,7 @@ export const FacultyManager = () => {
               className="w-1/3 mb-4"
             />
           </div>
-          <Card className="h-full w-full mt-2">
+          <Card className="h-full w-full mt-7">
             <table className="w-full table-auto text-left">
               <thead>
                 <tr>
@@ -78,7 +78,7 @@ export const FacultyManager = () => {
                       Description
                     </Typography>
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  {/* <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
                     <Typography
                       variant="small"
                       color="blue-gray"
@@ -86,7 +86,7 @@ export const FacultyManager = () => {
                     >
                       Action
                     </Typography>
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody>
@@ -113,7 +113,7 @@ export const FacultyManager = () => {
                           {faculty?.descActive}
                         </Typography>
                       </td>
-                      <td className="p-4 border-b border-blue-gray-50 w-20">
+                      {/* <td className="p-4 border-b border-blue-gray-50 w-20">
                         <Select label="Select action below">
                           <Option>
                             <Link to={`/marketingManager/faculty/${faculty?._id}`}>
@@ -121,7 +121,7 @@ export const FacultyManager = () => {
                             </Link>
                           </Option>
                         </Select>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 ):faculties ? (
@@ -148,7 +148,7 @@ export const FacultyManager = () => {
                             {faculty?.descActive}
                           </Typography>
                         </td>
-                        <td className="p-4 border-b border-blue-gray-50 w-20">
+                        {/* <td className="p-4 border-b border-blue-gray-50 w-20">
                           <Select label="Select action below">
                             <Option>
                               <Link to={`/marketingManager/faculty/${faculty?._id}`}>
@@ -156,7 +156,7 @@ export const FacultyManager = () => {
                               </Link>
                             </Option>
                           </Select>
-                        </td>
+                        </td> */}
                       </tr>
                     ))
                   ) : (

@@ -204,7 +204,7 @@ export const EditProfile = () => {
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)} />
-                  <Button className="mt-6" fullWidth onClick={handleSubmit} disabled={isSubmitting}>
+                  <Button className="mt-6" color='green' fullWidth onClick={handleSubmit} disabled={isSubmitting}>
                     Save
                   </Button>
                 </div>

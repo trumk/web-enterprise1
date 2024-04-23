@@ -50,7 +50,7 @@ export const Faculty = () => {
         <DefaultSidebar className="flex" />
         <div className="ml-5 w-full">
         <Link to="/admin/faculty/add">
-          <Button className="mt-2.5 mb-2.5">
+          <Button className="mt-2.5 mb-2.5 mt-8" color="green">
             Create new
           </Button>
           </Link>

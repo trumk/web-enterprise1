@@ -39,7 +39,7 @@ export function ChangePassword() {
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar className="flex" />
-        <div className="mt-5 ml-5 w-full flex flex-col items-center">
+        <div className="mt-5 ml-5 w-full flex flex-col items-center border rounded-lg">
           <Card color="transparent" shadow={false}>
               <Typography color="blue-gray" variant="h4">
                 Change Password
@@ -84,7 +84,7 @@ export function ChangePassword() {
                 />
               </div>
 
-              <Button className="mt-6" fullWidth onClick={handleSubmit}>
+              <Button className="mt-6" color="green" fullWidth onClick={handleSubmit}>
                 Save
               </Button>
             </form>
