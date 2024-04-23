@@ -33,10 +33,10 @@ export const ExceptionContribution = () => {
             <NavbarDefault />
             <div className="flex">
                 <DefaultSidebar className="flex" />
-                <div className="ml-5 w-full">
-                    <Card className="h-full w-full overflow-scroll">
+                <div className="ml-5 w-full mt-4">
+                    <Card className="h-full w-full overflow-scroll ">
                         <Typography className='my-4' variant='h4'>Contribution with no comment</Typography>
-                        <table className="w-full min-w-max table-auto text-left">
+                        <table className="w-full min-w-max table-auto text-left mt-4">
                             <thead>
                                 <tr>
                                     {TABLE_HEAD.map((head) => (
@@ -62,7 +62,7 @@ export const ExceptionContribution = () => {
                                             <Typography
                                                 variant="small"
                                                 color="blue-gray"
-                                                className="font-medium p-4"
+                                                className="font-medium p-4 mt-4"
                                             >
                                                 There is no contribution with no comment
                                             </Typography>
@@ -116,7 +116,7 @@ export const ExceptionContribution = () => {
                             )}
                             </tbody>
                         </table>
-                        <Typography className='my-4' variant='h4'>Contribution with no comment after 14 days</Typography>
+                        <Typography className='my-4 mt-5' variant='h4'>Contribution with no comment after 14 days</Typography>
                         <table className="w-full min-w-max table-auto text-left">
                             <thead>
                                 <tr>

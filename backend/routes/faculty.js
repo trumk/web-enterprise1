@@ -7,6 +7,8 @@ const authorization = require("../middlewares/authorization");
 const multer = require('multer');
 const upload = multer();
 
+router.get("/getFacultyLogin", FacultyController.getAllFaculty);
+
 router.use(authorization.verifyToken);
 
 router.post("/add", authorization.verifyManager, FacultyController.createFaculty);

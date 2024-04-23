@@ -76,11 +76,11 @@ export const Homepage = () => {
                         <div className="flex w-full flex-col gap-0.5">
                           <div className="flex items-start justify-between ml-3">
                             <Typography variant="h4" color="white">
-                              {faculty.facultyName}
+                              {faculty?.facultyName}
                             </Typography>
                           </div>
-                          <Typography variant='paragraph' color="white" className='ml-4 italic'>
-                            {faculty.descActive}
+                          <Typography variant='paragraph' color="white" className='ml-4 italic line-clamp-2'>
+                            {faculty?.descActive}
                           </Typography>
                         </div>
                       </CardHeader>
