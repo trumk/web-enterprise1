@@ -52,7 +52,7 @@ async function getAllFaculty(req, res) {
     res.status(200).json({
       success: true,
       message: 'All Faculties',
-      faculties: facultiesWithCoordinator,
+      Faculty: facultiesWithCoordinator,
     });
   } catch (err) {
     res.status(500).json({
