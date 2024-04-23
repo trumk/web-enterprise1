@@ -86,17 +86,7 @@ export const Faculty = () => {
                     >
                       Description
                     </Typography>
-                  </th>
-                                          <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      Marketing Coordinator
-                    </Typography>
-                  </th>
-                  
+                  </th>               
                   <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center">
                     <Typography
                       variant="small"
@@ -131,17 +121,7 @@ export const Faculty = () => {
                         >
                           {faculty?.descActive}
                         </Typography>
-                      </td>
-                      <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {faculty?.marketingCoordinator}
-                        </Typography>
-                      </td>
-                      
+                      </td>                  
                       <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
                             <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty?._id}`}> <Info/> </Link></IconButton>
@@ -174,16 +154,6 @@ export const Faculty = () => {
                             {faculty?.descActive}
                           </Typography>
                         </td>
-                         <td className="p-4 border-b border-blue-gray-50">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {faculty?.marketingCoordinator}
-                        </Typography>
-                      </td>
-                        
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
                             <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty?._id}`}> <Info/> </Link></IconButton>
