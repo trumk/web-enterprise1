@@ -50,10 +50,15 @@ export const ReadContribution = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
-  const [active, setActive] = useState(images?.img);
   const filteredRelatedContributions = relatedContributions.filter(
     relatedContribution => relatedContribution?._id !== contribution?._id
   );
+  const [active, setActive] = useState(images?.[0]?.img || '');
+  useEffect(() => {
+      if (contribution?.image.length > 0) {
+        setActive(contribution.image[0]);
+      }
+    }, [contribution]);
   console.log(relatedContributions)
   console.log(comments)
   return (

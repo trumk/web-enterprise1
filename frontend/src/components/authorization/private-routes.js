@@ -15,7 +15,12 @@ export const PrivateRoute = ({ element, userRole, path }) => {
       if (path !== '/marketingCoordinator' && path !== '/user') {
         navigate('/marketingCoordinator');
       }
-    } else {
+    } else if (userRole === 'guest') {
+      if (path !== '/guest' && path !== '/user') {
+        navigate('/guest');
+      }
+    }
+    else {
       if (path !== '/user') {
         navigate('/');
       }

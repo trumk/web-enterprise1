@@ -556,6 +556,7 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
+      const profile = await Profile.findOne({ userID: req.user.id });
       let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (
         role === "admin" ||
@@ -563,6 +564,9 @@ const contributionController = {
         role === "marketing manager"
       ) {
         query = { title: new RegExp(keyword, "i") };
+      }
+      if(role === "guest"){
+        query = { title: new RegExp(keyword, "i"), isPublic: true, facultyID: { $in: profile.facultyID  }};
       }
       const contributions = await Contribution.aggregate([
         { $match: query },
@@ -1189,10 +1193,19 @@ const contributionController = {
       res.status(500).json({ message: error.message });
     }
   },
-  getContributionByGuest: async (req, res) => {
+ getContributionByGuest : async (req, res) => {
     try {
-      const profile = await Profile.findOne({userID : req.user.id})
-      let query = {isPublic: true, facultyID: profile.facultyID}
+      const profile = await Profile.findOne({ userID: req.user.id });
+  
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+  
+      const query = {
+        isPublic: true,
+        facultyID: { $in: profile.facultyID },
+      };
+  
       const contributions = await Contribution.aggregate([
         { $match: query },
         {
@@ -1218,15 +1231,20 @@ const contributionController = {
           },
         },
         {
+          $unwind: {
+            path: "$event",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $project: {
+            _id: 1,
             title: 1,
             content: 1,
             image: 1,
             file: 1,
             isPublic: 1,
-            eventID: {
-              topic: "$event.topic",
-            },
+            eventID: { topic: "$event.topic" },
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
@@ -1236,11 +1254,13 @@ const contributionController = {
           },
         },
       ]);
-      return res.status(200).json(contributions)
+      return res.status(200).json(contributions);
     } catch (error) {
-      return res.status(500).json(error);
+      console.error("Error in getContributionByGuest:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  
 };
 
 module.exports = contributionController;
