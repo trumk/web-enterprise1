@@ -184,8 +184,10 @@ export default function NavbarDefault() {
       navigate('/marketingManager')
     } else if (user?.role === 'marketing coordinator') {
       navigate('/marketingCoordinator')
-    } else {
+    } else if(user.role === 'user') {
       navigate('/dashboard')
+    } else{
+      navigate('/')
     }
   }
   const profile = useSelector((state) => state.user.user?.user);
