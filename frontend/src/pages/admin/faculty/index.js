@@ -138,7 +138,7 @@ export const Faculty = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {faculty?.userName}
+                          {faculty?.marketingCoordinator}
                         </Typography>
                       </td>
                       
@@ -180,7 +180,7 @@ export const Faculty = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {faculty?.userName}
+                          {faculty?.marketingCoordinator}
                         </Typography>
                       </td>
                         
