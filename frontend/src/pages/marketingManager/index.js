@@ -222,7 +222,7 @@ export const MarketingManagerPage = () => {
       <NavbarDefault />
       <div className="flex">
         <DefaultSidebar className="flex" />
-        <div className="ml-5 w-full mt-5">
+        <div className="ml-5 w-full mt-4">
           <>
             <Select value={time} onChange={(value) => setTime(value)} label="Select year" className="mt-2.5">
               <Option value="2023">2023</Option>
@@ -237,7 +237,7 @@ export const MarketingManagerPage = () => {
             {/* <Button onClick={handleSubmit} className="mt-4">Save</Button>
             </form> */}
             <>
-              <section className="mt-4">
+              <section className="mt-8">
                 <div className="border border-gray-900">
                   <Typography variant="h4">Total Contribution</Typography>
                   {numberOfContribution && numberOfContribution.type && <Chart {...numberOfContribution} />}

@@ -69,6 +69,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getContributionByGuest: {
+      contributions: null,
+      isFetching: false,
+      error: false,
+    },
     getNotifications: {
       notifications: null,
       isFetching: false,
@@ -126,6 +131,18 @@ const contributionSlice = createSlice({
       state.getContributionsByEvent.isFetching = false;
       state.getContributionsByEvent.contributions = action.payload;
       state.getContributionsByEvent.error = false;
+    },
+    getContributionByGuestStart: (state) => {
+      state.getContributionByGuest.isFetching = true;
+    },
+    getContributionByGuestFailed: (state) => {
+      state.getContributionByGuest.isFetching = false;
+      state.getContributionByGuest.error = true;
+    },
+    getContributionByGuestSuccess: (state, action) => {
+      state.getContributionByGuest.isFetching = false;
+      state.getContributionByGuest.contributions = action.payload;
+      state.getContributionByGuest.error = false;
     },
     userContributionsStart: (state) => {
       state.userContributions.isFetching = true;
@@ -319,6 +336,9 @@ export const {
   getContributionByCoordinatorStart,
   getContributionByCoordinatorSuccess,
   getContributionByCoordinatorFailed,
+  getContributionByGuestStart,
+  getContributionByGuestSuccess,
+  getContributionByGuestFailed,
   getNotificationsStart,
   getNotificationsSuccess,
   getNotificationsFailed,

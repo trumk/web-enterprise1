@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         match: [/^\S+$/, "UserName should not contain spaces"],
         required: true,
         minLength: 4,
-        maxLength: 20,
+        maxLength: 200,
         unique: true
     },
     email:{

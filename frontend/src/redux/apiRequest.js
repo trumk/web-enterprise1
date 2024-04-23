@@ -23,6 +23,9 @@ import {
   enrollFacultyFailed,
   enrollFacultyStart,
   enrollFacultySuccess,
+  getFacultyLoginFailed,
+  getFacultyLoginStart,
+  getFacultyLoginSuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
@@ -101,6 +104,9 @@ import {
   getContributionsByEventFailed,
   getContributionsByEventStart,
   getContributionsByEventSuccess,
+  getContributionByGuestStart,
+  getContributionByGuestSuccess,
+  getContributionByGuestFailed,
 
   getContributionsFailed, 
   getContributionsStart, 
@@ -144,6 +150,16 @@ export const loginUser = async (user, dispatch) => {
   } catch (err) {
     dispatch(loginFailed(err.response.data));
     toast.error(err.response.data);
+  }
+};
+
+export const getFacultyLogin = () => async (dispatch) => {
+  dispatch(getFacultyLoginStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/faculty/getFacultyLogin`);
+    dispatch(getFacultyLoginSuccess(res.data));
+  } catch (err) {
+    dispatch(getFacultyLoginFailed(err));
   }
 };
 
@@ -658,7 +674,7 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
     });
     dispatch(editContributionSuccess(res.data));
     toast.success("Edit contribution successfully");
-    navigate(`/userContribution`);
+    navigate(`/myContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
     toast.error(error.response.data);
@@ -792,6 +808,21 @@ export const getContributionByCoordinator = (accessToken) => async (dispatch) =>
     dispatch(getContributionByCoordinatorSuccess(res.data));
   } catch (err) {
     dispatch(getContributionByCoordinatorFailed());
+    console.log(err);
+  }
+}
+
+export const getContributionByGuest = (accessToken) => async (dispatch) => {
+  dispatch(getContributionByGuestStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getContributionGuest`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionByGuestSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionByGuestFailed());
     console.log(err);
   }
 }

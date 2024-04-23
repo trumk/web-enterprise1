@@ -50,10 +50,15 @@ export const ReadContribution = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
-  const [active, setActive] = useState(images?.img);
   const filteredRelatedContributions = relatedContributions.filter(
     relatedContribution => relatedContribution?._id !== contribution?._id
   );
+  const [active, setActive] = useState(images?.[0]?.img || '');
+  useEffect(() => {
+      if (contribution?.image.length > 0) {
+        setActive(contribution.image[0]);
+      }
+    }, [contribution]);
   console.log(relatedContributions)
   console.log(comments)
   return (
@@ -126,7 +131,7 @@ export const ReadContribution = () => {
             </section>
             
             <section className="not-format">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6 mt-4">
                 <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
               </div>
               <form className="mb-6">

@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 
 export default function DefaultSidebar() {
 
-  const guestRoutes = [
+  const userRoutes = [
     {
       href: "/contributions",
       icon: PartyPopper,
@@ -35,7 +35,7 @@ export default function DefaultSidebar() {
     },
   ];
   const user = useSelector((state) => state.auth.login.currentUser);
-    const userRoutes = [
+    const profileRoutes = [
       {
         href: `/user/${user?._id}/profile`,
         icon: Contact,
@@ -74,6 +74,13 @@ export default function DefaultSidebar() {
       label: "Manage Contribution",
     },
   ];
+  const guestRoutes = [
+    {
+      href: "/guest",
+      icon: PartyPopper,
+      label: "Contributions",
+    }
+  ];
   const marketingCoordinatorRoutes = [
     {
       href: "/marketingCoordinator",
@@ -108,6 +115,7 @@ export default function DefaultSidebar() {
   );
   const isAdminPage = window.location.pathname.startsWith("/admin");
   const isUserPage = window.location.pathname.startsWith("/user");
+  const isGuestPage = window.location.pathname.startsWith("/guest");
   let routes;
 
   if (isAdminPage) {
@@ -117,9 +125,12 @@ export default function DefaultSidebar() {
   } else if (isMarketingManagerPage) {
     routes = marketingManagerRoutes;
   } else if (isUserPage) {
-    routes = userRoutes;
-  } else {
+    routes = profileRoutes;
+  }else if( isGuestPage){
     routes = guestRoutes;
+  }
+   else {
+    routes = userRoutes;
   }
   const location = useLocation();
   const currentPath = location.pathname;

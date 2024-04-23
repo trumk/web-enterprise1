@@ -20,7 +20,7 @@ router.get("/getAllContributions", contributionController.getContributionByDashB
 router.get("/getAllContributionsByEvent/:id", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.post("/statistic", upload1.none(), contributionController.getStatistic);
-
+router.get("/getContributionGuest", contributionController.getContributionByGuest);
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
 router.post("/searchByTitle", upload1.none(), contributionController.searchByTitleContribution);
