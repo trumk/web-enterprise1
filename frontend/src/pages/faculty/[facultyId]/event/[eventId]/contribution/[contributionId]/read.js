@@ -59,23 +59,23 @@ export const ReadContribution = () => {
   return (
     <>
       <NavbarDefault />
-      <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
+      <main className="pt-8 pb-16 lg:pt-10 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
           <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
             
-          <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button variant='outlined'>Back to event</Button></Link>
-            <header className="mb-4 lg:mb-6 not-format">
+          <Link to={`/faculty/${facultyId}/event/${eventId}`}><Button variant='outlined' color='green'>Back to event</Button></Link>
+          <header className=" mt-4 mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
-                  <div>
+                  <div className="mt-4" >
                     <Typography className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</Typography>
                   </div>
                 </div>
               </address>
-              <Typography variant='h3'>{contribution?.title}</Typography>
-              <div className="grid gap-4">
+              <Typography variant='h5'>{contribution?.title}</Typography>
+              <div className="grid gap-5">
                 <div>
                   <img
                     className="h-auto w-full max-w-full rounded-lg object-cover object-center md:h-[480px]"
