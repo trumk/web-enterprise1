@@ -423,6 +423,7 @@ const contributionController = {
             image: 1,
             file: 1,
             isPublic: 1,
+            createdAt:1,
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",

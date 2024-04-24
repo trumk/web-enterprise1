@@ -39,15 +39,15 @@ export const MyContributionDetail = () => {
                 <DefaultSidebar className='flex' />
                 <div className='mt-5 ml-5 w-full'>
                     <Link to="/myContribution">
-                        <Button>Back to List</Button>
+                        <Button color='green'>Back to List</Button>
                     </Link>
                     <Card className="mt-5">
                         <CardHeader
                             variant="gradient"
                             color="purple"
-                            className="mb-4 grid h-28 place-items-center"
+                            className="mb-4 grid h-28 place-items-center mt-4"
                         >
-                            <Typography variant="h3" color="white">
+                            <Typography variant="h4" color="white">
                                 {contribution?.title}
                             </Typography>
                         </CardHeader>
