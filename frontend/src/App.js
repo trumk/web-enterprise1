@@ -43,6 +43,7 @@ import Landing from "./pages/landing";
 import { MyContributionDetail } from "./pages/myContribution/[id]/detail";
 import { GuestPage } from "./pages/guest";
 import { ReadContributionDashboardByGuest } from "./pages/guest/[contributionId]/read";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -92,8 +93,10 @@ function App() {
           <Route path="/admin/contribution" element={<PrivateRoute userRole={user?.role} path="/admin" element={<Contribution />} />} />
           <Route path="/admin/contribution/:id" element={<PrivateRoute userRole={user?.role} path="/admin" element={<ContributionDetail />} />} />
           <Route path="/admin/user/" element={<PrivateRoute userRole={user?.role} path="/admin" element={<User />} />} />
+          {/* Guest Route */}
           <Route path="/guest" element={<PrivateRoute userRole={user?.role} path="/guest" element={<GuestPage />} />} />
           <Route path="/guest/:contributionId/read" element={<PrivateRoute userRole={user?.role} path="/guest" element={<ReadContributionDashboardByGuest />} />} />
+          <Route path="*" element={<NotFound/>} />
         </Routes>
       </BrowserRouter>
     </>

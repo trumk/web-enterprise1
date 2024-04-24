@@ -1261,7 +1261,17 @@ const contributionController = {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  
+  getTop3Contributions : async (req, res) => {
+    try {
+      let contributions = await Contribution.find({ isPublic: true });
+      contributions.sort((a, b) => b.comments.length - a.comments.length);
+      const top3Contributions = contributions.slice(0, 3);
+      return res.status(200).json(top3Contributions);
+    } catch (error) {
+      console.error("Error in getTop3Contributions:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
 };
 
 module.exports = contributionController;

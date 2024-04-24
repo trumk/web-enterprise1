@@ -13,7 +13,7 @@ import NavbarDefault from '../../components/navbar';
 import DefaultSidebar from '../../components/sidebar';
 import { getContributionsByUser, removeContribution } from '../../redux/apiRequest';
 import { Link } from 'react-router-dom';
-import { Book, Info, Settings, Trash } from 'lucide-react';
+import { Book, Settings, Trash } from 'lucide-react';
 
 export const MyContributionPage = () => {
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -21,7 +21,7 @@ export const MyContributionPage = () => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [contributionsPerPage, setContributionsPerPage] = useState(4);
+  const contributionsPerPage = 4;
 
   const totalPages = Math.ceil(userContribution?.length / contributionsPerPage);
 
@@ -33,7 +33,7 @@ export const MyContributionPage = () => {
 
   const goToPreviousPage = () => {
     setCurrentPage((page) => page - 1);
-  }; 
+  };
 
   useEffect(() => {
     if (user) {
@@ -43,14 +43,14 @@ export const MyContributionPage = () => {
 
   const handleDelete = (contributionId) => {
     const confirmation = window.confirm(`Are you sure you want to delete this contribution?`);
-    if(confirmation) {
+    if (confirmation) {
       dispatch(removeContribution(contributionId, user?.accessToken))
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }
 
@@ -142,9 +142,9 @@ export const MyContributionPage = () => {
                             </td>
                             <td className="p-4 border-b border-blue-gray-50 w-20">
                               <div className="flex gap-2 items-center">
-                                <Link to={`/myContribution/${contribution._id}/detail`}><IconButton variant="gradient" color="blue"><Book/></IconButton></Link>
-                                <Link to={`/myContribution/${contribution._id}/edit`}><IconButton variant="gradient" color="amber"> <Settings/> </IconButton></Link>
-                                <IconButton color="red" onClick={()=> handleDelete(contribution._id)}> <Trash /> </IconButton>
+                                <Link to={`/myContribution/${contribution._id}/detail`}><IconButton variant="gradient" color="blue"><Book /></IconButton></Link>
+                                <Link to={`/myContribution/${contribution._id}/edit`}><IconButton variant="gradient" color="amber"> <Settings /> </IconButton></Link>
+                                  <IconButton onClick={() => handleDelete(contribution._id)} disabled={contribution.isPublic === true} color="red"> <Trash /> </IconButton>
                               </div>
                             </td>
                           </tr>
