@@ -125,6 +125,7 @@ const contributionController = {
         message,
         userID: marketingID,
         peopleID: [req.user.id],
+        type:"submit",
         contributionID: contribution._id
       });
       await notification.save();
@@ -853,6 +854,7 @@ const contributionController = {
       message,
       userID: contribution.userID,
       peopleID: [req.user.id],
+      type:"publish",
       contributionID: contributionId
     });
     await notification.save();
@@ -900,13 +902,14 @@ const contributionController = {
         { new: true }
       );
       if (contribution.userID != userId) {
-        let notification = await Notification.findOne({ contributionID: contributionId });
+        let notification = await Notification.findOne({ contributionID: contributionId },{type:"comment"});
         if (!notification) {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
           notification = new Notification({
             message,
             userID: contribution1.userID,
             peopleID: [userId],
+            type:"comment",
             contributionID: contributionId
           });
           await notification.save();
