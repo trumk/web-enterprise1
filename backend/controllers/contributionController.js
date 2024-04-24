@@ -901,7 +901,7 @@ const contributionController = {
         },
         { new: true }
       );
-        let notification = await Notification.findOne({ contributionID: contributionId },{type:"comment"});
+        let notification = await Notification.findOne({ contributionID: contributionId , type:"comment"});
         if (!notification) {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
           notification = new Notification({
