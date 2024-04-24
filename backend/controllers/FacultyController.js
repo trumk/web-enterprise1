@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Faculty = require("../models/Faculty")
 const Profile = require("../models/Profile")
+const Event = require("../models/Event")
+const Contribution = require("../models/Contribution")
 const { User, Otp } = require("../models/User")
 const bcrypt = require("bcrypt")
 
@@ -320,29 +322,38 @@ async function enrollStudent(req, res) {
 }
 
 
-function deleteFaculty(req, res) {
-  const id = req.params.facultyId;
+async function deleteFaculty(req, res) {
+  const facultyId = req.params.facultyId;
 
-  // ID
-  Faculty.findOneAndDelete({ _id: id }) //find id
-    .exec()
-    .then(deletedFaculty => {
-      if (!deletedFaculty) {
-        return res.status(404).json({
-          success: false,
-          message: "Faculty not found with ID: " + id
-        });
-      }
-      // deleted successfully
-      return res.status(204).json({
-        success: true
+  try {
+    const faculty = await Faculty.findById(facultyId);
+    if (!faculty) {
+      return res.status(404).json({
+        success: false,
+        message: "Faculty not found with ID: " + facultyId
       });
-    })
-    .catch(err => res.status(500).json({
+    }
+
+    const events = await Event.find({ facultyId: facultyId });
+    const eventIds = events.map(event => event._id);
+    await Contribution.deleteMany({ eventID: { $in: eventIds } });
+
+    await Event.deleteMany({ facultyId: facultyId });
+
+    await Faculty.findOneAndDelete({ _id: facultyId });
+
+    return res.status(204).json({
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
       success: false,
-      message: "Error: " + err.message
-    }));
-};
+      message: "Error deleting faculty: " + err.message
+    });
+  }
+}
+
 
 
 module.exports = {
