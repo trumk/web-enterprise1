@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import logo from '../assets/logo.jpg'
+import banner from '../assets/banner.png'
 import {
   Navbar,
   Typography,
@@ -31,10 +32,10 @@ export default function NavbarDefault() {
   const handleLogout = () => {
     logout(dispatch, id, navigate, accessToken);
   };
-
+  
   const closeMenu = () => setIsMenuOpen(false);
   const notification = useSelector((state) => state.contribution.getNotifications?.notifications);
-
+  
   useEffect(() => {
     if (user && user._id) {
       dispatch(getAllNotifications(accessToken));
@@ -45,6 +46,10 @@ export default function NavbarDefault() {
     setOpenNotification(false);
     if (user && user?.accessToken) {
       dispatch(getOneNotification(id, accessToken))
+      if (notification && notification?.contributionID) {
+      } else {
+        alert("Contribution not found or deleted");
+      }
     }
   }
   const profileMenuItems = [];
@@ -202,9 +207,10 @@ export default function NavbarDefault() {
           <Button onClick={handleNavigateByRole} variant="text" className="flex items-center" size="sm">
 
             <Typography as="a" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-              <img src={logo} alt="logo" size="sm" className="mr-2 h-10" />
+              <img src={logo} alt="logo" className="mr-2 h-10" />
             </Typography>
           </Button>
+          <img src={banner} alt="banner" className="max-w-96 hidden lg:block"/>
           <div className="flex items-center gap-4">
             {!user ? (
               <div className="flex items-center gap-x-1">
