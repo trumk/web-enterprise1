@@ -115,7 +115,7 @@ export const MyContributionPage = () => {
                           <tr key={index}>
 
                             <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
-                              <Link to={`/admin/contribution/${contribution?._id}`}>
+                              <Link to={`/myContribution/${contribution?._id}/detail`}>
                                 <Typography
                                   variant="small"
                                   color="blue-gray"

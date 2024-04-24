@@ -44,6 +44,7 @@ export default function NavbarDefault() {
   console.log(notification);
   const handleReadNotification = (id) => {
     setOpenNotification(false);
+
     if (user && user?.accessToken) {
       dispatch(getOneNotification(id, accessToken))
     }
@@ -254,7 +255,7 @@ export default function NavbarDefault() {
                         const isRead = !item?.viewed;
                         return (
                           <>
-                            <Link to={item?.message.startsWith("Student") ? `/myContribution/${item.contributionID}/detail` : `/marketingCoordinator/contribution/${item.contributionID}/action`}>
+                            <Link to={item?.message.startsWith("<p>Student") ? `/marketingCoordinator/contribution/${item.contributionID}/action` : `/myContribution/${item.contributionID}/detail`}>
                               <MenuItem
                                 className={`flex items-center gap-2 rounded ${isRead
                                   ? "bg-yellow-500/10 focus:bg-yellow-500/10 active:bg-yellow-500/10"

@@ -28,6 +28,8 @@ export const EditProfile = () => {
   const [avatar, setAvatar] = useState(profile.avatar);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editSuccess, setEditSuccess] = useState(false);
+  
 
   const handleEditAvatar = () => {
     setIsEditing(true);
@@ -65,9 +67,7 @@ export const EditProfile = () => {
     for (const [key, value] of editedProfile.entries()) {
       console.log(key + ': ' + value);
     }
-    
-
-    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate));
+    dispatch(editProfile(profile._id, user._id, user.accessToken, editedProfile, navigate))
   };
   return (
     <>
@@ -204,7 +204,7 @@ export const EditProfile = () => {
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)} />
-                  <Button className="mt-6" color='green' fullWidth onClick={handleSubmit} disabled={isSubmitting}>
+                  <Button className="mt-6" color='green' fullWidth onClick={handleSubmit}>
                     Save
                   </Button>
                 </div>
