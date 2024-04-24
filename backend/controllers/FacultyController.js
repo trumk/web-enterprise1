@@ -77,7 +77,7 @@ async function getAllFaculty(req, res) {
     const facultiesWithCoordinator = await Promise.all(
       allFaculties.map(async (faculty) => {
         const profiles = await Profile.find({ facultyID: faculty._id });
-        const marketingCoordinators = await Promise.all(
+        const marketingCoordinator = await Promise.all(
           profiles.map(async (profile) => {
             const user = await User.findOne({
               _id: profile.userID,
@@ -86,13 +86,13 @@ async function getAllFaculty(req, res) {
             return user ? { _id: user._id, userName: user.userName } : null;
           })
         );
-        const validCoordinators = marketingCoordinators.filter(
+        const validCoordinators = marketingCoordinator.filter(
           (coordinator) => coordinator !== null
         );
 
         return {
           ...faculty._doc,
-          marketingCoordinators: validCoordinators,
+          marketingCoordinator: validCoordinators,
         };
       })
     );
