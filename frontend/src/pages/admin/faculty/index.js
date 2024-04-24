@@ -87,7 +87,7 @@ export const Faculty = () => {
                       Description
                     </Typography>
                   </th>  
-                                          <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
                     <Typography
                       variant="small"
                       color="blue-gray"
@@ -131,7 +131,7 @@ export const Faculty = () => {
                           {faculty?.descActive}
                         </Typography>
                       </td>   
-                                                                  <td className="p-4 border-b border-blue-gray-50">
+                        <td className="p-4 border-b border-blue-gray-50">
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -172,7 +172,7 @@ export const Faculty = () => {
                             {faculty?.descActive}
                           </Typography>
                         </td>
-                                                                                                            <td className="p-4 border-b border-blue-gray-50">
+                          <td className="p-4 border-b border-blue-gray-50">
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -183,8 +183,8 @@ export const Faculty = () => {
                       </td>  
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
-                            <IconButton variant="gradient" color="amber"><Link to={`/admin/faculty/${faculty?._id}`}> <Info/> </Link></IconButton>
-                            <IconButton color="red"><Link to={`/admin/faculty/${faculty?._id}/edit`}> <Settings/> </Link></IconButton>
+                            <Link to={`/admin/faculty/${faculty?._id}`}><IconButton variant="gradient" color="amber"> <Info/> </IconButton></Link>
+                            <Link to={`/admin/faculty/${faculty?._id}/edit`}> <IconButton color="red"><Settings/> </IconButton></Link>
                             </div>
                         </td>
                       </tr>

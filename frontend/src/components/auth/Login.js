@@ -30,7 +30,7 @@ export default function Login() {
             navigate("/marketingManager")
         } else if (currentUser.role === "guest") {
             navigate("/guest")
-        } else if(!currentUser){
+        } else if(currentUser.role === "user"){
             navigate("/dashboard")
         }
     }

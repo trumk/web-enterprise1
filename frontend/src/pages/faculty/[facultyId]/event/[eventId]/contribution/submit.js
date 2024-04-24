@@ -19,7 +19,8 @@ export const SubmitContribution = () => {
   const [content, setContent] = useState('');
   const [image, setImage] = useState([]);
   const [file, setFile] = useState([]);
-  const [message, setMessage] = useState('');
+  const [messageImage, setMessageImage] = useState('');
+  const [messageFile, setMessageFile] = useState('');
   const [isTermOpen, setIsTermOpen] = useState(false);
 
   const { facultyId, eventId } = useParams();
@@ -29,7 +30,7 @@ export const SubmitContribution = () => {
   const navigate = useNavigate();
   console.log(event.Event._id)
   const handleImageUpload = (e) => {
-    setMessage("");
+    setMessageImage("");
     let file = e.target.files;
     for (let i = 0; i < file.length; i++) {
       const fileType = file[i]['type'];
@@ -37,13 +38,13 @@ export const SubmitContribution = () => {
       if (validImageTypes.includes(fileType)) {
         setImage([...image, file[i]]);
       } else {
-        setMessage("Only image accepted");
+        setMessageImage("Only image accepted");
       }
     }
   };
 
   const handleFileUpload = (e) => {
-    setMessage("");
+    setMessageFile("");
     let selectedFiles = e.target.files;
     for (let i = 0; i < selectedFiles.length; i++) {
       const fileType = selectedFiles[i]['type'];
@@ -51,7 +52,7 @@ export const SubmitContribution = () => {
       if (validFileTypes.includes(fileType)) {
         setFile([...file, selectedFiles[i]]);
       } else {
-        setMessage("only .docx and .pdf accepted");
+        setMessageFile("Only .docx and .pdf accepted");
       }
     }
   };
@@ -83,9 +84,11 @@ export const SubmitContribution = () => {
   contribution.append('eventID', event.Event._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(postContribution(contribution, user.accessToken, handleSuccess));
+    setIsTermOpen(true);
+    
   }
   const handleAccept = () => {
+    dispatch(postContribution(contribution, user.accessToken, handleSuccess));
     setIsTermOpen(false);
     navigate(`/faculty/${facultyId}/event/${eventId}`);
   }
@@ -132,10 +135,9 @@ export const SubmitContribution = () => {
                 Image
               </Typography>
               <div className='w-[800px]'>
-                {message && <span>{message}</span>}
                 <div className="rounded-lg shadow-xl bg-gray-50 md:w-1/2 w-[400px]">
                   <div className="m-4">
-                    <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">{message}</span>
+                    <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">{messageImage}</span>
                     <div className="flex items-center justify-center w-full">
                       <label className="flex cursor-pointer flex-col w-full h-32 border-2 rounded-md border-dashed hover:bg-gray-100 hover:border-gray-300">
                         <div className="flex flex-col items-center justify-center pt-7">
@@ -163,8 +165,9 @@ export const SubmitContribution = () => {
                 Files
               </Typography>
               <div className='w-[800px] mt-2'>
-                {message && <span>{message}</span>}
+                
                 <div className="rounded-lg shadow-xl bg-gray-50 md:w-1/2 w-[400px]">
+                <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">{messageFile}</span>
                   <div>
                     {file?.length === 0 && (
                       <p className="text-sm mt-2 text-slate-500 italic">
