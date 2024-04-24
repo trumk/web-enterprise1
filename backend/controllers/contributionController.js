@@ -913,7 +913,7 @@ const contributionController = {
           });
           await notification.save();
         } else {
-          if (contribution.userID != userId) {
+          if (notification.userID != userId) {
           const index = notification.peopleID.indexOf(userId);
           if (index > -1) {
             notification.peopleID.splice(index, 1)
