@@ -46,10 +46,6 @@ export default function NavbarDefault() {
     setOpenNotification(false);
     if (user && user?.accessToken) {
       dispatch(getOneNotification(id, accessToken))
-      if (notification && notification?.contributionID) {
-      } else {
-        alert("Contribution not found or deleted");
-      }
     }
   }
   const profileMenuItems = [];
