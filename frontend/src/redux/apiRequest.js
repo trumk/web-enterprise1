@@ -131,14 +131,17 @@ import {
   submitContributionSuccess,
   userContributionsFailed,
   userContributionsStart,
-  userContributionsSuccess
+  userContributionsSuccess,
+  getLandingContributionStart,
+  getLandingContributionSuccess,
+  getLandingContributionFailed
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
 //const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
-const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
-//const BACKEND_URL = "http://localhost:5000";
+//const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
+const BACKEND_URL = "http://localhost:5000";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -853,6 +856,17 @@ export const getOneNotification = (id, accessToken) => async (dispatch) => {
     dispatch(readNotificationSuccess());
   } catch (err) {
     dispatch(readNotificationFailed());
+    console.log(err);
+  }
+}
+
+export const getContributionByLanding = () => async (dispatch) => {
+  dispatch(getLandingContributionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getContributionLanding`);
+    dispatch(getLandingContributionSuccess(res.data));
+  } catch (err) {
+    dispatch(getLandingContributionFailed());
     console.log(err);
   }
 }
