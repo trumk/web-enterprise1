@@ -14,7 +14,7 @@ const AddFaculty = () => {
   const [enrollKey, setEnrollKey] = useState("");
   const [marketingCoordinator, setMarketingCoordinator] = useState("");
   const filteredUsers = users.filter(user => {
-    return user.role="user";
+    return user.role==="user";
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
