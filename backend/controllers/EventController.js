@@ -249,7 +249,6 @@ async function deleteEvent(req, res) {
         message: "Event not found with ID: " + eventId
       });
     }
-    const facultyId = event.facultyId;
     await Contribution.deleteMany({ eventID: eventId });
     await Event.findOneAndDelete({ _id: eventId });
     return res.status(204).json({

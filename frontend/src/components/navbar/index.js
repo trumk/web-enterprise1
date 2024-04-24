@@ -44,7 +44,10 @@ export default function NavbarDefault() {
   console.log(notification);
   const handleReadNotification = (id) => {
     setOpenNotification(false);
-    dispatch(getOneNotification(id, accessToken));
+
+    if (user && user?.accessToken) {
+      dispatch(getOneNotification(id, accessToken))
+    }
   }
   const profileMenuItems = [];
   profileMenuItems.push({
