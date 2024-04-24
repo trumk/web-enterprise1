@@ -72,18 +72,30 @@ async function createFaculty(req, res) {
 
 async function getAllFaculty(req, res) {
   try {
-    const allFaculties = await Faculty.find(); // Retrieve all faculties from the database
-    const facultiesWithCoordinator = await Promise.all(allFaculties.map(async (faculty) => {
-      const profile = await Profile.findOne({ facultyID: faculty._id });
-      if (profile) {
-        const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+    const allFaculties = await Faculty.find();
+    
+    const facultiesWithCoordinator = await Promise.all(
+      allFaculties.map(async (faculty) => {
+        const profiles = await Profile.find({ facultyID: faculty._id });
+        const marketingCoordinators = await Promise.all(
+          profiles.map(async (profile) => {
+            const user = await User.findOne({
+              _id: profile.userID,
+              role: 'marketing coordinator',
+            });
+            return user ? { _id: user._id, userName: user.userName } : null;
+          })
+        );
+        const validCoordinators = marketingCoordinators.filter(
+          (coordinator) => coordinator !== null
+        );
+
         return {
           ...faculty._doc,
-          marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
+          marketingCoordinators: validCoordinators,
         };
-      }
-    }));
-
+      })
+    );
     res.status(200).json({
       success: true,
       message: 'All Faculties',
@@ -96,7 +108,7 @@ async function getAllFaculty(req, res) {
       error: err.message,
     });
   }
-};
+}
 
 async function getFacultyManager(req, res) {
   profile = await Profile.findOne({ userID: req.user.id })
