@@ -80,6 +80,7 @@ export default function Login() {
             labelText={field.labelText}
             labelFor={field.labelFor}
             type={field.type}
+            placeholder={field.placeholder}
             isRequired={!isGuest}
           />
         ))}
