@@ -166,7 +166,7 @@ export default function Landing() {
                         alt="..."
                         src={team.avatar}
                         className="rounded-full max-w-full mx-auto h-64"
-                        style={{ filter: 'drop-shadow(0px 10px 15px black)' }}
+                        style={{ filter: 'drop-shadow(5px 10px 15px black)' }}
                       />
                       <div className="pt-6 text-center">
                         <h5 className="text-xl font-bold">

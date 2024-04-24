@@ -258,7 +258,7 @@ export default function NavbarDefault() {
                         const isRead = !item?.viewed;
                         return (
                           <>
-                            <Link to={item?.message.startsWith("Student") ? `/myContribution/${item.contributionID}/detail` : `/myContribution/${item.contributionID}/detail`}>
+                            <Link to={item?.message.startsWith("Student") ? `/myContribution/${item.contributionID}/detail` : `/marketingCoordinator/contribution/${item.contributionID}/action`}>
                               <MenuItem
                                 className={`flex items-center gap-2 rounded ${isRead
                                   ? "bg-yellow-500/10 focus:bg-yellow-500/10 active:bg-yellow-500/10"
