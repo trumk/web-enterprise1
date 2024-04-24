@@ -57,7 +57,7 @@ export const ReadContributionDashboardByGuest = () => {
                 <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
 
                     <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                        <Link to={`/guest`}><Button variant='outlined'>Back to home</Button></Link>
+                        <Link to={`/guest`}><Button variant='outlined' color='green'>Back to home</Button></Link>
                         <header className=" mt-4 mb-4 lg:mb-6 not-format">
                             <address className="flex items-center mb-6 mt-3 not-italic">
                                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">

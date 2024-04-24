@@ -125,6 +125,7 @@ const contributionController = {
         message,
         userID: marketingID,
         peopleID: [req.user.id],
+        type:"submit",
         contributionID: contribution._id
       });
       await notification.save();
@@ -422,6 +423,7 @@ const contributionController = {
             image: 1,
             file: 1,
             isPublic: 1,
+            createdAt:1,
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
@@ -853,6 +855,7 @@ const contributionController = {
       message,
       userID: contribution.userID,
       peopleID: [req.user.id],
+      type:"publish",
       contributionID: contributionId
     });
     await notification.save();
@@ -873,7 +876,7 @@ const contributionController = {
 
       const commentContent = req.body.comment;
 
-      var contribution1 = await Contribution.findById(contributionId);
+      const contribution1 = await Contribution.findById(contributionId);
       if (!contribution1) {
         return res.status(404).json({ message: "Contribution not found" });
       }
@@ -899,18 +902,19 @@ const contributionController = {
         },
         { new: true }
       );
-      if (contribution.userID != userId) {
-        let notification = await Notification.findOne({ contributionID: contributionId });
+        let notification = await Notification.findOne({ contributionID: contributionId , type:"comment"});
         if (!notification) {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
           notification = new Notification({
             message,
-            userID: contribution.userID,
+            userID: contribution1.userID,
             peopleID: [userId],
+            type:"comment",
             contributionID: contributionId
           });
           await notification.save();
         } else {
+          if (notification.userID != userId) {
           const index = notification.peopleID.indexOf(userId);
           if (index > -1) {
             notification.peopleID.splice(index, 1)

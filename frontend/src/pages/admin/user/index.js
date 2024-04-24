@@ -14,7 +14,7 @@ export const User = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
-  const filteredUsers = users?.filter((user) => user.role !== "admin");
+  const filteredUsers = users?.filter((user) => user.role !== "admin" && user.role !== "guest");
   const currentItems = filteredUsers?.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
   const handleEditClick = (id) => {
     setIsEditingId(id);

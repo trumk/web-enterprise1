@@ -138,7 +138,7 @@ export const MarketingCoordinatorPage = () => {
                           </Link>
                         </td>
 
-                        <td className="p-4 border-b border-blue-gray-50">
+                        <td className="p-1 border-b border-blue-gray-50">
                           {Array.isArray(contribution.image) &&
                             contribution.image.length > 0 && (
                               <img
@@ -148,7 +148,7 @@ export const MarketingCoordinatorPage = () => {
                               />
                             )}
                         </td>
-                        <td className="p-4 border-b border-blue-gray-50">
+                        <td className="p-12 border-b border-blue-gray-50">
                           <Badge
                             className="w-[100px]"
                             content={

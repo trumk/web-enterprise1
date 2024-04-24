@@ -120,6 +120,7 @@ export const ContributionsDashboard = () => {
                                         <Button
                                             variant="text"
                                             className="mt-4 flex items-center gap-2"
+                                            color="blue"
                                         >
                                             Read More <ArrowRight className="h-4" />
                                         </Button>
