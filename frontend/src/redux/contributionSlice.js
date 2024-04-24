@@ -83,6 +83,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    landingContributions: {
+      data: null,
+      isFetching: false,
+      error: false,
+    }
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -288,6 +293,18 @@ const contributionSlice = createSlice({
       state.readNotification.isFetching = false;
       state.readNotification.error = true;
     },
+    getLandingContributionStart: (state) => {
+      state.landingContributions.isFetching = true;
+    },
+    getLandingContributionSuccess: (state, action) => {
+      state.landingContributions.isFetching = false;
+      state.landingContributions.data = action.payload;
+      state.landingContributions.error = false;
+    },
+    getLandingContributionFailed: (state) => {
+      state.landingContributions.isFetching = false;
+      state.landingContributions.error = true;
+    },
   },
 });
 export const {
@@ -345,5 +362,8 @@ export const {
   readNotificationStart,
   readNotificationSuccess,
   readNotificationFailed,
+  getLandingContributionStart,
+  getLandingContributionSuccess,
+  getLandingContributionFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;
