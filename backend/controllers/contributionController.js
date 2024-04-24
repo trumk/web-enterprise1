@@ -905,7 +905,7 @@ const contributionController = {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
           notification = new Notification({
             message,
-            userID: contribution.userID,
+            userID: contribution1.userID,
             peopleID: [userId],
             contributionID: contributionId
           });

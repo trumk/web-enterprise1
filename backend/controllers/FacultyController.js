@@ -29,6 +29,10 @@ async function createFaculty(req, res) {
         { role: "marketing coordinator" },
         { new: true }
       ),
+        Profile.findOneAndUpdate(
+        {userID : req.body.userID},
+        {facultyID : faculty._id}
+      )
     ]);
     const salt = await bcrypt.genSalt(10);
     const passString = newFaculty._id.toString()

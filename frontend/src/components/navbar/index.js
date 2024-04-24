@@ -180,16 +180,20 @@ export default function NavbarDefault() {
     routes = guestRoutes;
   }
   const handleNavigateByRole = () => {
-    if (user?.role === 'admin') {
-      navigate('/admin/user')
-    } else if (user?.role === 'marketing manager') {
-      navigate('/marketingManager')
-    } else if (user?.role === 'marketing coordinator') {
-      navigate('/marketingCoordinator')
+    if (!user) {
+        navigate("/");
+    } else if (user.role === 'admin') {
+        navigate('/admin/user');
+    } else if (user.role === 'marketing manager') {
+        navigate('/marketingManager');
+    } else if (user.role === 'marketing coordinator') {
+        navigate('/marketingCoordinator');
+    } else if(user.role === 'user') {
+        navigate('/dashboard');
     } else {
-      navigate('/dashboard')
+        navigate('/');
     }
-  }
+}
   const profile = useSelector((state) => state.user.user?.user);
   return (
     <div className="w-full">
