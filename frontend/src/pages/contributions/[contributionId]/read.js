@@ -54,10 +54,10 @@ export const ReadContributionDashboard = () => {
     <>
       <NavbarDefault />
       <main className="pt-8 pb-16 lg:pt-10 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
-        <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
+        <div className="flex justify-between px-4 mx-auto max-w-screen-xl mt-4 ">
 
           <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-          <Link to={`/contributions`}><Button  variant='outlined'>Back to home</Button></Link>
+          <Link to={`/contributions`}><Button color='green' variant='outlined'>Back to home</Button></Link>
             <header className=" mt-4 mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">

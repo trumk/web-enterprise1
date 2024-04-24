@@ -27,7 +27,7 @@ export const ExceptionContribution = () => {
     const noComments = exceptionContribution?.noComments;
     const noCommentsAfter14Days = exceptionContribution?.noCommentsAfter14Days;
     console.log(noComments, noCommentsAfter14Days);
-    const TABLE_HEAD = ["Title", "Created At", "Images", "Event"];
+    const TABLE_HEAD = ["Title", "Images", "Created At", "Event"];
     return (
         <>
             <NavbarDefault />
@@ -84,15 +84,6 @@ export const ExceptionContribution = () => {
                                             </td>
                                             <td className="p-4">
                                                 <Typography
-                                                    variant="small"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {format(new Date(comment.createdAt), "dd/MM/yyyy")}
-                                                </Typography>
-                                            </td>
-                                            <td className="p-4">
-                                                <Typography
                                                     as="a"
                                                     variant="small"
                                                     color="blue-gray"
@@ -101,6 +92,16 @@ export const ExceptionContribution = () => {
                                                     <img src={comment?.image[0]} alt="comment" className="w-10 h-10" />
                                                 </Typography>
                                             </td>
+                                            <td className="p-4">
+                                                <Typography
+                                                    variant="small"
+                                                    color="blue-gray"
+                                                    className="font-normal"
+                                                >
+                                                    {format(new Date(comment.createdAt), "dd/MM/yyyy")}
+                                                </Typography>
+                                            </td>
+                                            
                                             <td className="p-4">
                                                 <Typography
                                                     variant="small"
@@ -165,15 +166,6 @@ export const ExceptionContribution = () => {
                                                 </td>
                                                 <td className="p-4">
                                                     <Typography
-                                                        variant="small"
-                                                        color="blue-gray"
-                                                        className="font-normal"
-                                                    >
-                                                        {format(new Date(comment.createdAt), "dd/MM/yyyy")}
-                                                    </Typography>
-                                                </td>
-                                                <td className="p-4">
-                                                    <Typography
                                                         as="a"
                                                         variant="small"
                                                         color="blue-gray"
@@ -182,6 +174,16 @@ export const ExceptionContribution = () => {
                                                         <img src={comment?.image[0]} alt="Comment" className="w-10 h-10" />
                                                     </Typography>
                                                 </td>
+                                                <td className="p-4">
+                                                    <Typography
+                                                        variant="small"
+                                                        color="blue-gray"
+                                                        className="font-normal"
+                                                    >
+                                                        {format(new Date(comment.createdAt), "dd/MM/yyyy")}
+                                                    </Typography>
+                                                </td>
+                                                
                                                 <td className="p-4">
                                                     <Typography
                                                         variant="small"

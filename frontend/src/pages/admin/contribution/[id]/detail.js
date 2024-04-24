@@ -100,7 +100,7 @@ export const ContributionDetail = () => {
                         )}
                         <CardFooter className='mt-4'>
                             <Link to="/admin/contribution">
-                                <Button>Back to List</Button>
+                                <Button color='green '>Back to List</Button>
                             </Link>
                         </CardFooter>
                     </Card>

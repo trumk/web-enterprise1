@@ -95,7 +95,7 @@ export const EventDetail = () => {
                 </Typography>
                 
                 </CardBody>
-                <Link to="/admin/event"><Button color='blue' > Back to list</Button></Link>
+                <Link to="/admin/event"><Button color='green' > Back to list</Button></Link>
                 <Button color='red' onClick={handleDelete} className='ml-3'><Trash className='h-4'/></Button>
               </CardBody>
               
