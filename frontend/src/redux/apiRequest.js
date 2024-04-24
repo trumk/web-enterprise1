@@ -138,10 +138,10 @@ import {
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-//const BACKEND_URL = "https://web-enterprise1.onrender.com";
+const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
-//const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
+//const BACKEND_URL = "http://localhost:5000";
 
 //auth
 export const loginUser = async (user, dispatch) => {
