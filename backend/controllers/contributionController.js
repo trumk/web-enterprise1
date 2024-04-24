@@ -901,7 +901,6 @@ const contributionController = {
         },
         { new: true }
       );
-      if (contribution.userID != userId) {
         let notification = await Notification.findOne({ contributionID: contributionId },{type:"comment"});
         if (!notification) {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
@@ -914,6 +913,7 @@ const contributionController = {
           });
           await notification.save();
         } else {
+          if (contribution.userID != userId) {
           const index = notification.peopleID.indexOf(userId);
           if (index > -1) {
             notification.peopleID.splice(index, 1)
