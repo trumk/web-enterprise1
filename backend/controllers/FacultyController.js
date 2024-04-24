@@ -125,9 +125,9 @@ async function searchFaculty(req, res) {
     const faculties = await Faculty.find({ facultyName: new RegExp(keyword, "i") })
       .select('facultyName descActive');
     const facultiesWithCoordinator = await Promise.all(faculties.map(async (faculty) => {
-      const profile = await Profile.findOne({ facultyID: faculty._id });
+      const profile = await Profile.find({ facultyID: faculty._id });
       if (profile) {
-        const user = await User.findOne({ _id: profile.userID, role: 'marketing coordinator' });
+        const user = await User.find({ _id: profile.userID, role: 'marketing coordinator' });
         return {
           ...faculty._doc,
           marketingCoordinator: user ? { _id: user._id, userName: user.userName } : null,
