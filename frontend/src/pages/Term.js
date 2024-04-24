@@ -39,7 +39,7 @@ export const Term = ({open, setOpen, onAccept}) => {
         <>
         <Dialog open={open} handler={handleOpen}>
         <div className='flex flex-col items-center justify-center'>
-            <DialogHeader variant='h3' className='mt-20'>Terms and Conditions</DialogHeader>
+            <DialogHeader variant='h3'>Terms and Conditions</DialogHeader>
             <DialogBody className="h-[35rem] overflow-scroll" ref={scrollRef} onScroll={checkScroll}>
             <Typography variant="paragraph">Please read these terms and conditions carefully before using &quot;Web Enterprise&quot; website operated by our group.</Typography>
             <b>Conditions of use</b>
