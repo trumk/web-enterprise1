@@ -244,7 +244,8 @@ async function updateFaculty(req, res) {
 
     // Assign the new marketing coordinator
     promises.push(
-      User.findByIdAndUpdate(userID, { role: 'marketing coordinator' })  // Set new coordinator
+      User.findByIdAndUpdate(userID, { role: 'marketing coordinator' }),
+      Profile.findOneAndUpdate({userID: userID }, {facultyID: id})
     );
 
     await Promise.all(promises);

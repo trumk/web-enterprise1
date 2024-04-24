@@ -873,7 +873,7 @@ const contributionController = {
 
       const commentContent = req.body.comment;
 
-      var contribution1 = await Contribution.findById(contributionId);
+      const contribution1 = await Contribution.findById(contributionId);
       if (!contribution1) {
         return res.status(404).json({ message: "Contribution not found" });
       }
