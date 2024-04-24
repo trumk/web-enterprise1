@@ -151,7 +151,7 @@ export const loginUser = async (user, dispatch) => {
     dispatch(loginSuccess(res.data));
     toast.success("Login successfully");
   } catch (err) {
-    dispatch(loginFailed(err.response.data));
+    dispatch(loginFailed(err?.response?.data));
     toast.error(err.response.data);
   }
 };

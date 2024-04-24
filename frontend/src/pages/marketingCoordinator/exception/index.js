@@ -56,65 +56,65 @@ export const ExceptionContribution = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                            {noComments?.length === 0 ? (
+                                {noComments?.length === 0 ? (
                                     <tr>
-                                        
-                                            <Typography
-                                                variant="small"
-                                                color="blue-gray"
-                                                className="font-medium p-4 mt-4"
-                                            >
-                                                There is no contribution with no comment
-                                            </Typography>
-                                        
+
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-medium p-4 mt-4"
+                                        >
+                                            There is no contribution with no comment
+                                        </Typography>
+
                                     </tr>
                                 ) : (
-                                noComments?.map((comment, index) => {
-                                    const event = detailEvent?.find(event => event._id === comment.eventID);
-                                    return (
-                                        <tr key={comment._id}>
-                                            <td className="p-4">
-                                                <Typography
-                                                    variant="small"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {comment.title}
-                                                </Typography>
-                                            </td>
-                                            <td className="p-4">
-                                                <Typography
-                                                    as="a"
-                                                    variant="small"
-                                                    color="blue-gray"
-                                                    className="font-medium"
-                                                >
-                                                    <img src={comment?.image[0]} alt="comment" className="w-10 h-10" />
-                                                </Typography>
-                                            </td>
-                                            <td className="p-4">
-                                                <Typography
-                                                    variant="small"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {format(new Date(comment.createdAt), "dd/MM/yyyy")}
-                                                </Typography>
-                                            </td>
-                                            
-                                            <td className="p-4">
-                                                <Typography
-                                                    variant="small"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {event?.topic}
-                                                </Typography>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            )}
+                                    noComments?.map((comment, index) => {
+                                        const event = detailEvent?.find(event => event._id === comment.eventID);
+                                        return (
+                                            <tr key={comment._id}>
+                                                <td className="p-4">
+                                                    <Typography
+                                                        variant="small"
+                                                        color="blue-gray"
+                                                        className="font-normal"
+                                                    >
+                                                        {comment.title}
+                                                    </Typography>
+                                                </td>
+                                                <td className="p-4">
+                                                    <Typography
+                                                        as="a"
+                                                        variant="small"
+                                                        color="blue-gray"
+                                                        className="font-medium"
+                                                    >
+                                                        <img src={comment?.image[0]} alt="comment" className="w-10" />
+                                                    </Typography>
+                                                </td>
+                                                <td className="p-4">
+                                                    <Typography
+                                                        variant="small"
+                                                        color="blue-gray"
+                                                        className="font-normal"
+                                                    >
+                                                        {format(new Date(comment.createdAt), "dd/MM/yyyy")}
+                                                    </Typography>
+                                                </td>
+
+                                                <td className="p-4">
+                                                    <Typography
+                                                        variant="small"
+                                                        color="blue-gray"
+                                                        className="font-normal"
+                                                    >
+                                                        {event?.topic}
+                                                    </Typography>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
                             </tbody>
                         </table>
                         <Typography className='my-4 mt-5' variant='h4'>Contribution with no comment after 14 days</Typography>
@@ -140,15 +140,15 @@ export const ExceptionContribution = () => {
                             <tbody>
                                 {noCommentsAfter14Days?.length === 0 ? (
                                     <tr>
-                                        
-                                            <Typography
-                                                variant="small"
-                                                color="blue-gray"
-                                                className="font-medium p-4"
-                                            >
-                                                There is no contribution with no comment after 14 days
-                                            </Typography>
-                                        
+
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-medium p-4"
+                                        >
+                                            There is no contribution with no comment after 14 days
+                                        </Typography>
+
                                     </tr>
                                 ) : (
                                     noCommentsAfter14Days?.map((comment, index) => {
@@ -171,7 +171,7 @@ export const ExceptionContribution = () => {
                                                         color="blue-gray"
                                                         className="font-medium"
                                                     >
-                                                        <img src={comment?.image[0]} alt="Comment" className="w-10 h-10" />
+                                                        <img src={comment?.image[0]} alt="comment" className="w-10" />
                                                     </Typography>
                                                 </td>
                                                 <td className="p-4">
@@ -183,7 +183,7 @@ export const ExceptionContribution = () => {
                                                         {format(new Date(comment.createdAt), "dd/MM/yyyy")}
                                                     </Typography>
                                                 </td>
-                                                
+
                                                 <td className="p-4">
                                                     <Typography
                                                         variant="small"
