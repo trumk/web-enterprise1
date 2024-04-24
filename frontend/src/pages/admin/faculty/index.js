@@ -178,7 +178,7 @@ export const Faculty = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {faculty?.marketingCoordinator?.[0].userName}
+                          {faculty?.marketingCoordinator?.userName}
                         </Typography>
                       </td>  
                         <td className="p-4 border-b border-blue-gray-50 w-20">
