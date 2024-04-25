@@ -6,8 +6,8 @@ export const CheckIQ = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [hideNo, setHideNo] = useState(false);
   const [title, setTitle] = useState("Bạn có bị ngu không?");
+  const [yes, setYes] = useState("Yes");
 
-  // Mảng 7 hình ảnh
   const images = [
     'https://i.pinimg.com/564x/0d/af/39/0daf39f68ab715cbcbe3a5a933d03375.jpg',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSi1puizAQHG2Z2TgwVCdi6bco_UqtvwuRXg&s', 
@@ -24,6 +24,7 @@ export const CheckIQ = () => {
     setSelectedImage(6); 
     setHideNo(true);
     setTitle("🎉 Chúc mừng bạn đã nhận được 🎉"); 
+    setYes("Thank you");
   };
 
 
@@ -59,7 +60,7 @@ export const CheckIQ = () => {
           className={`bg-green-500 text-white rounded`}
           style={{ width: `${yesButtonWidth}px`, height: `${yesButtonHeight}px` }} 
         >
-          Yes
+              {yes}
         </button>
         { 
           !hideNo && (
