@@ -1,1 +1,7 @@
-<h1>hello word</h1>
+import React from "react"
+
+export const Helloworld = () => {
+return(
+<h1>Hello World</h1>
+);
+}
