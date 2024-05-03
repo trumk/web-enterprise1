@@ -96,19 +96,14 @@ export const ManageContribution = () => {
                         {contribution?.file.length > 0 && (
                             <div className="space-y-2">
                                 {contribution?.file?.map((file, index) => (
-                                    <div
-                                        className="flex items-center justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out mt-4"
-                                    >
-                                        <div >
-                                            <File className="h-4 w-4 mr-2 flex-shrink-0 mt-4" />
-                                            <Typography>{file.name}</Typography>
-                                        </div>
-                                        <a href={file}>
-                                            <Button >
-                                                <Download className='h-4 w-4' />
-                                            </Button>
-                                        </a>
+                                    <div className="flex justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out">
+                                    <div className="flex items-center">
+                                      <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                                      <p className="text-sm line-clamp-1">
+                                        Contribution Attachment {index + 1}
+                                      </p>
                                     </div>
+                                  </div>
                                 ))}
                             </div>
                         )}

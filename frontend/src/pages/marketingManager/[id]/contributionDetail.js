@@ -82,12 +82,12 @@ export const ContributionDetailManager = () => {
                   <div className="flex justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out">
                     <div className="flex items-center">
                       <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <p className="text-xs line-clamp-1">
+                      <p className="text-sm line-clamp-1">
                         Contribution Attachment {index + 1}
                       </p>
                     </div>
                     <div>
-                        <a target="_blank" rel="noreferrer" href={file} ><Button><Download/></Button></a>
+                        <a target="_blank" rel="noreferrer" href={file} ><Button><Download className="h-4 w-4"/></Button></a>
                     </div>
                   </div>
                 ))}

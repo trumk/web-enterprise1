@@ -5,7 +5,7 @@ import nxt from "../components/assets/nxt.png";
 import bhn from "../components/assets/bhn.png";
 import nbt from "../components/assets/nbt.png";
 import nvd from "../components/assets/nvd.png";
-import { FacebookIcon, GithubIcon, Twitch } from "lucide-react";
+import { FacebookIcon, GithubIcon } from "lucide-react";
 import { Avatar, Button, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +24,8 @@ export default function Landing() {
       role: "Tester",
       avatar: nnk,
       contact: {
-        Facebook: "https://www.facebook.com/khanh.nguyennam.1809"
+        Facebook: "https://www.facebook.com/khanh.nguyennam.1809",
+        Github: "https://github.com/Kaizo-1809",
       },
     },
     {
@@ -50,7 +51,8 @@ export default function Landing() {
       role: "Business Analyst, Quality Analyst",
       avatar: bhn,
       contact: {
-        Facebook: "https://www.facebook.com/hnam0611"
+        Facebook: "https://www.facebook.com/hnam0611",
+        Github: "https://github.com/hainam0611",
       },
     },
     {

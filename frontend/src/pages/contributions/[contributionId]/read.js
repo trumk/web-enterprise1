@@ -97,32 +97,7 @@ export const ReadContributionDashboard = () => {
 
             </div>
            
-            <section className="not-format">
-              <div className="flex justify-between items-center mb-6 mt-4">
-                <div>
-                  <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h3>
-                  {contribution?.file.length > 0 && (
-                    <div className="space-y-2 mt-4">
-                      {contribution?.file?.map((file, index) => (
-                        <div
-                          className="flex items-center justify-between mt-2 p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
-                        >
-                          <div className='flex items-center'>
-                            <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                            <Typography variant='h6'>{file.split('/').pop()}</Typography>
-                          </div>
-                          <a href={file}>
-                            <Button>
-                              <Download className='h-4 w-4' />
-                            </Button>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
+            
 
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">

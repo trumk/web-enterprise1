@@ -89,11 +89,6 @@ export const ContributionDetail = () => {
                                             <File className="h-4 w-4 mr-2 flex-shrink-0" />
                                             <Typography className='text-sm'>{file.split('/').pop()}</Typography>
                                         </div>
-                                        <a target="_blank" href={file} download>
-                                            <Button>
-                                                <Download className='h-4 w-4' />
-                                            </Button>
-                                        </a>
                                     </div>
                                 ))}
                             </div>
