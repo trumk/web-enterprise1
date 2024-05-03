@@ -86,7 +86,7 @@ const authController = {
                 otp: otpRender
             });
             await newOtp.save();
-            const verifyLink = `http://localhost:5503/verifylink?token=${generateVerifyMail(user, newOtp)}`;
+            const verifyLink = `https://web-enterprise1-xd0w.onrender.com/verifylink?token=${generateVerifyMail(user, newOtp)}`;
             const mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
