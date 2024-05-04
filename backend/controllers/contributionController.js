@@ -129,22 +129,22 @@ const contributionController = {
         contributionID: contribution._id
       });
       await notification.save();
-      // const mailOptions = {
-      //   from: process.env.EMAIL,
-      //   to: emailAddresses,
-      //   subject: `<b>New Submission</b>`,
-      //   html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`,
-      // };
-      // await new Promise((resolve, reject) => {
-      //   transporter.sendMail(mailOptions, (error, info) => {
-      //     if (error) {
-      //       reject(error);
-      //     } else {
-      //       resolve(info);
-      //     }
-      //   });
-      // });
-      // res.status(201).json(contribution);
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: emailAddresses,
+        subject: `<b>New Submission</b>`,
+        html: `<p>Student<b>${Student.firstName} ${Student.lastName}</b> has submitted new contribution</p><br>`,
+      };
+      await new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(info);
+          }
+        });
+      });
+      res.status(201).json(contribution);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message, ...error });
