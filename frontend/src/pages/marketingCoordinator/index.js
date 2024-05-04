@@ -126,7 +126,7 @@ export const MarketingCoordinatorPage = () => {
                       <tr key={index}>
                         <td className="p-4 border-b border-blue-gray-50 cursor-pointer hover:bg-gray-100">
                           <Link
-                            to={`/marketingCoordinator/contribution/${contribution._id}`}
+                            to={`/marketingCoordinator/contribution/${contribution._id}/action`}
                           >
                             <Typography
                               variant="small"
@@ -138,7 +138,7 @@ export const MarketingCoordinatorPage = () => {
                           </Link>
                         </td>
 
-                        <td className="p-4 border-b border-blue-gray-50">
+                        <td className="p-1 border-b border-blue-gray-50">
                           {Array.isArray(contribution.image) &&
                             contribution.image.length > 0 && (
                               <img
@@ -148,7 +148,7 @@ export const MarketingCoordinatorPage = () => {
                               />
                             )}
                         </td>
-                        <td className="p-4 border-b border-blue-gray-50">
+                        <td className="p-12 border-b border-blue-gray-50">
                           <Badge
                             className="w-[100px]"
                             content={
@@ -173,7 +173,7 @@ export const MarketingCoordinatorPage = () => {
                         <td className="p-4 border-b border-blue-gray-50 w-20">
                           <div className="flex gap-2 items-center">
 
-                            <IconButton variant="gradient" color="amber"><Link to={`/marketingCoordinator/contribution/${contribution._id}/action`}> <Settings/> </Link></IconButton>
+                            <Link to={`/marketingCoordinator/contribution/${contribution._id}/action`}> <IconButton variant="gradient" color="amber"><Settings/> </IconButton></Link>
 
                           </div>
                         </td>

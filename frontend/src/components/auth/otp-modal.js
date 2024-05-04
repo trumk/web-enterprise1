@@ -77,11 +77,6 @@ export const OTPModal = ({open, onClose, email}) => {
               </div>
               <FormAction handleSubmit={handleVerify} text="Submit"/>
             </form>
-            <Typography color="black" variant="p">
-              Already verify? Go to <Link to="/terms" className="font-medium text-purple-600 hover:text-purple-500">
-                next step
-            </Link>
-            </Typography>
           </DialogBody>
           <DialogFooter className="space-x-2">
             <Button variant="text" color="red" onClick={onClose}>

@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Card,
+  CardBody,
   CardFooter,
   CardHeader,
   Typography,
@@ -49,32 +50,34 @@ export const FacultyDetail = () => {
         <div className="mt-2.5 ml-5 w-full">
           {faculty && (
             <Card className="mt-5">
+              <CardBody className="border border-gray-900 rounded-lg"> 
               <CardHeader
                 variant="gradient"
                 color="gray"
-                className="mb-4 grid h-28 place-items-center"
+                className="mb-4 grid h-20 place-items-center mt-4"
               >
-                <Typography variant="h3" color="white">
+                <Typography variant="h3" color="white" >
                   {detail?.facultyName}
                 </Typography>
               </CardHeader>
-              <Typography variant="h5" className="ml-3">
+              <Typography variant="h6" className="ml-3 mt-5">
                 Enroll Key: {detail?.enrollKey}
               </Typography>
-              <Typography variant="h5" className="ml-3">
+              <Typography variant="h6" className="ml-3 mt-4">
                 Description: {detail?.descActive}
               </Typography>
-              <Typography variant="h5" className="ml-3">
+              <Typography variant="h6" className="ml-3 mt-4">
                 Manage by: {detail?.marketingCoordinator?.userName}
               </Typography>
+              </CardBody>
               <CardFooter>
                 <Link to="/admin/faculty">
-                  <Button>Back to List</Button>
+                  <Button className="ml-3 mt-4" color="blue">Back to List</Button>
                 </Link>
                 <Link to={`/admin/faculty/${id}/edit`}>
-                  <Button className="ml-3">Edit</Button>
+                  <Button className="ml-3 mt-4" color="black">Edit</Button>
                 </Link>
-                <Button className="ml-3" onClick={handleDelete}>Delete</Button>
+                <Button className="ml-3 mt-4 " color="red" onClick={handleDelete}>Delete</Button>
               </CardFooter>
             </Card>
           )}

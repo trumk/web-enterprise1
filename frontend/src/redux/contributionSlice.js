@@ -69,6 +69,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    getContributionByGuest: {
+      contributions: null,
+      isFetching: false,
+      error: false,
+    },
     getNotifications: {
       notifications: null,
       isFetching: false,
@@ -78,6 +83,11 @@ const contributionSlice = createSlice({
       isFetching: false,
       error: false,
     },
+    landingContributions: {
+      data: null,
+      isFetching: false,
+      error: false,
+    }
   },
   reducers: {
     getContributionsStart: (state) => {
@@ -126,6 +136,18 @@ const contributionSlice = createSlice({
       state.getContributionsByEvent.isFetching = false;
       state.getContributionsByEvent.contributions = action.payload;
       state.getContributionsByEvent.error = false;
+    },
+    getContributionByGuestStart: (state) => {
+      state.getContributionByGuest.isFetching = true;
+    },
+    getContributionByGuestFailed: (state) => {
+      state.getContributionByGuest.isFetching = false;
+      state.getContributionByGuest.error = true;
+    },
+    getContributionByGuestSuccess: (state, action) => {
+      state.getContributionByGuest.isFetching = false;
+      state.getContributionByGuest.contributions = action.payload;
+      state.getContributionByGuest.error = false;
     },
     userContributionsStart: (state) => {
       state.userContributions.isFetching = true;
@@ -271,6 +293,18 @@ const contributionSlice = createSlice({
       state.readNotification.isFetching = false;
       state.readNotification.error = true;
     },
+    getLandingContributionStart: (state) => {
+      state.landingContributions.isFetching = true;
+    },
+    getLandingContributionSuccess: (state, action) => {
+      state.landingContributions.isFetching = false;
+      state.landingContributions.data = action.payload;
+      state.landingContributions.error = false;
+    },
+    getLandingContributionFailed: (state) => {
+      state.landingContributions.isFetching = false;
+      state.landingContributions.error = true;
+    },
   },
 });
 export const {
@@ -319,11 +353,17 @@ export const {
   getContributionByCoordinatorStart,
   getContributionByCoordinatorSuccess,
   getContributionByCoordinatorFailed,
+  getContributionByGuestStart,
+  getContributionByGuestSuccess,
+  getContributionByGuestFailed,
   getNotificationsStart,
   getNotificationsSuccess,
   getNotificationsFailed,
   readNotificationStart,
   readNotificationSuccess,
   readNotificationFailed,
+  getLandingContributionStart,
+  getLandingContributionSuccess,
+  getLandingContributionFailed,
 } = contributionSlice.actions;
 export default contributionSlice.reducer;

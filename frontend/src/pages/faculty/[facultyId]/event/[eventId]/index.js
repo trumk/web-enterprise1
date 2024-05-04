@@ -58,7 +58,7 @@ export const EventInfo = () => {
       <div className='flex'>
         <DefaultSidebar className='flex' />
         <div className='ml-5 w-full h-full'>
-          <Link to={`/faculty/${facultyId}`}><Button color='blue'>Back</Button></Link>
+          <Link to={`/faculty/${facultyId}`}><Button color='blue'>Back to home</Button></Link>
           {eventData && (
             <Card className="mt-10">
               <CardHeader
@@ -87,7 +87,7 @@ export const EventInfo = () => {
               </CardBody>
               <CardFooter className='mt-[-20px]'>
                 <Link to={submitUrl}><Button color='green'>Post new contribution</Button></Link>
-                <Typography variant="h4" color='black' className="ml-3 mb-2">
+                <Typography variant="h4" color='black' className="ml-3 mb-2 mt-9">
                   Related Contribution
                 </Typography>
                 <div className='flex gap-5 items-center'>

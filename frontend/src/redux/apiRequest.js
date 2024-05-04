@@ -23,6 +23,9 @@ import {
   enrollFacultyFailed,
   enrollFacultyStart,
   enrollFacultySuccess,
+  getFacultyLoginFailed,
+  getFacultyLoginStart,
+  getFacultyLoginSuccess,
   getSelfFailed,
   getSelfStart,
   getSelfSuccess,
@@ -101,6 +104,9 @@ import {
   getContributionsByEventFailed,
   getContributionsByEventStart,
   getContributionsByEventSuccess,
+  getContributionByGuestStart,
+  getContributionByGuestSuccess,
+  getContributionByGuestFailed,
 
   getContributionsFailed, 
   getContributionsStart, 
@@ -125,14 +131,17 @@ import {
   submitContributionSuccess,
   userContributionsFailed,
   userContributionsStart,
-  userContributionsSuccess
+  userContributionsSuccess,
+  getLandingContributionStart,
+  getLandingContributionSuccess,
+  getLandingContributionFailed
 } from "./contributionSlice";
 import { toast } from "react-toastify";
 
-const BACKEND_URL = "https://web-enterprise1.onrender.com";
+// const BACKEND_URL = "https://web-enterprise1.onrender.com";
 
-//const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
-//const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "https://web-enterprise1-xd0w.onrender.com";
+// const BACKEND_URL = "http://localhost:5000";
 
 //auth
 export const loginUser = async (user, dispatch) => {
@@ -142,8 +151,18 @@ export const loginUser = async (user, dispatch) => {
     dispatch(loginSuccess(res.data));
     toast.success("Login successfully");
   } catch (err) {
-    dispatch(loginFailed(err.response.data));
+    dispatch(loginFailed(err?.response?.data));
     toast.error(err.response.data);
+  }
+};
+
+export const getFacultyLogin = () => async (dispatch) => {
+  dispatch(getFacultyLoginStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/faculty/getFacultyLogin`);
+    dispatch(getFacultyLoginSuccess(res.data));
+  } catch (err) {
+    dispatch(getFacultyLoginFailed(err));
   }
 };
 
@@ -658,7 +677,7 @@ export const modifyContribution = (id, contribution, accessToken, navigate) => a
     });
     dispatch(editContributionSuccess(res.data));
     toast.success("Edit contribution successfully");
-    navigate(`/userContribution`);
+    navigate(`/myContribution`);
   } catch (error) {
     dispatch(editContributionFailed());
     toast.error(error.response.data);
@@ -796,6 +815,21 @@ export const getContributionByCoordinator = (accessToken) => async (dispatch) =>
   }
 }
 
+export const getContributionByGuest = (accessToken) => async (dispatch) => {
+  dispatch(getContributionByGuestStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getContributionGuest`, {
+      headers: {
+        token: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(getContributionByGuestSuccess(res.data));
+  } catch (err) {
+    dispatch(getContributionByGuestFailed());
+    console.log(err);
+  }
+}
+
 export const getAllNotifications = (accessToken) => async (dispatch) => {
   dispatch(getNotificationsStart());
   try {
@@ -822,6 +856,17 @@ export const getOneNotification = (id, accessToken) => async (dispatch) => {
     dispatch(readNotificationSuccess());
   } catch (err) {
     dispatch(readNotificationFailed());
+    console.log(err);
+  }
+}
+
+export const getContributionByLanding = () => async (dispatch) => {
+  dispatch(getLandingContributionStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/contribution/getContributionLanding`);
+    dispatch(getLandingContributionSuccess(res.data));
+  } catch (err) {
+    dispatch(getLandingContributionFailed());
     console.log(err);
   }
 }

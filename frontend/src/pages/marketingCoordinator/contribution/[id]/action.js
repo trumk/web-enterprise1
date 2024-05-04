@@ -57,25 +57,28 @@ export const ManageContribution = () => {
                         <CardHeader
                             variant="gradient"
                             color="gray"
-                            className="mb-4 grid h-28 place-items-center"
+                            className="mb-4 grid h-20 place-items-center mt-5"
                         >
                             <Typography variant="h3" color="white">
                                 {contribution?.title}
                             </Typography>
                         </CardHeader>
-                        <Typography variant="h5" className="ml-3">
+                        <Typography variant="h5" className="ml-3 mt-4">
                             Student: {contribution?.author.firstName} {contribution?.author.lastName}
                         </Typography>
-                        <Typography variant="h5" className="ml-3">
-                            Content:
-                        </Typography>
-                        <Preview value={contribution?.content} />
-                        <Typography variant="h5" className="ml-3">
+                        <Typography variant="h5" className="ml-3 mt-4">
+                  Description:
+                </Typography>
+                <div className='mt-2 text-slate-500 border rounded-lg' style={{ display: 'flex', justifyContent: 'space-between', marginLeft: '30px', marginRight: '30px' }}>
+                <Preview value={contribution?.content} style={{ flexGrow: 5 }} />
+                        </div>
+                        
+                        <Typography variant="h5" className="ml-3 mt-4">
                             Published: {contribution?.isPublic ? 'Published' : 'Not published'}
                         </Typography>
-                        <Typography variant="h5" className="ml-3">
+                        <Typography variant="h5" className="ml-3 mt-4">
                             Image:
-                            <div className='flex items-center gap-2'>
+                            <div className='flex items-center gap-2 mt-4'>
                                 {contribution?.image.map((imgSrc, index) => (
                                     <img
                                         key={index}
@@ -87,46 +90,42 @@ export const ManageContribution = () => {
                             </div>
 
                         </Typography>
-                        <Typography variant="h5" className="ml-3">
+                        <Typography variant="h5" className="ml-3 mt-4">
                             Files:
                         </Typography>
                         {contribution?.file.length > 0 && (
                             <div className="space-y-2">
                                 {contribution?.file?.map((file, index) => (
-                                    <div
-                                        className="flex items-center justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
-                                    >
-                                        <div>
-                                            <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                                            <Typography>{file.name}</Typography>
-                                        </div>
-                                        <a href={file}>
-                                            <Button>
-                                                <Download className='h-4 w-4' />
-                                            </Button>
-                                        </a>
+                                    <div className="flex justify-between p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out">
+                                    <div className="flex items-center">
+                                      <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                                      <p className="text-sm line-clamp-1">
+                                        Contribution Attachment {index + 1}
+                                      </p>
                                     </div>
+                                  </div>
                                 ))}
                             </div>
                         )}
                         <CardFooter>
                             <Link to="/marketingCoordinator">
-                                <Button>Back to List</Button>
+                                <Button color='green' className='mt-4'>Back to List</Button>
                             </Link>
                             <Tooltip
                                 content={contribution?.isPublic ? "This contribution is already public" : "Make this contribution public"}
                                 placement="right"
+                                
                                 animate={{
                                     mount: { scale: 1, y: 0 },
                                     unmount: { scale: 0, y: 25 },
                                 }}
                             >
                                 <span>
-                                    <Button className='ml-5' disabled={contribution?.isPublic} onClick={handlePublic}>Public This Contribution?</Button>
+                                    <Button className='ml-5 mt-4' color= 'gray' disabled={contribution?.isPublic} onClick={handlePublic}>Public This Contribution?</Button>
                                 </span>
                             </Tooltip>
                             <div>
-                                <div className="flex justify-between items-center mb-6">
+                                <div className="flex justify-between items-center mb-6 mt-4">
                                     <Typography variant='h5' className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Your opinion about this post?</Typography>
                                 </div>
                                 <form className="mb-6" onSubmit={handleComment}>

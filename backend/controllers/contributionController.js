@@ -31,8 +31,6 @@ const contributionController = {
       const filesPaths = req.body.firebaseUrls.filter(
         (url) => !url.match(/\.(jpeg|jpg|gif|png)$/i)
       );
-      console.log(imagesPaths);
-      console.log(filesPaths);
       if (imagesPaths.length === 0) {
         return res.status(403).json("Image is required");
       }
@@ -127,6 +125,7 @@ const contributionController = {
         message,
         userID: marketingID,
         peopleID: [req.user.id],
+        type:"submit",
         contributionID: contribution._id
       });
       await notification.save();
@@ -246,7 +245,6 @@ const contributionController = {
   getContributionByCoordinator: async (req, res) => {
     try {
       const facultyId = await Profile.findOne({ userID: req.user.id });
-      console.log(facultyId)
       let query = { isPublic: true, facultyID: { $in: facultyId.facultyID } };
       const role = req.user.role;
       if (
@@ -425,6 +423,7 @@ const contributionController = {
             image: 1,
             file: 1,
             isPublic: 1,
+            createdAt:1,
             author: {
               firstName: "$userProfile.firstName",
               lastName: "$userProfile.lastName",
@@ -556,6 +555,7 @@ const contributionController = {
     try {
       const keyword = req.body.keyword;
       const role = req.user.role;
+      const profile = await Profile.findOne({ userID: req.user.id });
       let query = { title: new RegExp(keyword, "i"), isPublic: true };
       if (
         role === "admin" ||
@@ -563,6 +563,9 @@ const contributionController = {
         role === "marketing manager"
       ) {
         query = { title: new RegExp(keyword, "i") };
+      }
+      if(role === "guest"){
+        query = { title: new RegExp(keyword, "i"), isPublic: true, facultyID: { $in: profile.facultyID  }};
       }
       const contributions = await Contribution.aggregate([
         { $match: query },
@@ -852,6 +855,7 @@ const contributionController = {
       message,
       userID: contribution.userID,
       peopleID: [req.user.id],
+      type:"publish",
       contributionID: contributionId
     });
     await notification.save();
@@ -872,7 +876,7 @@ const contributionController = {
 
       const commentContent = req.body.comment;
 
-      var contribution1 = await Contribution.findById(contributionId);
+      const contribution1 = await Contribution.findById(contributionId);
       if (!contribution1) {
         return res.status(404).json({ message: "Contribution not found" });
       }
@@ -898,18 +902,19 @@ const contributionController = {
         },
         { new: true }
       );
-      if (contribution.userID != userId) {
-        let notification = await Notification.findOne({ contributionID: contributionId });
+        let notification = await Notification.findOne({ contributionID: contributionId , type:"comment"});
         if (!notification) {
           const message = `<b>${user.firstName} ${user.lastName}</b> commented in your contribution.`;
           notification = new Notification({
             message,
-            userID: contribution.userID,
+            userID: contribution1.userID,
             peopleID: [userId],
+            type:"comment",
             contributionID: contributionId
           });
           await notification.save();
         } else {
+          if (notification.userID != userId) {
           const index = notification.peopleID.indexOf(userId);
           if (index > -1) {
             notification.peopleID.splice(index, 1)
@@ -1189,6 +1194,84 @@ const contributionController = {
       res.status(500).json({ message: error.message });
     }
   },
+ getContributionByGuest : async (req, res) => {
+    try {
+      const profile = await Profile.findOne({ userID: req.user.id });
+  
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+  
+      const query = {
+        isPublic: true,
+        facultyID: { $in: profile.facultyID },
+      };
+  
+      const contributions = await Contribution.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userID",
+            foreignField: "userID",
+            as: "userProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$userProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "events",
+            localField: "eventID",
+            foreignField: "_id",
+            as: "event",
+          },
+        },
+        {
+          $unwind: {
+            path: "$event",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            content: 1,
+            image: 1,
+            file: 1,
+            isPublic: 1,
+            eventID: { topic: "$event.topic" },
+            author: {
+              firstName: "$userProfile.firstName",
+              lastName: "$userProfile.lastName",
+              avatar: "$userProfile.avatar",
+            },
+            createdAt: 1,
+          },
+        },
+      ]);
+      return res.status(200).json(contributions);
+    } catch (error) {
+      console.error("Error in getContributionByGuest:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+  getTop3Contributions : async (req, res) => {
+    try {
+      let contributions = await Contribution.find({ isPublic: true });
+      contributions.sort((a, b) => b.comments.length - a.comments.length);
+      const top3Contributions = contributions.slice(0, 3);
+      return res.status(200).json(top3Contributions);
+    } catch (error) {
+      console.error("Error in getTop3Contributions:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
 };
 
 module.exports = contributionController;

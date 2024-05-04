@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const Faculty = require("../models/Faculty");
+const Contribution = require("../models/Contribution");
+
 
 
 async function createEvent(req, res) {
@@ -213,28 +215,53 @@ function updateEvent(req, res) {
     });
 };
 
-function deleteEvent(req, res) {
-  const id = req.params.eventId;
+// function deleteEvent(req, res) {
+//   const id = req.params.eventId;
 
-  Event.findOneAndDelete({_id: id})
-    .exec()
-    .then(deleteEvent => {
-      if (!deleteEvent) {
-        return res.status(404).json({
-          success: false,
-          message: "event not found with ID: " + id
-        });
-      }
+//   Event.findOneAndDelete({_id: id})
+//     .exec()
+//     .then(deleteEvent => {
+//       if (!deleteEvent) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "event not found with ID: " + id
+//         });
+//       }
 
-      //  deleted successfully
-      return res.status(204).json({
-        success: true
+//       //  deleted successfully
+//       return res.status(204).json({
+//         success: true
+//       });
+//     })
+//     .catch(err => res.status(500).json({
+//       success: false,
+//       message: "error deleting : " + err.message
+//     }));
+async function deleteEvent(req, res) {
+  const eventId = req.params.eventId;
+
+  try {
+   
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found with ID: " + eventId
       });
-    })
-    .catch(err => res.status(500).json({
+    }
+    await Contribution.deleteMany({ eventID: eventId });
+    await Event.findOneAndDelete({ _id: eventId });
+    return res.status(204).json({
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
       success: false,
-      message: "error deleting : " + err.message
-    }));
+      message: "Error deleting event: " + err.message
+    });
+  }
+
 }
 module.exports = {
   createEvent,

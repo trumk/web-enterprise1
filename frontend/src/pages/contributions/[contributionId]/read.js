@@ -44,27 +44,35 @@ export const ReadContributionDashboard = () => {
       });
   };
   const images = contribution?.image.map(image => ({ img: image }))
-  const [active, setActive] = useState(images?.img);
-  // console.log(comments[1].userProfile?.user.role)
+  const [active, setActive] = useState(images?.[0]?.img || '');
+  useEffect(() => {
+    if (contribution?.image.length > 0) {
+      setActive(contribution.image[0]);
+    }
+  }, [contribution]);
   return (
     <>
       <NavbarDefault />
       <main className="pt-8 pb-16 lg:pt-10 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
-        <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
+        <div className="flex justify-between px-4 mx-auto max-w-screen-xl mt-4 ">
 
           <article className="mx-auto w-full max-w-3xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-          <Link to={`/contributions`}><Button variant='outlined'>Back to Dashboard</Button></Link>
-            <header className="mb-4 lg:mb-6 not-format">
+          <Link to={`/contributions`}><Button color='green' variant='outlined'>Back to home</Button></Link>
+            <header className=" mt-4 mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 mt-3 not-italic">
                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                   <img className="mr-4 w-16 h-16 rounded-full" src={contribution?.author.avatar} alt="Jese Leos" />
-                  <div>
+                  <div className="mt-4" >
                     <Typography className="text-xl font-bold text-gray-900 dark:text-white">{contribution?.author.firstName} {contribution?.author.lastName}</Typography>
                   </div>
                 </div>
               </address>
-              <Typography variant='h3'>{contribution?.title}</Typography>
-              <div className="grid gap-4">
+              <Typography variant='h5'>{contribution?.title}</Typography>
+              
+              
+            </header>
+            <div className= "border border-gray-900 rounded-sm p-2" >
+            <div className="grid gap-5">
                 <div>
                   <img
                     className="h-auto w-full max-w-full rounded-lg object-cover object-center md:h-[480px]"
@@ -85,38 +93,15 @@ export const ReadContributionDashboard = () => {
                   ))}
                 </div>
               </div>
-            </header>
-            <Preview value={contribution?.content} className="text-md" />
-            <section className="not-format">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Some attachments for my contribution</h2>
-                  {contribution?.file.length > 0 && (
-                    <div className="space-y-2">
-                      {contribution?.file?.map((file, index) => (
-                        <div
-                          className="flex items-center justify-between mt-2 p-3 w-[500px] bg-sky-100 border border-gray-900 text-sky-700 rounded-md ml-3 bg-blue-200 cursor-pointer hover:bg-blue-300 transition-all duration-300 ease-in-out"
-                        >
-                          <div className='flex items-center'>
-                            <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                            <Typography variant='h6'>{file.split('/').pop()}</Typography>
-                          </div>
-                          <a href={file}>
-                            <Button>
-                              <Download className='h-4 w-4' />
-                            </Button>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
+            <Preview value={contribution?.content} className="text"/>
+
+            </div>
+           
+            
 
             <section className="not-format">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h2>
+                <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Discussion ({comments?.length})</h3>
               </div>
               <form className="mb-6">
                 <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">

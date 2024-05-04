@@ -2,23 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavbarDefault from "../../components/navbar";
 import DefaultSidebar from "../../components/sidebar";
-import {
-    getAllContributions,
-    searchContribution,
-    sortAsc,
-    sortDesc,
-} from "../../redux/apiRequest";
+import {getContributionByGuest,  searchContribution} from "../../redux/apiRequest";
 import { format } from "date-fns";
 import { Button, Input, Option, Select, Typography } from "@material-tailwind/react";
 import { ArrowBigLeft, ArrowRight, Heading2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export const ContributionsDashboard = () => {
+export const GuestPage = () => {
     const user = useSelector((state) => state.auth.login?.currentUser);
     const [sortOption, setSortOption] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
     const contributionData = useSelector(
-        (state) => state.contribution.contributions?.allContributions
+        (state) => state.contribution.getContributionByGuest?.contributions
     );
     const filterContribution = useSelector(
         (state) => state.contribution.searchContribution?.filterContribution
@@ -28,7 +23,7 @@ export const ContributionsDashboard = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         if (user) {
-            dispatch(getAllContributions(user.accessToken, dispatch));
+            dispatch(getContributionByGuest(user.accessToken, dispatch));
         }
     }, [user, dispatch]);
     const handleSearch = () => {
@@ -42,15 +37,7 @@ export const ContributionsDashboard = () => {
         }
     };
 
-    const handleSortChange = (option) => {
-        setSortOption(option);
 
-        if (option === "asc") {
-            dispatch(sortAsc(user.accessToken));
-        } else if (option === "desc") {
-            dispatch(sortDesc(user.accessToken));
-        }
-    };
     console.log(filterContribution);
     return (
         <>
@@ -59,15 +46,6 @@ export const ContributionsDashboard = () => {
                 <DefaultSidebar className="flex" />
                 <div className="ml-5 w-full">
                     <div className="mt-3">
-                        <Select
-                            value={sortOption}
-                            onChange={(value) => handleSortChange(value)}
-                            className="mb-4 p-2 border rounded"
-                        >
-                            <Option value="">Sort by</Option>
-                            <Option value="asc">Sort by Oldest Contribution</Option>
-                            <Option value="desc">Sort by Lastest Contribution</Option>
-                        </Select>
                     </div>
                     <form className="flex items-center gap-2 mt-2">
                         <Input
@@ -120,7 +98,6 @@ export const ContributionsDashboard = () => {
                                         <Button
                                             variant="text"
                                             className="mt-4 flex items-center gap-2"
-                                            color="blue"
                                         >
                                             Read More <ArrowRight className="h-4" />
                                         </Button>
@@ -165,7 +142,7 @@ export const ContributionsDashboard = () => {
                                                 </Typography>
                                             </p>
                                         </div>
-                                        <Link to={`/contributions/${contribution._id}/read`}>
+                                        <Link to={`/guest/${contribution._id}/read`}>
                                             <Button
                                                 variant="text"
                                                 className="mt-4 flex items-center gap-2"
@@ -215,7 +192,7 @@ export const ContributionsDashboard = () => {
                                                 </Typography>
                                             </p>
                                         </div>
-                                        <Link to={`/contributions/${contribution._id}/read`}>
+                                        <Link to={`/guest/${contribution._id}/read`}>
                                             <Button
                                                 variant="text"
                                                 className="mt-4 flex items-center gap-2"
@@ -266,7 +243,7 @@ export const ContributionsDashboard = () => {
                                                 </Typography>
                                             </p>
                                         </div>
-                                        <Link to={`/contributions/${contribution._id}/read`}>
+                                        <Link to={`/guest/${contribution._id}/read`}>
                                             <Button
                                                 variant="text"
                                                 className="mt-4 flex items-center gap-2"

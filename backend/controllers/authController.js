@@ -86,7 +86,7 @@ const authController = {
                 otp: otpRender
             });
             await newOtp.save();
-            const verifyLink = `http://localhost:5503/verifylink?token=${generateVerifyMail(user, newOtp)}`;
+            const verifyLink = `https://web-enterprise1-xd0w.onrender.com/verifylink?token=${generateVerifyMail(user, newOtp)}`;
             const mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
@@ -266,7 +266,7 @@ const authController = {
                 return res.status(400).json("Password needs to be longer than 4 characters");
             }
             if (newPassword != confirmPassword) {
-                return res.status(401).json("New Password do not match");
+                return res.status(401).json("Password do not match");
             }
             if (validPassword && newPassword == confirmPassword) {
                 const salt = await bcrypt.genSalt(10);

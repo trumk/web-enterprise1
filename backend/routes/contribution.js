@@ -5,7 +5,7 @@ const { upload, uploadToFirebase, multerErrorHandler} = require("../middlewares/
 const upload1 = multer();
 
 const router = require("express").Router();
-
+router.get("/getContributionLanding", contributionController.getTop3Contributions);
 router.use(authorization.verifyToken);
 
 router.post("/submit",
@@ -20,7 +20,7 @@ router.get("/getAllContributions", contributionController.getContributionByDashB
 router.get("/getAllContributionsByEvent/:id", contributionController.getContributionByEvent)
 router.get("/getMyContribution", contributionController.getMyContribution);
 router.post("/statistic", upload1.none(), contributionController.getStatistic);
-
+router.get("/getContributionGuest", contributionController.getContributionByGuest);
 router.get("/edit/:id", contributionController.getOneContribution);
 router.delete("/delete/:id", contributionController.deleteContribution);
 router.post("/searchByTitle", upload1.none(), contributionController.searchByTitleContribution);
@@ -34,6 +34,7 @@ router.get("/notification/:id", contributionController.getOneNotification);
 router.get("/exception", contributionController.getExceptionReports);
 router.get("/getContributionByFaculty", contributionController.getContributionByCoordinator);
 router.get("/:id", contributionController.getOneContribution);
+
 
 
 
